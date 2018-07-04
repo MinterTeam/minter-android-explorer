@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 by MinterTeam
+ * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
  *
  * The MIT License
@@ -38,7 +38,7 @@ import network.minter.explorerapi.MinterExplorerApi;
 import network.minter.explorerapi.models.HistoryTransaction;
 
 /**
- * MinterWallet. 2018
+ * minter-android-explorer. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */

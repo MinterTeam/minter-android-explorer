@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 by MinterTeam
+ * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
  *
  * The MIT License
@@ -27,6 +27,9 @@ package network.minter.explorerapi.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+import org.parceler.Transient;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -39,10 +42,11 @@ import network.minter.mintercore.crypto.MinterHash;
 import network.minter.mintercore.crypto.MinterPublicKey;
 
 /**
- * MinterCore. 2018
+ * minter-android-explorer. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
+@Parcel
 public class HistoryTransaction implements Serializable {
 
     public MinterHash hash;
@@ -51,7 +55,8 @@ public class HistoryTransaction implements Serializable {
     public Date timestamp;
     public BigDecimal fee;
     public Type type;
-    public Object data;
+	@Transient
+	public Object data;
     public Status status;
     public String payload;
     public transient String username;
@@ -207,93 +212,99 @@ public class HistoryTransaction implements Serializable {
         }
     }
 
-    public static class TxConvertCoinResult {
-        public MinterAddress from;
-        @SerializedName("from_coin_symbol")
-        public String fromCoin;
-        @SerializedName("to_coin_symbol")
-        public String toCoin;
-        @SerializedName("value")
-        public BigDecimal amount;
+	@Parcel
+	public static class TxConvertCoinResult {
+		public MinterAddress from;
+		@SerializedName("from_coin_symbol")
+		public String fromCoin;
+		@SerializedName("to_coin_symbol")
+		public String toCoin;
+		@SerializedName("value")
+		public BigDecimal amount;
 
-        public MinterAddress getFrom() {
-            return from;
-        }
+		public MinterAddress getFrom() {
+			return from;
+		}
 
-        public String getFromCoin() {
-            if (fromCoin == null) {
-                return null;
-            }
-            return fromCoin.toUpperCase();
-        }
+		public String getFromCoin() {
+			if (fromCoin == null) {
+				return null;
+			}
+			return fromCoin.toUpperCase();
+		}
 
-        public String getToCoin() {
-            if (toCoin == null) {
-                return null;
-            }
-            return toCoin.toUpperCase();
-        }
+		public String getToCoin() {
+			if (toCoin == null) {
+				return null;
+			}
+			return toCoin.toUpperCase();
+		}
 
-        public BigDecimal getAmount() {
-            return amount;
-        }
-    }
+		public BigDecimal getAmount() {
+			return amount;
+		}
+	}
 
-    public static class TxDeclareCandidacyResult {
-        public MinterAddress from;
-        public MinterAddress address;
-        @SerializedName("pub_key")
-        public MinterPublicKey pubKey;
-        public BigDecimal commission;
-        public String coin;
-        public BigDecimal stake;
+	@Parcel
+	public static class TxDeclareCandidacyResult {
+		public MinterAddress from;
+		public MinterAddress address;
+		@SerializedName("pub_key")
+		public MinterPublicKey pubKey;
+		public BigDecimal commission;
+		public String coin;
+		public BigDecimal stake;
 
-        public MinterAddress getFrom() {
-            return from;
-        }
+		public MinterAddress getFrom() {
+			return from;
+		}
 
-        public MinterAddress getAddress() {
-            return address;
-        }
+		public MinterAddress getAddress() {
+			return address;
+		}
 
-        public MinterPublicKey getPubKey() {
-            return pubKey;
-        }
+		public MinterPublicKey getPubKey() {
+			return pubKey;
+		}
 
-        public BigDecimal getCommission() {
-            return commission;
-        }
+		public BigDecimal getCommission() {
+			return commission;
+		}
 
-        public String getCoin() {
-            if (coin == null) {
-                return null;
-            }
-            return coin.toUpperCase();
-        }
+		public String getCoin() {
+			if (coin == null) {
+				return null;
+			}
+			return coin.toUpperCase();
+		}
 
-        public BigDecimal getStake() {
-            return stake;
-        }
-    }
+		public BigDecimal getStake() {
+			return stake;
+		}
+	}
 
-    public static class TxSetCandidateOnlineOfflineResult {
-        public MinterAddress from;
-        @SerializedName("pub_key")
-        public MinterPublicKey pubKey;
-    }
+	@Parcel
+	public static class TxSetCandidateOnlineOfflineResult {
+		public MinterAddress from;
+		@SerializedName("pub_key")
+		public MinterPublicKey pubKey;
+	}
 
-    public static class TxUnboundResult {
-        public MinterAddress from;
+	@Parcel
+	public static class TxUnboundResult {
+		public MinterAddress from;
 
-    }
+	}
 
-    public static class TxDelegateResult {
-        public MinterAddress from;
+	@Parcel
+	public static class TxDelegateResult {
+		public MinterAddress from;
 
-    }
+	}
 
-    public static class TxRedeemCheckResult {
-        public MinterAddress from;
+	@Parcel
+	public static class TxRedeemCheckResult {
+		public MinterAddress from;
 
-    }
+	}
 }

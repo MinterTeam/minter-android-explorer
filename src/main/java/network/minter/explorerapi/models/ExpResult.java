@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 by MinterTeam
+ * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
  *
  * The MIT License
@@ -27,8 +27,10 @@ package network.minter.explorerapi.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+
 /**
- * MinterCore. 2018
+ * minter-android-explorer. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
@@ -46,17 +48,18 @@ public class ExpResult<Result> {
         return meta;
     }
 
-    public static class Meta {
-        @SerializedName("current_page")
-        public int currentPage;
-        public int from;
-        public int to;
-        public int total;
-        @SerializedName("last_page")
-        public int lastPage;
-        public String path;
-        @SerializedName("per_page")
-        public int perPage;
-    }
+	@Parcel
+	public static class Meta {
+		@SerializedName("current_page")
+		public int currentPage;
+		public int from;
+		public int to;
+		public int total;
+		@SerializedName("last_page")
+		public int lastPage;
+		public String path;
+		@SerializedName("per_page")
+		public int perPage;
+	}
 
 }

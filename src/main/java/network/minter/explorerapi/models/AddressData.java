@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 by MinterTeam
+ * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
  *
  * The MIT License
@@ -25,6 +25,8 @@
 
 package network.minter.explorerapi.models;
 
+import org.parceler.Parcel;
+
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,10 +35,11 @@ import network.minter.mintercore.MinterSDK;
 import network.minter.mintercore.crypto.MinterAddress;
 
 /**
- * MinterWallet. 2018
+ * minter-android-explorer. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
+@Parcel
 public class AddressData {
     public Map<String, CoinBalance> coins;
     public long txCount;
@@ -70,31 +73,32 @@ public class AddressData {
         return totalOut;
     }
 
-    public static class CoinBalance {
-        public String coin;
-        public BigDecimal amount;
-        public BigDecimal usdAmount;
-        public BigDecimal baseCoinAmount;
+	@Parcel
+	public static class CoinBalance {
+		public String coin;
+		public BigDecimal amount;
+		public BigDecimal usdAmount;
+		public BigDecimal baseCoinAmount;
 
-        public CoinBalance() {
-        }
+		public CoinBalance() {
+		}
 
-        public CoinBalance(String coin, BigDecimal value, BigDecimal valueUsd) {
-            this.coin = coin;
-            this.amount = value;
-            this.usdAmount = valueUsd;
-        }
+		public CoinBalance(String coin, BigDecimal value, BigDecimal valueUsd) {
+			this.coin = coin;
+			this.amount = value;
+			this.usdAmount = valueUsd;
+		}
 
-        public String getCoin() {
-            return coin;
-        }
+		public String getCoin() {
+			return coin;
+		}
 
-        public BigDecimal getAmount() {
-            return amount;
-        }
+		public BigDecimal getAmount() {
+			return amount;
+		}
 
-        public BigDecimal getUsdAmount() {
-            return usdAmount;
-        }
-    }
+		public BigDecimal getUsdAmount() {
+			return usdAmount;
+		}
+	}
 }

@@ -46,8 +46,8 @@ public interface ExplorerTransactionEndpoint {
     Call<ExpResult<List<HistoryTransaction>>> getTransactions(@QueryMap Map<String, String> query);
 
     @GET("/api/v1/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@Query("addresses[]") List<String> addresses);
+    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@Query(value = "addresses[]", encoded = true) List<String> addresses);
 
     @GET("/api/v1/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@Query("addresses[]") List<String> addresses, @Query("page") long page);
+    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@Query(value = "addresses[]", encoded = true) List<String> addresses, @Query("page") long page);
 }

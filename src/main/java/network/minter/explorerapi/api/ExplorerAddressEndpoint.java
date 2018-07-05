@@ -45,7 +45,7 @@ public interface ExplorerAddressEndpoint {
     Call<ExpResult<AddressData>> balance(@Path("address") String address);
 
     @GET("/api/v1/address")
-    Call<ExpResult<List<AddressData>>> balanceMultiple(@Query("addresses[]") List<String> addresses);
+    Call<ExpResult<List<AddressData>>> balanceMultiple(@Query(value = "addresses[]", encoded = true) List<String> addresses);
 
 	/**
 	 * Get WebSocket connection data
@@ -54,7 +54,7 @@ public interface ExplorerAddressEndpoint {
 	 * @return
 	 */
 	@GET("/api/v1/address/get-balance-channel")
-	Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query("addresses[]") List<String> addresses);
+	Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query(value = "addresses[]", encoded = true) List<String> addresses);
 
 	/**
 	 * Get WebSocket connection data
@@ -64,5 +64,5 @@ public interface ExplorerAddressEndpoint {
 	 * @return
 	 */
 	@GET("/api/v1/address/get-balance-channel")
-	Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query("addresses[]") List<String> addresses, @Query("user") String user);
+	Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query(value = "addresses[]", encoded = true) List<String> addresses, @Query("user") String user);
 }

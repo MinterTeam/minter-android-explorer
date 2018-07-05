@@ -23,46 +23,15 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorerapi.api;
-
-import java.util.List;
-
-import network.minter.explorerapi.models.AddressData;
-import network.minter.explorerapi.models.BalanceChannel;
-import network.minter.explorerapi.models.ExpResult;
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
+package network.minter.explorerapi.models;
 
 /**
  * minter-android-explorer. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public interface ExplorerAddressEndpoint {
-    @GET("/api/v1/address/{address}")
-    Call<ExpResult<AddressData>> balance(@Path("address") String address);
-
-    @GET("/api/v1/address")
-    Call<ExpResult<List<AddressData>>> balanceMultiple(@Query("addresses[]") List<String> addresses);
-
-	/**
-	 * Get WebSocket connection data
-	 *
-	 * @param addresses
-	 * @return
-	 */
-	@GET("/api/v1/address/get-balance-channel")
-	Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query("addresses[]") List<String> addresses);
-
-	/**
-	 * Get WebSocket connection data
-	 *
-	 * @param addresses
-	 * @param user      For statistics some user id
-	 * @return
-	 */
-	@GET("/api/v1/address/get-balance-channel")
-	Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query("addresses[]") List<String> addresses, @Query("user") String user);
+public class BalanceChannel {
+	public String channel;
+	public long timestamp;
+	public String token;
 }

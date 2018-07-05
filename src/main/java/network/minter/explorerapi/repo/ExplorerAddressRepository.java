@@ -42,91 +42,105 @@ import java.util.Map;
 
 import network.minter.explorerapi.api.ExplorerAddressEndpoint;
 import network.minter.explorerapi.models.AddressData;
+import network.minter.explorerapi.models.BalanceChannel;
 import network.minter.explorerapi.models.ExpResult;
 import network.minter.mintercore.crypto.MinterAddress;
 import network.minter.mintercore.internal.api.ApiService;
 import network.minter.mintercore.internal.data.DataRepository;
 import retrofit2.Call;
 
+import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
+
 /**
  * minter-android-explorer. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEndpoint> {
-    private final static String COINS_BALANCE = "coins";
+public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEndpoint> implements DataRepository.Configurator {
+	private final static String COINS_BALANCE = "coins";
 
-    public ExplorerAddressRepository(@NonNull ApiService.Builder apiBuilder) {
-        super(apiBuilder);
-    }
+	public ExplorerAddressRepository(@NonNull ApiService.Builder apiBuilder) {
+		super(apiBuilder);
+	}
 
-    public Call<ExpResult<List<AddressData>>> getAddressesData(List<MinterAddress> addresses) {
-        final List<String> sAddresses = new ArrayList<>(addresses.size());
-        for (MinterAddress address : addresses) {
-            sAddresses.add(address.toString());
-        }
+	public Call<ExpResult<List<AddressData>>> getAddressesData(List<MinterAddress> addresses) {
+		final List<String> sAddresses = new ArrayList<>(addresses.size());
+		for (MinterAddress address : addresses) {
+			sAddresses.add(address.toString());
+		}
 
-        return getService().balanceMultiple(sAddresses);
-    }
+		return getInstantService(this).balanceMultiple(sAddresses);
+	}
 
-    public Call<ExpResult<AddressData>> getAddressData(MinterAddress address) {
-        return getAddressData(address.toString());
-    }
+	public Call<ExpResult<AddressData>> getAddressData(MinterAddress address) {
+		return getAddressData(address.toString());
+	}
 
-    public Call<ExpResult<AddressData>> getAddressData(String address) {
-        return getService().balance(address);
-    }
+	public Call<ExpResult<AddressData>> getAddressData(String address) {
+		return getInstantService(this).balance(address);
+	}
 
-    @NonNull
-    @Override
-    protected Class<ExplorerAddressEndpoint> getServiceClass() {
-        return ExplorerAddressEndpoint.class;
-    }
+	@NonNull
+	@Override
+	protected Class<ExplorerAddressEndpoint> getServiceClass() {
+		return ExplorerAddressEndpoint.class;
+	}
 
-    @Override
-    protected void configureService(ApiService.Builder apiBuilder) {
-        super.configureService(apiBuilder);
-        apiBuilder.registerTypeAdapter(AddressData.class, new AddressDataDeserializer());
-    }
+	public Call<ExpResult<BalanceChannel>> getBalanceChannel(@NonNull List<MinterAddress> addresses, String userId) {
+		checkNotNull(addresses, "Addresses can't be null");
+		final List<String> addressStrings = new ArrayList<>(addresses.size());
+		for (MinterAddress address : addresses) {
+			addressStrings.add(address.toString());
+		}
+		if (userId == null) {
+			return getInstantService().getBalanceChannel(addressStrings);
+		}
 
-    /*
-    {"txCount":1,"coins":[{"coin":"mnt","amount":39.999999,"baseCoinAmount":39.999999,"usdAmount":0.002999999925}]}
-     */
-    public static class AddressDataDeserializer implements JsonDeserializer<AddressData> {
-        @Override
-        public AddressData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-                throws JsonParseException {
-            if (json.isJsonNull()) {
-                return null;
-            }
+		return getInstantService().getBalanceChannel(addressStrings, userId);
+	}
+	@Override
+	public void configure(ApiService.Builder api) {
+		api.registerTypeAdapter(AddressData.class, new AddressDataDeserializer());
+	}
 
-            AddressData data = new AddressData();
+	/*
+	{"txCount":1,"coins":[{"coin":"mnt","amount":39.999999,"baseCoinAmount":39.999999,"usdAmount":0.002999999925}]}
+	 */
+	public static class AddressDataDeserializer implements JsonDeserializer<AddressData> {
+		@Override
+		public AddressData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
+			if (json.isJsonNull()) {
+				return null;
+			}
 
-            JsonObject root = json.getAsJsonObject();
+			AddressData data = new AddressData();
 
-            if (root.has(COINS_BALANCE)) {
-                JsonArray coins = root.getAsJsonArray(COINS_BALANCE);
-                final Map<String, AddressData.CoinBalance> out = new HashMap<>();
-                for (int i = 0; i < coins.size(); i++) {
-                    final JsonObject coin = coins.get(i).getAsJsonObject();
-                    final AddressData.CoinBalance b = new AddressData.CoinBalance();
-                    b.amount = coin.get("amount").getAsBigDecimal();
-                    b.usdAmount = coin.get("usdAmount").getAsBigDecimal();
-                    b.baseCoinAmount = coin.get("baseCoinAmount").getAsBigDecimal();
-                    b.coin = coin.get("coin").getAsString();
-                    out.put(b.coin, b);
-                }
+			JsonObject root = json.getAsJsonObject();
 
-                data.coins = out;
-            }
+			if (root.has(COINS_BALANCE)) {
+				JsonArray coins = root.getAsJsonArray(COINS_BALANCE);
+				final Map<String, AddressData.CoinBalance> out = new HashMap<>();
+				for (int i = 0; i < coins.size(); i++) {
+					final JsonObject coin = coins.get(i).getAsJsonObject();
+					final AddressData.CoinBalance b = new AddressData.CoinBalance();
+					b.amount = coin.get("amount").getAsBigDecimal();
+					b.usdAmount = coin.get("usdAmount").getAsBigDecimal();
+					b.baseCoinAmount = coin.get("baseCoinAmount").getAsBigDecimal();
+					b.coin = coin.get("coin").getAsString();
+					out.put(b.coin, b);
+				}
 
-            if (root.has("txCount")) {
-                data.txCount = root.get("txCount").getAsLong();
-            } else {
-                data.txCount = 0L;
-            }
+				data.coins = out;
+			}
 
-            return data;
-        }
-    }
+			if (root.has("txCount")) {
+				data.txCount = root.get("txCount").getAsLong();
+			} else {
+				data.txCount = 0L;
+			}
+
+			return data;
+		}
+	}
 }

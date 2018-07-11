@@ -47,7 +47,7 @@ public interface ExplorerAddressEndpoint {
 	 * @param address
 	 * @return Retrofit call with {@link ExpResult}
 	 */
-	@GET("/v1/address/{address}")
+	@GET("v1/address/{address}")
     Call<ExpResult<AddressData>> balance(@Path("address") String address);
 
 	/**
@@ -56,7 +56,7 @@ public interface ExplorerAddressEndpoint {
 	 * @param addresses
 	 * @return Retrofit call with {@link ExpResult}
 	 */
-	@GET("/v1/address")
+	@GET("v1/address")
     Call<ExpResult<List<AddressData>>> balanceMultiple(@Query(value = "addresses[]", encoded = true) List<String> addresses);
 
 	/**
@@ -65,7 +65,7 @@ public interface ExplorerAddressEndpoint {
 	 * @param addresses
 	 * @return Retrofit call with {@link ExpResult}
 	 */
-	@GET("/v1/address/get-balance-channel")
+	@GET("v1/address/get-balance-channel")
 	Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query(value = "addresses[]", encoded = true) List<String> addresses);
 
 	/**
@@ -75,6 +75,6 @@ public interface ExplorerAddressEndpoint {
 	 * @param user      For statistics some user id
 	 * @return Retrofit call with {@link ExpResult}
 	 */
-	@GET("/v1/address/get-balance-channel")
+	@GET("v1/address/get-balance-channel")
 	Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query(value = "addresses[]", encoded = true) List<String> addresses, @Query("user") String user);
 }

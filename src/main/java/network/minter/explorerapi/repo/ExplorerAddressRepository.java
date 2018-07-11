@@ -77,7 +77,7 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
 	}
 
 	public Call<ExpResult<AddressData>> getAddressData(String address) {
-		return getInstantService(this).balance(address);
+		return getInstantService().balance(address);
 	}
 
 	@NonNull
@@ -98,6 +98,7 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
 
 		return getInstantService().getBalanceChannel(addressStrings, userId);
 	}
+
 	@Override
 	public void configure(ApiService.Builder api) {
 		api.registerTypeAdapter(AddressData.class, new AddressDataDeserializer());

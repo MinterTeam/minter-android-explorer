@@ -46,16 +46,22 @@ import retrofit2.Call;
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class ExplorerTransactionRepository extends DataRepository<ExplorerTransactionEndpoint> {
+public class ExplorerTransactionRepository extends DataRepository<ExplorerTransactionEndpoint> implements DataRepository.Configurator {
     public ExplorerTransactionRepository(@NonNull ApiService.Builder apiBuilder) {
         super(apiBuilder);
     }
 
-    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address) {
+	/**
+	 * TODO query
+	 *
+	 * @param address
+	 * @return
+	 * @link https://explorer.beta.minter.network/help/index.html#operations-Transactions-get_api_v1_transactions
+	 */
+	public Call<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address) {
         Map<String, String> query = new HashMap<>();
         query.put("address", address.toString());
-
-        return getService().getTransactions(query);
+		return getInstantService().getTransactions(query);
     }
 
     public Call<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses) {
@@ -68,18 +74,16 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
             out.add(address.toString());
         }
 
-        return getService().getTransactions(out, page);
-    }
-
-    @Override
-    protected void configureService(ApiService.Builder apiBuilder) {
-        super.configureService(apiBuilder);
-        apiBuilder.registerTypeAdapter(HistoryTransaction.class, new ExplorerHistoryTransactionDeserializer());
+	    return getInstantService().getTransactions(out, page);
     }
 
     @NonNull
     @Override
     protected Class<ExplorerTransactionEndpoint> getServiceClass() {
-        return ExplorerTransactionEndpoint.class;
+	    return ExplorerTransactionEndpoint.class;
     }
+	@Override
+	public void configure(ApiService.Builder api) {
+		api.registerTypeAdapter(HistoryTransaction.class, new ExplorerHistoryTransactionDeserializer());
+	}
 }

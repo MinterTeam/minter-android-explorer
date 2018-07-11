@@ -41,6 +41,7 @@ import network.minter.mintercore.internal.api.converters.BytesDataDeserializer;
 import network.minter.mintercore.internal.api.converters.MinterAddressDeserializer;
 import network.minter.mintercore.internal.api.converters.MinterHashDeserializer;
 import network.minter.mintercore.internal.api.converters.MinterPublicKeyDeserializer;
+import okhttp3.HttpUrl;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
@@ -49,68 +50,72 @@ import okhttp3.logging.HttpLoggingInterceptor;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class MinterExplorerApi {
-    public static final String FRONT_URL = BuildConfig.BASE_FRONT_URL;
-    private final static String BASE_API_URL = BuildConfig.BASE_API_URL;
-    private static MinterExplorerApi INSTANCE;
-    private ApiService.Builder mApiService;
-    private ExplorerTransactionRepository mTransactionRepository;
-    private ExplorerAddressRepository mAddressRepository;
+	public static final String FRONT_URL = BuildConfig.BASE_FRONT_URL;
+	private final static String BASE_API_URL = BuildConfig.BASE_API_URL;
+	private static MinterExplorerApi INSTANCE;
+	private ApiService.Builder mApiService;
+	private ExplorerTransactionRepository mTransactionRepository;
+	private ExplorerAddressRepository mAddressRepository;
 
-    private MinterExplorerApi() {
-        mApiService = new ApiService.Builder(BASE_API_URL, getGsonBuilder());
-        mApiService.addHeader("Content-Type", "application/json");
-        mApiService.addHeader("X-Minter-Client-Name", "MinterAndroid");
-        mApiService.addHeader("X-Minter-Client-Version", BuildConfig.VERSION_NAME);
-        mApiService.setDateFormat("yyyy-MM-dd HH:mm:ssX");
-    }
+	private MinterExplorerApi() {
+		mApiService = new ApiService.Builder(BASE_API_URL, getGsonBuilder());
+		mApiService.addHeader("Content-Type", "application/json");
+		mApiService.addHeader("X-Minter-Client-Name", "MinterAndroid (explorer)");
+		mApiService.addHeader("X-Minter-Client-Version", BuildConfig.VERSION_NAME);
+		mApiService.setDateFormat("yyyy-MM-dd HH:mm:ssX");
+	}
 
-    public static void initialize(boolean debug) {
-        if (INSTANCE != null) {
-            return;
-        }
+	public static void initialize(boolean debug) {
+		if (INSTANCE != null) {
+			return;
+		}
 
-        INSTANCE = new MinterExplorerApi();
-        INSTANCE.mApiService.setDebug(debug);
+		INSTANCE = new MinterExplorerApi();
+		INSTANCE.mApiService.setDebug(debug);
 
-        if (debug) {
-            INSTANCE.mApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
-        }
-    }
+		if (debug) {
+			INSTANCE.mApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
+		}
+	}
 
-    public static MinterExplorerApi getInstance() {
-        return INSTANCE;
-    }
+	public static HttpUrl.Builder newFrontUrl() {
+		return HttpUrl.parse(FRONT_URL).newBuilder();
+	}
 
-    public ExplorerTransactionRepository transactions() {
-        if (mTransactionRepository == null) {
-            mTransactionRepository = new ExplorerTransactionRepository(mApiService);
-        }
+	public static MinterExplorerApi getInstance() {
+		return INSTANCE;
+	}
 
-        return mTransactionRepository;
-    }
+	public ExplorerTransactionRepository transactions() {
+		if (mTransactionRepository == null) {
+			mTransactionRepository = new ExplorerTransactionRepository(mApiService);
+		}
 
-    public ApiService.Builder getApiService() {
-        return mApiService;
-    }
+		return mTransactionRepository;
+	}
 
-    public ExplorerAddressRepository address() {
-        if (mAddressRepository == null) {
-            mAddressRepository = new ExplorerAddressRepository(mApiService);
-        }
+	public ApiService.Builder getApiService() {
+		return mApiService;
+	}
 
-        return mAddressRepository;
-    }
+	public ExplorerAddressRepository address() {
+		if (mAddressRepository == null) {
+			mAddressRepository = new ExplorerAddressRepository(mApiService);
+		}
+
+		return mAddressRepository;
+	}
 
 
-    public GsonBuilder getGsonBuilder() {
-        GsonBuilder out = new GsonBuilder();
-        out.setDateFormat("yyyy-MM-dd HH:mm:ssX");
-        out.registerTypeAdapter(MinterAddress.class, new MinterAddressDeserializer());
-        out.registerTypeAdapter(MinterPublicKey.class, new MinterPublicKeyDeserializer());
-        out.registerTypeAdapter(MinterHash.class, new MinterHashDeserializer());
-        out.registerTypeAdapter(BigInteger.class, new BigIntegerDeserializer());
-        out.registerTypeAdapter(BytesData.class, new BytesDataDeserializer());
+	public GsonBuilder getGsonBuilder() {
+		GsonBuilder out = new GsonBuilder();
+		out.setDateFormat("yyyy-MM-dd HH:mm:ssX");
+		out.registerTypeAdapter(MinterAddress.class, new MinterAddressDeserializer());
+		out.registerTypeAdapter(MinterPublicKey.class, new MinterPublicKeyDeserializer());
+		out.registerTypeAdapter(MinterHash.class, new MinterHashDeserializer());
+		out.registerTypeAdapter(BigInteger.class, new BigIntegerDeserializer());
+		out.registerTypeAdapter(BytesData.class, new BytesDataDeserializer());
 
-        return out;
-    }
+		return out;
+	}
 }

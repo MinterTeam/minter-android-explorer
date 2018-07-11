@@ -41,19 +41,31 @@ import retrofit2.http.Query;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public interface ExplorerAddressEndpoint {
-    @GET("/api/v1/address/{address}")
+	/**
+	 * Resolve balance by address
+	 *
+	 * @param address
+	 * @return Retrofit call with {@link ExpResult}
+	 */
+	@GET("/v1/address/{address}")
     Call<ExpResult<AddressData>> balance(@Path("address") String address);
 
-    @GET("/api/v1/address")
+	/**
+	 * Resolve balance by multiple addresses
+	 *
+	 * @param addresses
+	 * @return Retrofit call with {@link ExpResult}
+	 */
+	@GET("/v1/address")
     Call<ExpResult<List<AddressData>>> balanceMultiple(@Query(value = "addresses[]", encoded = true) List<String> addresses);
 
 	/**
 	 * Get WebSocket connection data
 	 *
 	 * @param addresses
-	 * @return
+	 * @return Retrofit call with {@link ExpResult}
 	 */
-	@GET("/api/v1/address/get-balance-channel")
+	@GET("/v1/address/get-balance-channel")
 	Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query(value = "addresses[]", encoded = true) List<String> addresses);
 
 	/**
@@ -61,8 +73,8 @@ public interface ExplorerAddressEndpoint {
 	 *
 	 * @param addresses
 	 * @param user      For statistics some user id
-	 * @return
+	 * @return Retrofit call with {@link ExpResult}
 	 */
-	@GET("/api/v1/address/get-balance-channel")
+	@GET("/v1/address/get-balance-channel")
 	Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query(value = "addresses[]", encoded = true) List<String> addresses, @Query("user") String user);
 }

@@ -94,12 +94,12 @@ android {
         // can't use name starts with 'test'
         netMain {
             dimension "env"
-            buildConfigField "String", "BASE_API_URL", '"https://explorer.minter.network/api"'
+            buildConfigField "String", "BASE_API_URL", '"https://explorer.minter.network/api/"'
             buildConfigField "String", "BASE_FRONT_URL", '"https://explorer.minter.network"'
         }
         netTest {
             dimension "env"
-            buildConfigField "String", "BASE_API_URL", '"https://testnet.explorer.minter.network/api"'
+            buildConfigField "String", "BASE_API_URL", '"https://testnet.explorer.minter.network/api/"'
             buildConfigField "String", "BASE_FRONT_URL", '"https://explorer.beta.minter.network"'
         }
     }

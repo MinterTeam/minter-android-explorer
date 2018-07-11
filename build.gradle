@@ -56,7 +56,7 @@ group = 'network.minter.android'
 version = '1.0.0'
 
 ext {
-    minterMinSdk = 19
+    minterMinSdk = 16
     minterMaxSdk = 27
     minterBuildTools = "28.0.0"
     minterLibSupport = "27.1.1"

@@ -149,6 +149,10 @@ public class HistoryTransaction implements Serializable {
         return Objects.hash(hash, nonce, block, timestamp, fee, type, data);
     }
 
+	public static class TxDefaultResult {
+		public MinterAddress from;
+	}
+
     public static class TxSendCoinResult {
         public MinterAddress from;
         public MinterAddress to;

@@ -73,8 +73,10 @@ public class HistoryTransaction implements Serializable {
     public enum Type {
         @SerializedName("send")
         Send(TxSendCoinResult.class),
-        @SerializedName("convert")
-        ConvertCoin(TxConvertCoinResult.class),
+	    @SerializedName("sellCoin")
+	    SellCoin(TxConvertCoinResult.class),
+	    @SerializedName("buyCoin")
+	    BuyCoin(TxConvertCoinResult.class),
         @SerializedName("createCoin")
         CreateCoin(TxCreateResult.class),
         @SerializedName("declareCandidacy")
@@ -216,10 +218,10 @@ public class HistoryTransaction implements Serializable {
 	@Parcel
 	public static class TxConvertCoinResult {
 		public MinterAddress from;
-		@SerializedName("from_coin_symbol")
-		public String fromCoin;
-		@SerializedName("to_coin_symbol")
-		public String toCoin;
+		@SerializedName("coin_to_sell")
+		public String coinToSell;
+		@SerializedName("coin_to_buy")
+		public String coinToBuy;
 		@SerializedName("value")
 		public BigDecimal amount;
 
@@ -227,18 +229,18 @@ public class HistoryTransaction implements Serializable {
 			return from;
 		}
 
-		public String getFromCoin() {
-			if (fromCoin == null) {
+		public String getCoinToSell() {
+			if (coinToSell == null) {
 				return null;
 			}
-			return fromCoin.toUpperCase();
+			return coinToSell.toUpperCase();
 		}
 
-		public String getToCoin() {
-			if (toCoin == null) {
+		public String getCoinToBuy() {
+			if (coinToBuy == null) {
 				return null;
 			}
-			return toCoin.toUpperCase();
+			return coinToBuy.toUpperCase();
 		}
 
 		public BigDecimal getAmount() {

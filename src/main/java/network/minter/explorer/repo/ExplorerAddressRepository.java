@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorerapi.repo;
+package network.minter.explorer.repo;
 
 import android.support.annotation.NonNull;
 
@@ -40,16 +40,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import network.minter.explorerapi.api.ExplorerAddressEndpoint;
-import network.minter.explorerapi.models.AddressData;
-import network.minter.explorerapi.models.BalanceChannel;
-import network.minter.explorerapi.models.ExpResult;
-import network.minter.mintercore.crypto.MinterAddress;
-import network.minter.mintercore.internal.api.ApiService;
-import network.minter.mintercore.internal.data.DataRepository;
+import network.minter.core.crypto.MinterAddress;
+import network.minter.core.internal.api.ApiService;
+import network.minter.core.internal.data.DataRepository;
+import network.minter.explorer.api.ExplorerAddressEndpoint;
+import network.minter.explorer.models.AddressData;
+import network.minter.explorer.models.BalanceChannel;
+import network.minter.explorer.models.ExpResult;
 import retrofit2.Call;
 
-import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
+import static network.minter.core.internal.common.Preconditions.checkNotNull;
+
 
 /**
  * minter-android-explorer. 2018

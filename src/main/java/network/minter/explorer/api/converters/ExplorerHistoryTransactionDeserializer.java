@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorerapi.api.converters;
+package network.minter.explorer.api.converters;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
@@ -34,8 +34,8 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-import network.minter.explorerapi.MinterExplorerApi;
-import network.minter.explorerapi.models.HistoryTransaction;
+import network.minter.explorer.MinterExplorerApi;
+import network.minter.explorer.models.HistoryTransaction;
 
 /**
  * minter-android-explorer. 2018

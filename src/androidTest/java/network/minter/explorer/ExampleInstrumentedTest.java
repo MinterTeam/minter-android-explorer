@@ -23,34 +23,29 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorerapi.api;
+package network.minter.explorer;
 
-import java.util.List;
-import java.util.Map;
+import android.content.Context;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 
-import network.minter.explorerapi.models.ExpResult;
-import network.minter.explorerapi.models.HistoryTransaction;
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
-import retrofit2.http.QueryMap;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
 
 /**
- * minter-android-explorer. 2018
+ * Instrumented test, which will execute on an Android device.
  *
- * @author Eduard Maximovich <edward.vstock@gmail.com>
+ * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-public interface ExplorerTransactionEndpoint {
-	/**
-	 * @param query
-	 * @return
-	 */
-	@GET("v1/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@QueryMap Map<String, String> query);
+@RunWith(AndroidJUnit4.class)
+public class ExampleInstrumentedTest {
+    @Test
+    public void useAppContext() {
+        // Context of the app under test.
+        Context appContext = InstrumentationRegistry.getTargetContext();
 
-	@GET("v1/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@Query(value = "addresses[]", encoded = true) List<String> addresses);
-
-	@GET("v1/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@Query(value = "addresses[]", encoded = true) List<String> addresses, @Query("page") long page);
+        assertEquals("network.minter.explorerapi.test", appContext.getPackageName());
+    }
 }

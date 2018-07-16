@@ -23,24 +23,24 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorerapi;
+package network.minter.explorer;
 
 import com.google.gson.GsonBuilder;
 
 import java.math.BigInteger;
 
-import network.minter.explorerapi.repo.ExplorerAddressRepository;
-import network.minter.explorerapi.repo.ExplorerTransactionRepository;
-import network.minter.mintercore.crypto.BytesData;
-import network.minter.mintercore.crypto.MinterAddress;
-import network.minter.mintercore.crypto.MinterHash;
-import network.minter.mintercore.crypto.MinterPublicKey;
-import network.minter.mintercore.internal.api.ApiService;
-import network.minter.mintercore.internal.api.converters.BigIntegerDeserializer;
-import network.minter.mintercore.internal.api.converters.BytesDataDeserializer;
-import network.minter.mintercore.internal.api.converters.MinterAddressDeserializer;
-import network.minter.mintercore.internal.api.converters.MinterHashDeserializer;
-import network.minter.mintercore.internal.api.converters.MinterPublicKeyDeserializer;
+import network.minter.core.crypto.BytesData;
+import network.minter.core.crypto.MinterAddress;
+import network.minter.core.crypto.MinterHash;
+import network.minter.core.crypto.MinterPublicKey;
+import network.minter.core.internal.api.ApiService;
+import network.minter.core.internal.api.converters.BigIntegerDeserializer;
+import network.minter.core.internal.api.converters.BytesDataDeserializer;
+import network.minter.core.internal.api.converters.MinterAddressDeserializer;
+import network.minter.core.internal.api.converters.MinterHashDeserializer;
+import network.minter.core.internal.api.converters.MinterPublicKeyDeserializer;
+import network.minter.explorer.repo.ExplorerAddressRepository;
+import network.minter.explorer.repo.ExplorerTransactionRepository;
 import okhttp3.HttpUrl;
 import okhttp3.logging.HttpLoggingInterceptor;
 

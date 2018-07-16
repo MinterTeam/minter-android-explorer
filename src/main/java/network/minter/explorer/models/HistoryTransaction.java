@@ -23,8 +23,9 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorerapi.models;
+package network.minter.explorer.models;
 
+import com.annimon.stream.Objects;
 import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
@@ -35,11 +36,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
-import network.minter.mintercore.crypto.MinterAddress;
-import network.minter.mintercore.crypto.MinterHash;
-import network.minter.mintercore.crypto.MinterPublicKey;
+import network.minter.core.crypto.MinterAddress;
+import network.minter.core.crypto.MinterHash;
+import network.minter.core.crypto.MinterPublicKey;
 
 /**
  * minter-android-explorer. 2018
@@ -49,6 +49,7 @@ import network.minter.mintercore.crypto.MinterPublicKey;
 @Parcel
 public class HistoryTransaction implements Serializable {
 
+	public BigInteger txn;
     public MinterHash hash;
     public BigInteger nonce;
     public BigInteger block;

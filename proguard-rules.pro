@@ -1,7 +1,7 @@
 -dontobfuscate
 
--keep public class network.minter.explorerapi.** { *; }
--keep public class network.minter.explorerapi.MinterExplorerApi { *; }
+-keep public class network.minter.explorer.** { *; }
+-keep public class network.minter.explorer.MinterExplorerApi { *; }
 
 # Parceler library
 -keep interface org.parceler.Parcel

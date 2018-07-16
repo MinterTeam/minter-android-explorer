@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorerapi.repo;
+package network.minter.explorer.repo;
 
 import android.support.annotation.NonNull;
 
@@ -32,13 +32,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import network.minter.explorerapi.api.ExplorerTransactionEndpoint;
-import network.minter.explorerapi.api.converters.ExplorerHistoryTransactionDeserializer;
-import network.minter.explorerapi.models.ExpResult;
-import network.minter.explorerapi.models.HistoryTransaction;
-import network.minter.mintercore.crypto.MinterAddress;
-import network.minter.mintercore.internal.api.ApiService;
-import network.minter.mintercore.internal.data.DataRepository;
+import network.minter.core.crypto.MinterAddress;
+import network.minter.core.internal.api.ApiService;
+import network.minter.core.internal.data.DataRepository;
+import network.minter.explorer.api.ExplorerTransactionEndpoint;
+import network.minter.explorer.api.converters.ExplorerHistoryTransactionDeserializer;
+import network.minter.explorer.models.ExpResult;
+import network.minter.explorer.models.HistoryTransaction;
 import retrofit2.Call;
 
 /**

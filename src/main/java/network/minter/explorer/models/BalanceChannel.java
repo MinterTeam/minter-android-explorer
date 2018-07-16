@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorerapi.models;
+package network.minter.explorer.models;
 
 /**
  * minter-android-explorer. 2018

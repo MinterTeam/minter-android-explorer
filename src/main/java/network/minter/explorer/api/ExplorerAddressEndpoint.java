@@ -23,13 +23,13 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorerapi.api;
+package network.minter.explorer.api;
 
 import java.util.List;
 
-import network.minter.explorerapi.models.AddressData;
-import network.minter.explorerapi.models.BalanceChannel;
-import network.minter.explorerapi.models.ExpResult;
+import network.minter.explorer.models.AddressData;
+import network.minter.explorer.models.BalanceChannel;
+import network.minter.explorer.models.ExpResult;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;

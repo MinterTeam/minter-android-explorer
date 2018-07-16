@@ -23,43 +23,20 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorerapi.models;
+package network.minter.explorer;
 
-import com.google.gson.annotations.SerializedName;
+import org.junit.Test;
 
-import org.parceler.Parcel;
+import static org.junit.Assert.assertEquals;
 
 /**
- * minter-android-explorer. 2018
+ * Example local unit test, which will execute on the development machine (host).
  *
- * @author Eduard Maximovich <edward.vstock@gmail.com>
+ * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-public class ExpResult<Result> {
-    @SerializedName("data")
-    public Result result;
-    public Object links;
-    public Meta meta;
-
-    public Meta getMeta() {
-        if (meta == null) {
-            meta = new Meta();
-        }
-
-        return meta;
+public class ExampleUnitTest {
+    @Test
+    public void addition_isCorrect() {
+        assertEquals(4, 2 + 2);
     }
-
-	@Parcel
-	public static class Meta {
-		@SerializedName("current_page")
-		public int currentPage;
-		public int from;
-		public int to;
-		public int total;
-		@SerializedName("last_page")
-		public int lastPage;
-		public String path;
-		@SerializedName("per_page")
-		public int perPage;
-	}
-
 }

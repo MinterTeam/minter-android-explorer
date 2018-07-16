@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorerapi.models;
+package network.minter.explorer.models;
 
 import org.parceler.Parcel;
 
@@ -31,8 +31,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import network.minter.mintercore.MinterSDK;
-import network.minter.mintercore.crypto.MinterAddress;
+import network.minter.core.MinterSDK;
+import network.minter.core.crypto.MinterAddress;
 
 /**
  * minter-android-explorer. 2018

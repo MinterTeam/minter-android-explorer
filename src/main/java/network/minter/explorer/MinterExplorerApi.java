@@ -62,7 +62,7 @@ public class MinterExplorerApi {
 		mApiService.addHeader("Content-Type", "application/json");
 		mApiService.addHeader("X-Minter-Client-Name", "MinterAndroid (explorer)");
 		mApiService.addHeader("X-Minter-Client-Version", BuildConfig.VERSION_NAME);
-		mApiService.setDateFormat("yyyy-MM-dd HH:mm:ssX");
+		mApiService.setDateFormat("yyyy-MM-dd HH:mm:ssZ");
 	}
 
 	public static void initialize(boolean debug) {

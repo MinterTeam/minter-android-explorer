@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -75,6 +76,8 @@ public class HistoryTransaction implements Serializable {
         Send(TxSendCoinResult.class),
 	    @SerializedName("sellCoin")
 	    SellCoin(TxConvertCoinResult.class),
+        @SerializedName("sellAllCoin")
+        SellAllCoins(TxConvertCoinResult.class),
 	    @SerializedName("buyCoin")
 	    BuyCoin(TxConvertCoinResult.class),
         @SerializedName("createCoin")

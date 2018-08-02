@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -109,7 +110,7 @@ public class MinterExplorerApi {
 
 	public GsonBuilder getGsonBuilder() {
 		GsonBuilder out = new GsonBuilder();
-		out.setDateFormat("yyyy-MM-dd HH:mm:ssX");
+        out.setDateFormat("yyyy-MM-dd HH:mm:ssZ");
 		out.registerTypeAdapter(MinterAddress.class, new MinterAddressDeserializer());
 		out.registerTypeAdapter(MinterPublicKey.class, new MinterPublicKeyDeserializer());
 		out.registerTypeAdapter(MinterHash.class, new MinterHashDeserializer());

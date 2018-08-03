@@ -89,14 +89,6 @@ public class MinterExplorerApi {
         return INSTANCE;
     }
 
-    public static String getAvatarUrl(long id) {
-        return BASE_API_URL + "v1/avatar/by/user/" + String.valueOf(id);
-    }
-
-    public static String getAvatarUrl() {
-        return getAvatarUrl(1);
-    }
-
     public ExplorerTransactionRepository transactions() {
         if (mTransactionRepository == null) {
             mTransactionRepository = new ExplorerTransactionRepository(mApiService);

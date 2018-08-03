@@ -43,9 +43,6 @@ import java.util.List;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.crypto.MinterHash;
 import network.minter.core.crypto.MinterPublicKey;
-import network.minter.explorer.MinterExplorerApi;
-
-import static network.minter.core.internal.common.Preconditions.firstNonNull;
 
 /**
  * minter-android-explorer. 2018
@@ -123,9 +120,8 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         return (T) data;
     }
 
-    @NonNull
     public String getAvatar() {
-        return firstNonNull(avatarUrl, MinterExplorerApi.getAvatarUrl());
+        return avatarUrl;
     }
 
     public HistoryTransaction setAvatar(String avatarUrl) {

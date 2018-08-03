@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -25,27 +26,51 @@
 
 package network.minter.explorer;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
+import android.os.Build;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertEquals;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Instrumented test, which will execute on an Android device.
- *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class ExampleInstrumentedTest {
+public class DateParseFromExplorerTest {
     @Test
-    public void useAppContext() {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
+    public void parseDateWithTZ() {
+        final String src = "2018-08-02 15:48:19+03";
 
-        assertEquals("network.minter.explorerapi.test", appContext.getPackageName());
+        final String fmt = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? "yyyy-MM-dd HH:mm:ssX" : "yyyy-MM-dd HH:mm:ssZ";
+        SimpleDateFormat sdf = new SimpleDateFormat(fmt);
+
+        Exception er = null;
+        Date d = null;
+        try {
+            d = sdf.parse(src);
+        } catch (ParseException e) {
+            er = e;
+        }
+
+        assertNull(er);
+        assertNotNull(d);
+        System.out.println("Parsed date: " + d.toString());
+
+    }
+
+    String msg(Exception e) {
+        if (e == null) {
+            return "";
+        }
+
+        return e.getMessage();
     }
 }

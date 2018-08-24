@@ -68,6 +68,10 @@ public class MinterExplorerApi {
         mApiService.setDateFormat(DATE_FORMAT);
     }
 
+    public static void initialize() {
+        initialize(false);
+    }
+
     public static void initialize(boolean debug) {
         if (INSTANCE != null) {
             return;

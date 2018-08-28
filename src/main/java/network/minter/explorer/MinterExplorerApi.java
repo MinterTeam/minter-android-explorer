@@ -27,12 +27,10 @@
 package network.minter.explorer;
 
 import android.os.Build;
-import android.support.annotation.NonNull;
 
 import com.google.gson.GsonBuilder;
 
 import java.math.BigInteger;
-import java.util.List;
 
 import network.minter.core.crypto.BytesData;
 import network.minter.core.crypto.MinterAddress;
@@ -44,15 +42,10 @@ import network.minter.core.internal.api.converters.BytesDataDeserializer;
 import network.minter.core.internal.api.converters.MinterAddressDeserializer;
 import network.minter.core.internal.api.converters.MinterHashDeserializer;
 import network.minter.core.internal.api.converters.MinterPublicKeyDeserializer;
-import network.minter.explorer.models.ExpResult;
-import network.minter.explorer.models.HistoryTransaction;
 import network.minter.explorer.repo.ExplorerAddressRepository;
 import network.minter.explorer.repo.ExplorerTransactionRepository;
 import okhttp3.HttpUrl;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * minter-android-explorer. 2018
@@ -140,18 +133,6 @@ public class MinterExplorerApi {
         if (mAddressRepository == null) {
             mAddressRepository = new ExplorerAddressRepository(mApiService);
         }
-        MinterAddress address = new MinterAddress("Mx01c8af77721c9666c672de62a4deadda0dafb03a");
-        mTransactionRepository.getTransactions(address).enqueue(new Callback<ExpResult<List<HistoryTransaction>>>() {
-            @Override
-            public void onResponse(@NonNull Call<ExpResult<List<HistoryTransaction>>> call, @NonNull Response<ExpResult<List<HistoryTransaction>>> response) {
-
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ExpResult<List<HistoryTransaction>>> call, @NonNull Throwable t) {
-
-            }
-        });
 
         return mAddressRepository;
     }

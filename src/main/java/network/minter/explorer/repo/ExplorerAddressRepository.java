@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -54,6 +55,7 @@ import static network.minter.core.internal.common.Preconditions.checkNotNull;
 
 /**
  * minter-android-explorer. 2018
+ * Address information api repository
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
@@ -64,22 +66,37 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
 		super(apiBuilder);
 	}
 
-	public Call<ExpResult<List<AddressData>>> getAddressesData(List<MinterAddress> addresses) {
-		final List<String> sAddresses = new ArrayList<>(addresses.size());
-		for (MinterAddress address : addresses) {
-			sAddresses.add(address.toString());
-		}
+    /**
+     * Get full information about given addresses
+     * @param addresses list of minter addresses
+     * @return
+     */
+    public Call<ExpResult<List<AddressData>>> getAddressesData(List<MinterAddress> addresses) {
+        final List<String> sAddresses = new ArrayList<>(addresses.size());
+        for (MinterAddress address : addresses) {
+            sAddresses.add(address.toString());
+        }
 
-		return getInstantService(this).balanceMultiple(sAddresses);
-	}
+        return getInstantService(this).balanceMultiple(sAddresses);
+    }
 
-	public Call<ExpResult<AddressData>> getAddressData(MinterAddress address) {
-		return getAddressData(address.toString());
-	}
+    /**
+     * Get full information about given address
+     * @param address minter address
+     * @return
+     */
+    public Call<ExpResult<AddressData>> getAddressData(MinterAddress address) {
+        return getAddressData(address.toString());
+    }
 
-	public Call<ExpResult<AddressData>> getAddressData(String address) {
-		return getInstantService().balance(address);
-	}
+    /**
+     * Get full information about given address
+     * @param address string minter address WITH prefix "Mx"
+     * @return
+     */
+    public Call<ExpResult<AddressData>> getAddressData(String address) {
+        return getInstantService().balance(address);
+    }
 
 	@NonNull
 	@Override
@@ -87,18 +104,24 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
 		return ExplorerAddressEndpoint.class;
 	}
 
-	public Call<ExpResult<BalanceChannel>> getBalanceChannel(@NonNull List<MinterAddress> addresses, String userId) {
-		checkNotNull(addresses, "Addresses can't be null");
-		final List<String> addressStrings = new ArrayList<>(addresses.size());
-		for (MinterAddress address : addresses) {
-			addressStrings.add(address.toString());
-		}
-		if (userId == null) {
-			return getInstantService().getBalanceChannel(addressStrings);
-		}
+    /**
+     * Get websocket balance update notification
+     * @param addresses minter address to notify about
+     * @param userId optional unique user id
+     * @return
+     */
+    public Call<ExpResult<BalanceChannel>> getBalanceChannel(@NonNull List<MinterAddress> addresses, String userId) {
+        checkNotNull(addresses, "Addresses can't be null");
+        final List<String> addressStrings = new ArrayList<>(addresses.size());
+        for (MinterAddress address : addresses) {
+            addressStrings.add(address.toString());
+        }
+        if (userId == null) {
+            return getInstantService().getBalanceChannel(addressStrings);
+        }
 
-		return getInstantService().getBalanceChannel(addressStrings, userId);
-	}
+        return getInstantService().getBalanceChannel(addressStrings, userId);
+    }
 
 	@Override
 	public void configure(ApiService.Builder api) {

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -43,47 +44,63 @@ import retrofit2.Call;
 
 /**
  * minter-android-explorer. 2018
+ * Transactions information api repository
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
+ * @link <a href="https://testnet.explorer.minter.network/help/index.html#operations-Transactions-get_api_v1_transactions">swagger</a>
  */
 public class ExplorerTransactionRepository extends DataRepository<ExplorerTransactionEndpoint> implements DataRepository.Configurator {
     public ExplorerTransactionRepository(@NonNull ApiService.Builder apiBuilder) {
         super(apiBuilder);
     }
 
-	/**
-	 * TODO query
-	 *
-	 * @param address
-	 * @return
-	 * @link https://explorer.beta.minter.network/help/index.html#operations-Transactions-get_api_v1_transactions
-	 */
-	public Call<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address) {
+    /**
+     * Get transactions list for given minter address
+     * Method not finished
+     * see link below
+     * @param address minter address
+     * @return
+     * @TODO query builder
+     * @link https://explorer.beta.minter.network/help/index.html#operations-Transactions-get_api_v1_transactions
+     */
+    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address) {
         Map<String, String> query = new HashMap<>();
         query.put("address", address.toString());
-		return getInstantService().getTransactions(query);
+        return getInstantService().getTransactions(query);
     }
 
+    /**
+     * Get transactions list for multiple minter addresses
+     * @param addresses list of minter addresses
+     * @return
+     */
     public Call<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses) {
         return getTransactions(addresses, 1);
     }
 
+    /**
+     * Get transactions list for multiple minter addresses with given page number
+     * @param addresses list of minter addresses
+     * @param page page number
+     * @return
+     */
     public Call<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses, long page) {
         List<String> out = new ArrayList<>(addresses.size());
         for (MinterAddress address : addresses) {
             out.add(address.toString());
         }
 
-	    return getInstantService().getTransactions(out, page);
+        return getInstantService().getTransactions(out, page);
+    }
+
+    @Override
+    public void configure(ApiService.Builder api) {
+        api.registerTypeAdapter(HistoryTransaction.class, new ExplorerHistoryTransactionDeserializer());
     }
 
     @NonNull
     @Override
     protected Class<ExplorerTransactionEndpoint> getServiceClass() {
-	    return ExplorerTransactionEndpoint.class;
+        return ExplorerTransactionEndpoint.class;
     }
-	@Override
-	public void configure(ApiService.Builder api) {
-		api.registerTypeAdapter(HistoryTransaction.class, new ExplorerHistoryTransactionDeserializer());
-	}
 }

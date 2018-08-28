@@ -35,11 +35,34 @@ dependencies {
 }
 ```
 
-## Initialize it
+## Basic Usage
+### Initialize it
 ```java
 
 MinterExplorerApi.initialize();
 ```
+
+### Usage
+SDK uses retrofit http client [see](https://square.github.io/retrofit/)
+```java
+// get transactions (or other) repository
+ExplorerTransactionsRepository txRepo = MinterExplorerApi.getInstance().transactions();
+
+// get list of transactions by given address
+MinterAddress address = new MinterAddress("Mx01c8af77721c9666c672de62a4deadda0dafb03a");
+txRepo.getTransactions(address).enqueue(new Callback<ExpResult<List<HistoryTransaction>>>() {
+    @Override
+    public void onResponse(@NonNull Call<ExpResult<List<HistoryTransaction>>> call, @NonNull Response<ExpResult<List<HistoryTransaction>>> response) {
+        // handle response
+    }
+
+    @Override
+    public void onFailure(@NonNull Call<ExpResult<List<HistoryTransaction>>> call, @NonNull Throwable t) {
+        // handle error
+    }
+});
+```
+For more examples, see our [wallet app](https://github.com/MinterTeam/minter-android-wallet)
 
 ## Docs
 TODO (javadocs available for now)

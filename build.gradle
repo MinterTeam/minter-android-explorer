@@ -30,7 +30,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-rc01'
+        classpath 'com.android.tools.build:gradle:3.2.0-rc02'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
     }
 }
@@ -59,8 +59,8 @@ version = '0.1.0'
 
 ext {
     minterMinSdk = 16
-    minterMaxSdk = 27
-    minterBuildTools = "28.0.0"
+    minterMaxSdk = 28
+    minterBuildTools = "28.0.2"
     minterLibSupport = "27.1.1"
     minterCoreVers = "0.1.0"
     pomDescription = "Minter Android Explorer API SDK"
@@ -102,7 +102,7 @@ android {
         netTest {
             dimension "env"
             buildConfigField "String", "BASE_API_URL", '"https://testnet.explorer.minter.network/api/"'
-            buildConfigField "String", "BASE_FRONT_URL", '"https://explorer.beta.minter.network"'
+            buildConfigField "String", "BASE_FRONT_URL", '"https://testnet.explorer.minter.network"'
         }
     }
 

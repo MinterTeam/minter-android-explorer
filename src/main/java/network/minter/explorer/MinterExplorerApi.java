@@ -27,10 +27,12 @@
 package network.minter.explorer;
 
 import android.os.Build;
+import android.support.annotation.NonNull;
 
 import com.google.gson.GsonBuilder;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import network.minter.core.crypto.BytesData;
 import network.minter.core.crypto.MinterAddress;
@@ -42,10 +44,15 @@ import network.minter.core.internal.api.converters.BytesDataDeserializer;
 import network.minter.core.internal.api.converters.MinterAddressDeserializer;
 import network.minter.core.internal.api.converters.MinterHashDeserializer;
 import network.minter.core.internal.api.converters.MinterPublicKeyDeserializer;
+import network.minter.explorer.models.ExpResult;
+import network.minter.explorer.models.HistoryTransaction;
 import network.minter.explorer.repo.ExplorerAddressRepository;
 import network.minter.explorer.repo.ExplorerTransactionRepository;
 import okhttp3.HttpUrl;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * minter-android-explorer. 2018
@@ -68,10 +75,17 @@ public class MinterExplorerApi {
         mApiService.setDateFormat(DATE_FORMAT);
     }
 
+    /**
+     * Init method
+     */
     public static void initialize() {
         initialize(false);
     }
 
+    /**
+     * Init method with debug logs flag
+     * @param debug enable debug logs
+     */
     public static void initialize(boolean debug) {
         if (INSTANCE != null) {
             return;
@@ -85,14 +99,27 @@ public class MinterExplorerApi {
         }
     }
 
+    /**
+     * Create new front url using HttpUrl.Builder
+     * @return HttpUrl.Builder
+     * @see HttpUrl.Builder
+     */
     public static HttpUrl.Builder newFrontUrl() {
         return HttpUrl.parse(FRONT_URL).newBuilder();
     }
 
+    /**
+     * Singleton instance
+     * @return
+     */
     public static MinterExplorerApi getInstance() {
         return INSTANCE;
     }
 
+    /**
+     * Transactions api repository
+     * @return
+     */
     public ExplorerTransactionRepository transactions() {
         if (mTransactionRepository == null) {
             mTransactionRepository = new ExplorerTransactionRepository(mApiService);
@@ -105,10 +132,26 @@ public class MinterExplorerApi {
         return mApiService;
     }
 
+    /**
+     * Addresses api repository
+     * @return
+     */
     public ExplorerAddressRepository address() {
         if (mAddressRepository == null) {
             mAddressRepository = new ExplorerAddressRepository(mApiService);
         }
+        MinterAddress address = new MinterAddress("Mx01c8af77721c9666c672de62a4deadda0dafb03a");
+        mTransactionRepository.getTransactions(address).enqueue(new Callback<ExpResult<List<HistoryTransaction>>>() {
+            @Override
+            public void onResponse(@NonNull Call<ExpResult<List<HistoryTransaction>>> call, @NonNull Response<ExpResult<List<HistoryTransaction>>> response) {
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ExpResult<List<HistoryTransaction>>> call, @NonNull Throwable t) {
+
+            }
+        });
 
         return mAddressRepository;
     }

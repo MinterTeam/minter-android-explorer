@@ -237,6 +237,10 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         public String coinToBuy;
         @SerializedName("value")
         public BigDecimal amount;
+        @SerializedName("value_to_buy")
+        public BigDecimal valueToBuy;
+        @SerializedName("value_to_sell")
+        public BigDecimal valueToSell;
 
         public MinterAddress getFrom() {
             return from;

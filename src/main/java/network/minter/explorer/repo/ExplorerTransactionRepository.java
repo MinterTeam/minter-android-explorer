@@ -93,6 +93,21 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
         return getInstantService().getTransactions(out, page);
     }
 
+    /**
+     * Get transactions list for multiple minter addresses with given page number
+     * @param addresses list of minter addresses
+     * @param page page number
+     * @return
+     */
+    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses, long page, int limit) {
+        List<String> out = new ArrayList<>(addresses.size());
+        for (MinterAddress address : addresses) {
+            out.add(address.toString());
+        }
+
+        return getInstantService().getTransactions(out, page, limit);
+    }
+
     @Override
     public void configure(ApiService.Builder api) {
         api.registerTypeAdapter(HistoryTransaction.class, new ExplorerHistoryTransactionDeserializer());

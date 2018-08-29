@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -53,4 +54,11 @@ public interface ExplorerTransactionEndpoint {
 
 	@GET("v1/transactions")
     Call<ExpResult<List<HistoryTransaction>>> getTransactions(@Query(value = "addresses[]", encoded = true) List<String> addresses, @Query("page") long page);
+
+    @GET("v1/transactions")
+    Call<ExpResult<List<HistoryTransaction>>> getTransactions(
+            @Query(value = "addresses[]", encoded = true) List<String> addresses,
+            @Query("page") long page,
+            @Query("perPage") int limit
+    );
 }

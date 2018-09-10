@@ -43,13 +43,14 @@ import network.minter.core.internal.api.converters.MinterAddressDeserializer;
 import network.minter.core.internal.api.converters.MinterHashDeserializer;
 import network.minter.core.internal.api.converters.MinterPublicKeyDeserializer;
 import network.minter.explorer.repo.ExplorerAddressRepository;
+import network.minter.explorer.repo.ExplorerCoinsRepository;
 import network.minter.explorer.repo.ExplorerTransactionRepository;
 import okhttp3.HttpUrl;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * minter-android-explorer. 2018
- * @author Eduard Maximovich <edward.vstock@gmail.com>
+ * @author Eduard Maximovich [edward.vstock[at]gmail.com]
  */
 public class MinterExplorerApi {
     public static final String FRONT_URL = BuildConfig.BASE_FRONT_URL;
@@ -59,6 +60,7 @@ public class MinterExplorerApi {
     private ApiService.Builder mApiService;
     private ExplorerTransactionRepository mTransactionRepository;
     private ExplorerAddressRepository mAddressRepository;
+    private ExplorerCoinsRepository mCoinsRepository;
 
     private MinterExplorerApi() {
         mApiService = new ApiService.Builder(BASE_API_URL, getGsonBuilder());
@@ -102,16 +104,14 @@ public class MinterExplorerApi {
     }
 
     /**
-     * Singleton instance
-     * @return
+     * @return Singleton instance
      */
     public static MinterExplorerApi getInstance() {
         return INSTANCE;
     }
 
     /**
-     * Transactions api repository
-     * @return
+     * @return Transactions api repository
      */
     public ExplorerTransactionRepository transactions() {
         if (mTransactionRepository == null) {
@@ -121,13 +121,23 @@ public class MinterExplorerApi {
         return mTransactionRepository;
     }
 
+    /**
+     * @return Coins api repository
+     */
+    public ExplorerCoinsRepository coins() {
+        if (mCoinsRepository == null) {
+            mCoinsRepository = new ExplorerCoinsRepository(mApiService);
+        }
+
+        return mCoinsRepository;
+    }
+
     public ApiService.Builder getApiService() {
         return mApiService;
     }
 
     /**
-     * Addresses api repository
-     * @return
+     * @return Addresses api repository
      */
     public ExplorerAddressRepository address() {
         if (mAddressRepository == null) {

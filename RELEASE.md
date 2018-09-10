@@ -1,4 +1,9 @@
 # Release notes
+
+## 0.1.2
+ - added list and searching coin method and repository. [Ref](https://testnet.explorer.minter.network/help/index.html#operations-Coins-get_api_v1_coins)
+ - sdk versions now no more synchronized
+
 ## 0.1.1
  - change base frontend url for testnet environment
  - more javadocs

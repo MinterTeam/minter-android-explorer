@@ -24,15 +24,15 @@ project build.gradle
 ```groovy
 
 ext {
-    minterSdkVersion = "0.1.1"
+    minterExplorerSDK = "0.1.2"
 }
 
 dependencies {
     // for testnet use suffix "-testnet"
-    implementation "network.minter.android:minter-android-explorer-testnet:${minterSdkVersion}"
+    implementation "network.minter.android:minter-android-explorer-testnet:${minterExplorerSDK}"
 
     // for main net
-    implementation "network.minter.android:minter-android-explorer:${minterSdkVersion}"
+    implementation "network.minter.android:minter-android-explorer:${minterExplorerSDK}"
 }
 ```
 

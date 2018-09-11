@@ -34,12 +34,14 @@ import java.math.BigInteger;
 
 import network.minter.core.crypto.BytesData;
 import network.minter.core.crypto.MinterAddress;
+import network.minter.core.crypto.MinterCheck;
 import network.minter.core.crypto.MinterHash;
 import network.minter.core.crypto.MinterPublicKey;
 import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.api.converters.BigIntegerDeserializer;
 import network.minter.core.internal.api.converters.BytesDataDeserializer;
 import network.minter.core.internal.api.converters.MinterAddressDeserializer;
+import network.minter.core.internal.api.converters.MinterCheckDeserializer;
 import network.minter.core.internal.api.converters.MinterHashDeserializer;
 import network.minter.core.internal.api.converters.MinterPublicKeyDeserializer;
 import network.minter.explorer.repo.ExplorerAddressRepository;
@@ -153,7 +155,9 @@ public class MinterExplorerApi {
         out.registerTypeAdapter(MinterAddress.class, new MinterAddressDeserializer());
         out.registerTypeAdapter(MinterPublicKey.class, new MinterPublicKeyDeserializer());
         out.registerTypeAdapter(MinterHash.class, new MinterHashDeserializer());
+        out.registerTypeAdapter(MinterCheck.class, new MinterCheckDeserializer());
         out.registerTypeAdapter(BigInteger.class, new BigIntegerDeserializer());
+        out.registerTypeAdapter(BytesData.class, new BytesDataDeserializer());
         out.registerTypeAdapter(BytesData.class, new BytesDataDeserializer());
 
         return out;

@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.1.3
+ - added unspecified transactions data for type: unbound, redeem check and delegate
+
 ## 0.1.2
  - added list and searching coin method and repository. [Ref](https://testnet.explorer.minter.network/help/index.html#operations-Coins-get_api_v1_coins)
  - sdk versions now no more synchronized

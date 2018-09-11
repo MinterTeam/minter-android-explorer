@@ -40,7 +40,9 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import network.minter.core.crypto.BytesData;
 import network.minter.core.crypto.MinterAddress;
+import network.minter.core.crypto.MinterCheck;
 import network.minter.core.crypto.MinterHash;
 import network.minter.core.crypto.MinterPublicKey;
 
@@ -313,18 +315,52 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
     @Parcel
     public static class TxUnboundResult {
         public MinterAddress from;
+        @SerializedName("pub_key")
+        public MinterPublicKey publicKey;
+        public String coin;
+        public String stake;
 
+        public BigDecimal getStake() {
+            if (stake == null || stake.isEmpty()) {
+                stake = "0";
+            }
+
+            return new BigDecimal(stake);
+        }
+
+        public String getCoin() {
+            return coin.toUpperCase();
+        }
     }
 
     @Parcel
     public static class TxDelegateResult {
         public MinterAddress from;
+        @SerializedName("pub_key")
+        public MinterPublicKey publicKey;
+        public String coin;
+        public String stake;
 
+        public String getCoin() {
+            return coin.toUpperCase();
+        }
+
+        public BigDecimal getStake() {
+            if (stake == null || stake.isEmpty()) {
+                stake = "0";
+            }
+
+            return new BigDecimal(stake);
+        }
     }
 
     @Parcel
     public static class TxRedeemCheckResult {
         public MinterAddress from;
+        @SerializedName("raw_check")
+        public MinterCheck rawCheck;
+        public BytesData proof;
+
 
     }
 }

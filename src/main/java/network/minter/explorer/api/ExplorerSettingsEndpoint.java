@@ -28,58 +28,33 @@ package network.minter.explorer.api;
 
 import java.util.List;
 
-import network.minter.explorer.models.AddressData;
 import network.minter.explorer.models.BalanceChannel;
 import network.minter.explorer.models.ExpResult;
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
  * minter-android-explorer. 2018
- *
- * @author Eduard Maximovich <edward.vstock@gmail.com>
+ * @author Eduard Maximovich [edward.vstock[at]gmail.com]
  */
-public interface ExplorerAddressEndpoint {
-	/**
-	 * Resolve balance by address
-	 *
-	 * @param address
-	 * @return Retrofit call with {@link ExpResult}
-	 */
-	@GET("v1/address/{address}")
-    Call<ExpResult<AddressData>> balance(@Path("address") String address);
+public interface ExplorerSettingsEndpoint {
 
-	/**
-	 * Resolve balance by multiple addresses
-	 *
-	 * @param addresses
-	 * @return Retrofit call with {@link ExpResult}
-	 */
-	@GET("v1/address")
-    Call<ExpResult<List<AddressData>>> balanceMultiple(@Query(value = "addresses[]", encoded = true) List<String> addresses);
+    /**
+     * Get WebSocket connection data
+     * @param addresses
+     * @param user For statistics some user id
+     * @return Retrofit call with {@link ExpResult}
+     */
+    @GET("v1/settings/get-balance-channel")
+    Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query(value = "addresses[]", encoded = true) List<String> addresses, @Query("user") String user);
 
-	/**
-	 * Get WebSocket connection data
-	 *
-	 * @param addresses
-	 * @return Retrofit call with {@link ExpResult}
-     * @deprecated Use {@link ExplorerSettingsEndpoint#getBalanceChannel}
-	 */
-    @Deprecated
+    /**
+     * Get WebSocket connection data
+     * @param addresses
+     * @return Retrofit call with {@link ExpResult}
+     */
     @GET("v1/address/get-balance-channel")
-	Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query(value = "addresses[]", encoded = true) List<String> addresses);
+    Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query(value = "addresses[]", encoded = true) List<String> addresses);
 
-	/**
-	 * Get WebSocket connection data
-	 *
-	 * @param addresses
-	 * @param user      For statistics some user id
-	 * @return Retrofit call with {@link ExpResult}
-     * @deprecated Use {@link ExplorerSettingsEndpoint#getBalanceChannel}
-	 */
-    @Deprecated
-    @GET("v1/address/get-balance-channel")
-	Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query(value = "addresses[]", encoded = true) List<String> addresses, @Query("user") String user);
 }

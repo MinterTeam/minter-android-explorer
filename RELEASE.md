@@ -1,5 +1,16 @@
 # Release notes
 
+## 0.2.0
+ - **breaking changes**:
+   - all **"unbound"** transaction strings, objects and constants renamed to **"unbond"**
+   - `TxDelegateResult` and `TxUnboundResult` now combined to single class: `TxDelegateUnbondResult` as they have single data model in explorer.
+   - removed fields `from` from `Tx[*]Result`, use `HistoryTransaction#from`
+   - renamed fields `pubKey` to `publicKey`
+   - removed `amount` from `TxConvertCoinResult`, use `TxConvertCoinResult#getValueToBuy` and `TxConvertCoinResult#getValueToSell`
+ - added more getters to models
+ - deprecated methods `ExplorerAddressEndpoint#getBalanceChannel` and `ExplorerAddressRepository#getBalanceChannel`,
+ use instead `ExplorerSettingsEndpoint#getBalanceChannel` and `ExplorerSettingsRepository#getBalanceChannel`.
+
 ## 0.1.3
  - added unspecified transactions data for type: unbound, redeem check and delegate
 

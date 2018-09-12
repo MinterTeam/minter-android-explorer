@@ -34,73 +34,28 @@ import java.util.List;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.data.DataRepository;
-import network.minter.explorer.api.ExplorerAddressEndpoint;
-import network.minter.explorer.api.converters.ExplorerAddressDataDeserializer;
-import network.minter.explorer.models.AddressData;
+import network.minter.explorer.api.ExplorerSettingsEndpoint;
 import network.minter.explorer.models.BalanceChannel;
 import network.minter.explorer.models.ExpResult;
 import retrofit2.Call;
 
 import static network.minter.core.internal.common.Preconditions.checkNotNull;
 
-
 /**
  * minter-android-explorer. 2018
- * Address information api repository
- *
- * @author Eduard Maximovich <edward.vstock@gmail.com>
+ * @author Eduard Maximovich [edward.vstock[at]gmail.com]
  */
-public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEndpoint> implements DataRepository.Configurator {
-	public ExplorerAddressRepository(@NonNull ApiService.Builder apiBuilder) {
-		super(apiBuilder);
-	}
-
-    /**
-     * Get full information about given addresses
-     * @param addresses list of minter addresses
-     * @return Retrofit call
-     */
-    public Call<ExpResult<List<AddressData>>> getAddressesData(List<MinterAddress> addresses) {
-        final List<String> sAddresses = new ArrayList<>(addresses.size());
-        for (MinterAddress address : addresses) {
-            sAddresses.add(address.toString());
-        }
-
-        return getInstantService(this).balanceMultiple(sAddresses);
+public class ExplorerSettingsRepository extends DataRepository<ExplorerSettingsEndpoint> {
+    public ExplorerSettingsRepository(@NonNull ApiService.Builder apiBuilder) {
+        super(apiBuilder);
     }
-
-    /**
-     * Get full information about given address
-     * @param address minter address
-     * @return Retrofit call
-     */
-    public Call<ExpResult<AddressData>> getAddressData(MinterAddress address) {
-        return getAddressData(address.toString());
-    }
-
-    /**
-     * Get full information about given address
-     * @param address string minter address WITH prefix "Mx"
-     * @return Retrofit call
-     */
-    public Call<ExpResult<AddressData>> getAddressData(String address) {
-        return getInstantService().balance(address);
-    }
-
-	@NonNull
-	@Override
-	protected Class<ExplorerAddressEndpoint> getServiceClass() {
-		return ExplorerAddressEndpoint.class;
-	}
 
     /**
      * Get websocket balance update notification
      * @param addresses minter address to notify about
      * @param userId optional unique user id
      * @return Retrofit call
-     * @deprecated Use {@link ExplorerSettingsRepository#getBalanceChannel(List, String)}
      */
-    @Deprecated
     public Call<ExpResult<BalanceChannel>> getBalanceChannel(@NonNull List<MinterAddress> addresses, String userId) {
         checkNotNull(addresses, "Addresses can't be null");
         final List<String> addressStrings = new ArrayList<>(addresses.size());
@@ -114,9 +69,9 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
         return getInstantService().getBalanceChannel(addressStrings, userId);
     }
 
-	@Override
-	public void configure(ApiService.Builder api) {
-        api.registerTypeAdapter(AddressData.class, new ExplorerAddressDataDeserializer());
-	}
-
+    @NonNull
+    @Override
+    protected Class<ExplorerSettingsEndpoint> getServiceClass() {
+        return ExplorerSettingsEndpoint.class;
+    }
 }

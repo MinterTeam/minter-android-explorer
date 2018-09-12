@@ -46,13 +46,14 @@ import network.minter.core.internal.api.converters.MinterHashDeserializer;
 import network.minter.core.internal.api.converters.MinterPublicKeyDeserializer;
 import network.minter.explorer.repo.ExplorerAddressRepository;
 import network.minter.explorer.repo.ExplorerCoinsRepository;
+import network.minter.explorer.repo.ExplorerSettingsRepository;
 import network.minter.explorer.repo.ExplorerTransactionRepository;
 import okhttp3.HttpUrl;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * minter-android-explorer. 2018
- * @author Eduard Maximovich [edward.vstock[at]gmail.com]
+ * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
 public class MinterExplorerApi {
     public static final String FRONT_URL = BuildConfig.BASE_FRONT_URL;
@@ -63,6 +64,7 @@ public class MinterExplorerApi {
     private ExplorerTransactionRepository mTransactionRepository;
     private ExplorerAddressRepository mAddressRepository;
     private ExplorerCoinsRepository mCoinsRepository;
+    private ExplorerSettingsRepository mSettingsRepository;
 
     private MinterExplorerApi() {
         mApiService = new ApiService.Builder(BASE_API_URL, getGsonBuilder());
@@ -124,6 +126,17 @@ public class MinterExplorerApi {
     }
 
     /**
+     * @return Settings api repository
+     */
+    public ExplorerSettingsRepository settings() {
+        if (mSettingsRepository == null) {
+            mSettingsRepository = new ExplorerSettingsRepository(mApiService);
+        }
+
+        return mSettingsRepository;
+    }
+
+    /**
      * @return Coins api repository
      */
     public ExplorerCoinsRepository coins() {
@@ -157,7 +170,6 @@ public class MinterExplorerApi {
         out.registerTypeAdapter(MinterHash.class, new MinterHashDeserializer());
         out.registerTypeAdapter(MinterCheck.class, new MinterCheckDeserializer());
         out.registerTypeAdapter(BigInteger.class, new BigIntegerDeserializer());
-        out.registerTypeAdapter(BytesData.class, new BytesDataDeserializer());
         out.registerTypeAdapter(BytesData.class, new BytesDataDeserializer());
 
         return out;

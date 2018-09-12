@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -64,10 +65,10 @@ public class AddressData {
             return new BigDecimal(0);
         }
 
-        // @TODO ?
+        // @TODO this is not so valid data for now, explorer doesn't know real value in base coin
         BigDecimal totalOut = new BigDecimal(0.0f);
         for (Map.Entry<String, CoinBalance> entry : coins.entrySet()) {
-            totalOut = totalOut.add(entry.getValue().amount);
+            totalOut = totalOut.add(entry.getValue().getBaseCoinAmount());
         }
 
         return totalOut;
@@ -89,8 +90,15 @@ public class AddressData {
 			this.usdAmount = valueUsd;
 		}
 
-		public String getCoin() {
-			return coin;
+        public BigDecimal getBaseCoinAmount() {
+            return baseCoinAmount;
+        }
+
+        public String getCoin() {
+            if (coin == null) {
+                return null;
+            }
+            return coin.toUpperCase();
 		}
 
 		public BigDecimal getAmount() {

@@ -59,7 +59,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * Method not finished
      * see link below
      * @param address minter address
-     * @return
+     * @return Retrofit call
      * @TODO query builder
      * @link https://explorer.beta.minter.network/help/index.html#operations-Transactions-get_api_v1_transactions
      */
@@ -72,7 +72,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
     /**
      * Get transactions list for multiple minter addresses
      * @param addresses list of minter addresses
-     * @return
+     * @return Retrofit call
      */
     public Call<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses) {
         return getTransactions(addresses, 1);
@@ -82,7 +82,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * Get transactions list for multiple minter addresses with given page number
      * @param addresses list of minter addresses
      * @param page page number
-     * @return
+     * @return Retrofit call
      */
     public Call<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses, long page) {
         List<String> out = new ArrayList<>(addresses.size());
@@ -97,7 +97,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * Get transactions list for multiple minter addresses with given page number
      * @param addresses list of minter addresses
      * @param page page number
-     * @return
+     * @return Retrofit call
      */
     public Call<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses, long page, int limit) {
         List<String> out = new ArrayList<>(addresses.size());

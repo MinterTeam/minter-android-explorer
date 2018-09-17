@@ -24,7 +24,7 @@ project build.gradle
 ```groovy
 
 ext {
-    minterExplorerSDK = "0.2.0"
+    minterExplorerSDK = "0.2.1"
 }
 
 dependencies {
@@ -68,5 +68,19 @@ For more examples, see our [wallet app](https://github.com/MinterTeam/minter-and
 ## Docs
 TODO (javadocs available for now)
 
-# Build
+## Build
 TODO
+
+## Tests
+TODO
+
+## Changelog
+
+See [Release notes](RELEASE.md)
+
+
+## License
+
+This software is released under the [MIT](LICENSE.txt) License.
+
+© 2018 MinterTeam <edward.vstock@gmail.com>, All rights reserved.

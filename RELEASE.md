@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.2.1
+ - updated core sdk to creating private key from mnemonic phrase directly
+
 ## 0.2.0
  - **breaking changes**:
    - all **"unbound"** transaction strings, objects and constants renamed to **"unbond"**

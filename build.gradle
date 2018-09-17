@@ -55,14 +55,14 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'network.minter.android'
-version = '0.2.0'
+version = '0.2.1'
 
 ext {
     minterMinSdk = 16
     minterMaxSdk = 28
     minterBuildTools = "28.0.2"
     minterLibSupport = "27.1.1"
-    minterCoreVers = "0.1.2"
+    minterCoreVers = "0.1.3"
     pomDescription = "Minter Android Explorer API SDK"
 }
 
@@ -73,7 +73,7 @@ android {
     defaultConfig {
         minSdkVersion minterMinSdk
         targetSdkVersion minterMaxSdk
-        versionCode 1
+        versionCode 2
         versionName version
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

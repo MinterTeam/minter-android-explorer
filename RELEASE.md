@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.2.2
+ - package dependencies fix
+
 ## 0.2.1
  - updated core sdk to creating private key from mnemonic phrase directly
 

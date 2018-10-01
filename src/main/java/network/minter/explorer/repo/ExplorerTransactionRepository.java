@@ -33,14 +33,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import network.minter.blockchain.models.CountableData;
+import network.minter.blockchain.models.TransactionCommissionValue;
+import network.minter.blockchain.models.TransactionSendResult;
+import network.minter.blockchain.models.operational.TransactionSign;
 import network.minter.core.crypto.MinterAddress;
+import network.minter.core.crypto.PrivateKey;
 import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.data.DataRepository;
 import network.minter.explorer.api.ExplorerTransactionEndpoint;
 import network.minter.explorer.api.converters.ExplorerHistoryTransactionDeserializer;
+import network.minter.explorer.models.BCExplorerResult;
 import network.minter.explorer.models.ExpResult;
 import network.minter.explorer.models.HistoryTransaction;
 import retrofit2.Call;
+
+import static network.minter.core.internal.common.Preconditions.checkNotNull;
+import static network.minter.core.internal.helpers.CollectionsHelper.asMap;
 
 /**
  * minter-android-explorer. 2018
@@ -106,6 +115,51 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
         }
 
         return getInstantService().getTransactions(out, page, limit);
+    }
+
+    public Call<BCExplorerResult<CountableData>> getTransactionCount(@NonNull MinterAddress key) {
+        checkNotNull(key, "Public key required!");
+        return getTransactionCount(key.toString());
+    }
+
+    /**
+     * Returns the number of transactions sent from an address
+     * @param address fq address
+     * @return Prepared request with transaction count result
+     */
+    public Call<BCExplorerResult<CountableData>> getTransactionCount(@NonNull String address) {
+        return getInstantService().getTransactionsCount(checkNotNull(address, "Address required!"));
+    }
+
+    /**
+     * SendCoin transaction
+     * @param transactionSign Raw signed TX
+     * @return Prepared request
+     * @see TransactionSendResult
+     */
+    public Call<BCExplorerResult<TransactionSendResult>> sendTransaction(@NonNull TransactionSign transactionSign) {
+        return getInstantService().sendTransaction(
+                asMap("transaction", transactionSign.getTxSign())
+        );
+    }
+
+    /**
+     * Resolve transaction commission before sending it
+     * @param sign Transaction sign is NOT A TRANSACTION HASH, it's a valid transaction and valid to send
+     * @return
+     * @see network.minter.blockchain.models.operational.Transaction#sign(PrivateKey)
+     */
+    public Call<BCExplorerResult<TransactionCommissionValue>> getTransactionCommission(TransactionSign sign) {
+        return getTransactionCommission(sign.getTxSign());
+    }
+
+    /**
+     * Resolve transaction commission before sending it
+     * @param sign
+     * @return
+     */
+    public Call<BCExplorerResult<TransactionCommissionValue>> getTransactionCommission(String sign) {
+        return getInstantService().getTxCommission(sign);
     }
 
     @Override

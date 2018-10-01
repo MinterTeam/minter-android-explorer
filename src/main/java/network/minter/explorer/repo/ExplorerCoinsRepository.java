@@ -28,14 +28,22 @@ package network.minter.explorer.repo;
 
 import android.support.annotation.NonNull;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
+import network.minter.blockchain.models.ExchangeBuyValue;
+import network.minter.blockchain.models.ExchangeSellValue;
+import network.minter.blockchain.models.operational.Transaction;
 import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.data.DataRepository;
 import network.minter.explorer.api.ExplorerCoinsEndpoint;
+import network.minter.explorer.models.BCExplorerResult;
 import network.minter.explorer.models.CoinItem;
 import network.minter.explorer.models.ExpResult;
 import retrofit2.Call;
+
+import static network.minter.core.internal.common.Preconditions.checkNotNull;
 
 /**
  * minter-android-explorer. 2018
@@ -52,6 +60,56 @@ public class ExplorerCoinsRepository extends DataRepository<ExplorerCoinsEndpoin
      */
     public Call<ExpResult<List<CoinItem>>> getAll() {
         return getInstantService().getAll();
+    }
+
+    /**
+     * @param coinToSell Selling coin
+     * @param valueToSell Selling amount of exchange (big integer amount like: 1 BIP equals
+     *         1000000000000000000 (18 zeroes) in big integer equivalent)
+     * @param coinToBuy Buying coin coin
+     * @return Exchange calculation
+     */
+    public Call<BCExplorerResult<ExchangeSellValue>> getCoinExchangeCurrencyToSell(@NonNull String coinToSell, BigDecimal valueToSell, @NonNull String coinToBuy) {
+        return getCoinExchangeCurrencyToSell(coinToSell, valueToSell.multiply(Transaction.VALUE_MUL_DEC).toBigInteger(), coinToBuy);
+    }
+
+    /**
+     * @param coinToSell Selling coin
+     * @param valueToSell Selling amount of exchange (big integer amount like: 1 BIP equals
+     *         1000000000000000000 (18 zeroes) in big integer equivalent)
+     * @param coinToBuy Buying coin coin
+     * @return Exchange calculation
+     */
+    public Call<BCExplorerResult<ExchangeSellValue>> getCoinExchangeCurrencyToSell(@NonNull String coinToSell, BigInteger valueToSell, @NonNull String coinToBuy) {
+        return getInstantService().getCoinExchangeCurrencyToSell(
+                checkNotNull(coinToSell, "Source coin required").toUpperCase(),
+                valueToSell.toString(), checkNotNull(coinToBuy, "Target coin required").toUpperCase()
+        );
+    }
+
+    /**
+     * @param coinToSell Selling coin
+     * @param valueToBuy Buying amount of exchange (human readable amount like: 1 BIP equals 1.0 in
+     *         float equivalent)
+     * @param coinToBuy Buying coin
+     * @return Exchange calculation
+     */
+    public Call<BCExplorerResult<ExchangeBuyValue>> getCoinExchangeCurrencyToBuy(@NonNull String coinToSell, BigDecimal valueToBuy, @NonNull String coinToBuy) {
+        return getCoinExchangeCurrencyToBuy(coinToSell, valueToBuy.multiply(Transaction.VALUE_MUL_DEC).toBigInteger(), coinToBuy);
+    }
+
+    /**
+     * @param coinToSell Selling coin
+     * @param valueToBuy Buying amount of exchange (big integer amount like: 1 BIP equals
+     *         1000000000000000000 (18 zeroes) in big integer equivalent)
+     * @param coinToBuy Buying coin
+     * @return Exchange calculation
+     */
+    public Call<BCExplorerResult<ExchangeBuyValue>> getCoinExchangeCurrencyToBuy(@NonNull String coinToSell, BigInteger valueToBuy, @NonNull String coinToBuy) {
+        return getInstantService().getCoinExchangeCurrencyToBuy(
+                checkNotNull(coinToSell, "Source coin required").toUpperCase(),
+                valueToBuy.toString(), checkNotNull(coinToBuy, "Target coin required").toUpperCase()
+        );
     }
 
     /**

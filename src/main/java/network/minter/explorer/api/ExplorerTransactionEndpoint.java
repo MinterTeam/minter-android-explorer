@@ -29,30 +29,36 @@ package network.minter.explorer.api;
 import java.util.List;
 import java.util.Map;
 
+import network.minter.blockchain.models.CountableData;
+import network.minter.blockchain.models.TransactionCommissionValue;
+import network.minter.blockchain.models.TransactionSendResult;
+import network.minter.explorer.models.BCExplorerResult;
 import network.minter.explorer.models.ExpResult;
 import network.minter.explorer.models.HistoryTransaction;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
 /**
  * minter-android-explorer. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public interface ExplorerTransactionEndpoint {
-	/**
-	 * @param query
-	 * @return
-	 */
-	@GET("v1/transactions")
+    /**
+     * @param query
+     * @return
+     */
+    @GET("v1/transactions")
     Call<ExpResult<List<HistoryTransaction>>> getTransactions(@QueryMap Map<String, String> query);
 
-	@GET("v1/transactions")
+    @GET("v1/transactions")
     Call<ExpResult<List<HistoryTransaction>>> getTransactions(@Query(value = "addresses[]", encoded = true) List<String> addresses);
 
-	@GET("v1/transactions")
+    @GET("v1/transactions")
     Call<ExpResult<List<HistoryTransaction>>> getTransactions(@Query(value = "addresses[]", encoded = true) List<String> addresses, @Query("page") long page);
 
     @GET("v1/transactions")
@@ -61,4 +67,23 @@ public interface ExplorerTransactionEndpoint {
             @Query("page") long page,
             @Query("perPage") int limit
     );
+
+    @GET("v1/transaction/{hash}")
+    Call<ExpResult<HistoryTransaction>> findTransactionByHash(@Path("hash") String hash);
+
+    @GET("v1/transaction/get-count/{address}")
+    Call<BCExplorerResult<CountableData>> getTransactionsCount(@Path("address") String address);
+
+    @POST("v1/transaction/push")
+    Call<BCExplorerResult<TransactionSendResult>> sendTransaction(@Body Map<String, String> data);
+
+    /**
+     * Calculates signed transaction commission
+     * @param signedTx Valid transaction, signed with private key
+     * @return
+     */
+    @GET("v1/estimate/tx-commission")
+    Call<BCExplorerResult<TransactionCommissionValue>> getTxCommission(@Query("transaction") String signedTx);
+
+
 }

@@ -1,5 +1,12 @@
 # Release notes
 
+## 0.2.3
+ - added proxy methods for blockchain node through the Explorer:
+    - send transaction
+    - calculate transaction fee by transaction hash
+    - coin exchange currency (sell/buy)
+    - counting transactions by address to get **nonce**
+
 ## 0.2.2
  - package dependencies fix
 

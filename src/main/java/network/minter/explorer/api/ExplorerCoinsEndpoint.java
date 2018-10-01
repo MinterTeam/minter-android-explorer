@@ -28,6 +28,9 @@ package network.minter.explorer.api;
 
 import java.util.List;
 
+import network.minter.blockchain.models.ExchangeBuyValue;
+import network.minter.blockchain.models.ExchangeSellValue;
+import network.minter.explorer.models.BCExplorerResult;
 import network.minter.explorer.models.CoinItem;
 import network.minter.explorer.models.ExpResult;
 import retrofit2.Call;
@@ -45,4 +48,32 @@ public interface ExplorerCoinsEndpoint {
 
     @GET("v1/coins")
     Call<ExpResult<List<CoinItem>>> search(@Query("symbol") String symbol);
+
+    /**
+     * Give an estimation about coin exchange (selling)
+     * @param coinToSell coin to convert from
+     * @param valueToSell BigInteger string value
+     * @param coinToBuy coin to convert to
+     * @return
+     */
+    @GET("v1/estimate/coin-sell")
+    Call<BCExplorerResult<ExchangeSellValue>> getCoinExchangeCurrencyToSell(
+            @Query("coinToSell") String coinToSell,
+            @Query("valueToSell") String valueToSell,
+            @Query("coinToBuy") String coinToBuy
+    );
+
+    /**
+     * Give an estimation about coin exchange (buying)
+     * @param coinToSell coin to convert from
+     * @param valueToBuy BigInteger string value
+     * @param coinToBuy coin to convert to
+     * @return
+     */
+    @GET("v1/estimate/coin-buy")
+    Call<BCExplorerResult<ExchangeBuyValue>> getCoinExchangeCurrencyToBuy(
+            @Query("coinToSell") String coinToSell,
+            @Query("valueToBuy") String valueToBuy,
+            @Query("coinToBuy") String coinToBuy
+    );
 }

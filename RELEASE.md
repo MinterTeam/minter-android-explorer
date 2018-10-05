@@ -2,6 +2,7 @@
 
 ## 0.2.4
  - Reduced android dependencies usage
+ - added ability to set custom explorer api url
 
 ## 0.2.3
  - added proxy methods for blockchain node through the Explorer:

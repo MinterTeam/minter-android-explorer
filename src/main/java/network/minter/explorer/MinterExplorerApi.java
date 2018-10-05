@@ -88,11 +88,43 @@ public class MinterExplorerApi {
         mApiService.setDateFormat(DATE_FORMAT);
     }
 
+    private MinterExplorerApi(String baseApiUrl) {
+        mApiService = new ApiService.Builder(baseApiUrl, getGsonBuilder());
+        mApiService.addHeader("Content-Type", "application/json");
+        mApiService.addHeader("X-Minter-Client-Name", "MinterAndroid (explorer)");
+        mApiService.addHeader("X-Minter-Client-Version", BuildConfig.VERSION_NAME);
+        mApiService.setDateFormat(DATE_FORMAT);
+    }
+
     /**
      * Init method
      */
     public static void initialize() {
         initialize(false);
+    }
+
+    /**
+     * Init method
+     */
+    public static void initialize(String baseExplorerApiUrl) {
+        initialize(baseExplorerApiUrl, false);
+    }
+
+    /**
+     * Init method with debug logs flag
+     * @param debug enable debug logs
+     */
+    public static void initialize(String baseExplorerApiUrl, boolean debug) {
+        if (INSTANCE != null) {
+            return;
+        }
+
+        INSTANCE = new MinterExplorerApi(baseExplorerApiUrl);
+        INSTANCE.mApiService.setDebug(debug);
+
+        if (debug) {
+            INSTANCE.mApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
+        }
     }
 
     /**

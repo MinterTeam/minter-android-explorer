@@ -26,10 +26,10 @@
 
 package network.minter.explorer.repo;
 
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.internal.api.ApiService;
@@ -46,7 +46,7 @@ import static network.minter.core.internal.common.Preconditions.checkNotNull;
  * @author Eduard Maximovich [edward.vstock[at]gmail.com]
  */
 public class ExplorerSettingsRepository extends DataRepository<ExplorerSettingsEndpoint> {
-    public ExplorerSettingsRepository(@NonNull ApiService.Builder apiBuilder) {
+    public ExplorerSettingsRepository(@Nonnull ApiService.Builder apiBuilder) {
         super(apiBuilder);
     }
 
@@ -56,7 +56,7 @@ public class ExplorerSettingsRepository extends DataRepository<ExplorerSettingsE
      * @param userId optional unique user id
      * @return Retrofit call
      */
-    public Call<ExpResult<BalanceChannel>> getBalanceChannel(@NonNull List<MinterAddress> addresses, String userId) {
+    public Call<ExpResult<BalanceChannel>> getBalanceChannel(@Nonnull List<MinterAddress> addresses, String userId) {
         checkNotNull(addresses, "Addresses can't be null");
         final List<String> addressStrings = new ArrayList<>(addresses.size());
         for (MinterAddress address : addresses) {
@@ -69,7 +69,7 @@ public class ExplorerSettingsRepository extends DataRepository<ExplorerSettingsE
         return getInstantService().getBalanceChannel(addressStrings, userId);
     }
 
-    @NonNull
+    @Nonnull
     @Override
     protected Class<ExplorerSettingsEndpoint> getServiceClass() {
         return ExplorerSettingsEndpoint.class;

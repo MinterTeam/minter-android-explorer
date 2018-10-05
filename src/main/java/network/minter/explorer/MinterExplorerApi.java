@@ -58,8 +58,22 @@ import okhttp3.logging.HttpLoggingInterceptor;
 public class MinterExplorerApi {
     public static final String FRONT_URL = BuildConfig.BASE_FRONT_URL;
     private final static String BASE_API_URL = BuildConfig.BASE_API_URL;
-    private final static String DATE_FORMAT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? "yyyy-MM-dd HH:mm:ssX" : "yyyy-MM-dd HH:mm:ssZ";
+    private final static String DATE_FORMAT;
     private static MinterExplorerApi INSTANCE;
+
+    static {
+        String format = "yyyy-MM-dd HH:mm:ssX";
+        try {
+            Class.forName("android.os.Build");
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                format = "yyyy-MM-dd HH:mm:ssZ";
+            }
+        } catch (ClassNotFoundException ignore) {
+        } finally {
+            DATE_FORMAT = format;
+        }
+    }
+
     private ApiService.Builder mApiService;
     private ExplorerTransactionRepository mTransactionRepository;
     private ExplorerAddressRepository mAddressRepository;

@@ -26,11 +26,11 @@
 
 package network.minter.explorer.models;
 
-import android.support.annotation.Nullable;
-
 import com.google.gson.annotations.SerializedName;
 
 import java.math.BigDecimal;
+
+import javax.annotation.Nullable;
 
 import network.minter.blockchain.models.BCResult;
 

@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.2.4
+ - Reduced android dependencies usage
+
 ## 0.2.3
  - added proxy methods for blockchain node through the Explorer:
     - send transaction

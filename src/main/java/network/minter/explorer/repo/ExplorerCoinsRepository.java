@@ -26,11 +26,11 @@
 
 package network.minter.explorer.repo;
 
-import android.support.annotation.NonNull;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 import network.minter.blockchain.models.ExchangeBuyValue;
 import network.minter.blockchain.models.ExchangeSellValue;
@@ -50,7 +50,7 @@ import static network.minter.core.internal.common.Preconditions.checkNotNull;
  * @author Eduard Maximovich [edward.vstock[at]gmail.com]
  */
 public class ExplorerCoinsRepository extends DataRepository<ExplorerCoinsEndpoint> {
-    public ExplorerCoinsRepository(@NonNull ApiService.Builder apiBuilder) {
+    public ExplorerCoinsRepository(@Nonnull ApiService.Builder apiBuilder) {
         super(apiBuilder);
     }
 
@@ -69,7 +69,7 @@ public class ExplorerCoinsRepository extends DataRepository<ExplorerCoinsEndpoin
      * @param coinToBuy Buying coin coin
      * @return Exchange calculation
      */
-    public Call<BCExplorerResult<ExchangeSellValue>> getCoinExchangeCurrencyToSell(@NonNull String coinToSell, BigDecimal valueToSell, @NonNull String coinToBuy) {
+    public Call<BCExplorerResult<ExchangeSellValue>> getCoinExchangeCurrencyToSell(@Nonnull String coinToSell, BigDecimal valueToSell, @Nonnull String coinToBuy) {
         return getCoinExchangeCurrencyToSell(coinToSell, valueToSell.multiply(Transaction.VALUE_MUL_DEC).toBigInteger(), coinToBuy);
     }
 
@@ -80,7 +80,7 @@ public class ExplorerCoinsRepository extends DataRepository<ExplorerCoinsEndpoin
      * @param coinToBuy Buying coin coin
      * @return Exchange calculation
      */
-    public Call<BCExplorerResult<ExchangeSellValue>> getCoinExchangeCurrencyToSell(@NonNull String coinToSell, BigInteger valueToSell, @NonNull String coinToBuy) {
+    public Call<BCExplorerResult<ExchangeSellValue>> getCoinExchangeCurrencyToSell(@Nonnull String coinToSell, BigInteger valueToSell, @Nonnull String coinToBuy) {
         return getInstantService().getCoinExchangeCurrencyToSell(
                 checkNotNull(coinToSell, "Source coin required").toUpperCase(),
                 valueToSell.toString(), checkNotNull(coinToBuy, "Target coin required").toUpperCase()
@@ -94,7 +94,7 @@ public class ExplorerCoinsRepository extends DataRepository<ExplorerCoinsEndpoin
      * @param coinToBuy Buying coin
      * @return Exchange calculation
      */
-    public Call<BCExplorerResult<ExchangeBuyValue>> getCoinExchangeCurrencyToBuy(@NonNull String coinToSell, BigDecimal valueToBuy, @NonNull String coinToBuy) {
+    public Call<BCExplorerResult<ExchangeBuyValue>> getCoinExchangeCurrencyToBuy(@Nonnull String coinToSell, BigDecimal valueToBuy, @Nonnull String coinToBuy) {
         return getCoinExchangeCurrencyToBuy(coinToSell, valueToBuy.multiply(Transaction.VALUE_MUL_DEC).toBigInteger(), coinToBuy);
     }
 
@@ -105,7 +105,7 @@ public class ExplorerCoinsRepository extends DataRepository<ExplorerCoinsEndpoin
      * @param coinToBuy Buying coin
      * @return Exchange calculation
      */
-    public Call<BCExplorerResult<ExchangeBuyValue>> getCoinExchangeCurrencyToBuy(@NonNull String coinToSell, BigInteger valueToBuy, @NonNull String coinToBuy) {
+    public Call<BCExplorerResult<ExchangeBuyValue>> getCoinExchangeCurrencyToBuy(@Nonnull String coinToSell, BigInteger valueToBuy, @Nonnull String coinToBuy) {
         return getInstantService().getCoinExchangeCurrencyToBuy(
                 checkNotNull(coinToSell, "Source coin required").toUpperCase(),
                 valueToBuy.toString(), checkNotNull(coinToBuy, "Target coin required").toUpperCase()
@@ -121,7 +121,7 @@ public class ExplorerCoinsRepository extends DataRepository<ExplorerCoinsEndpoin
     }
 
 
-    @NonNull
+    @Nonnull
     @Override
     protected Class<ExplorerCoinsEndpoint> getServiceClass() {
         return ExplorerCoinsEndpoint.class;

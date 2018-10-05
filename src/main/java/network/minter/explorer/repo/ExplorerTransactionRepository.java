@@ -26,12 +26,12 @@
 
 package network.minter.explorer.repo;
 
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 import network.minter.blockchain.models.CountableData;
 import network.minter.blockchain.models.TransactionCommissionValue;
@@ -59,7 +59,7 @@ import static network.minter.core.internal.helpers.CollectionsHelper.asMap;
  * @link <a href="https://testnet.explorer.minter.network/help/index.html#operations-Transactions-get_api_v1_transactions">swagger</a>
  */
 public class ExplorerTransactionRepository extends DataRepository<ExplorerTransactionEndpoint> implements DataRepository.Configurator {
-    public ExplorerTransactionRepository(@NonNull ApiService.Builder apiBuilder) {
+    public ExplorerTransactionRepository(@Nonnull ApiService.Builder apiBuilder) {
         super(apiBuilder);
     }
 
@@ -117,7 +117,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
         return getInstantService().getTransactions(out, page, limit);
     }
 
-    public Call<BCExplorerResult<CountableData>> getTransactionCount(@NonNull MinterAddress key) {
+    public Call<BCExplorerResult<CountableData>> getTransactionCount(@Nonnull MinterAddress key) {
         checkNotNull(key, "Public key required!");
         return getTransactionCount(key.toString());
     }
@@ -127,7 +127,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * @param address fq address
      * @return Prepared request with transaction count result
      */
-    public Call<BCExplorerResult<CountableData>> getTransactionCount(@NonNull String address) {
+    public Call<BCExplorerResult<CountableData>> getTransactionCount(@Nonnull String address) {
         return getInstantService().getTransactionsCount(checkNotNull(address, "Address required!"));
     }
 
@@ -137,7 +137,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * @return Prepared request
      * @see TransactionSendResult
      */
-    public Call<BCExplorerResult<TransactionSendResult>> sendTransaction(@NonNull TransactionSign transactionSign) {
+    public Call<BCExplorerResult<TransactionSendResult>> sendTransaction(@Nonnull TransactionSign transactionSign) {
         return getInstantService().sendTransaction(
                 asMap("transaction", transactionSign.getTxSign())
         );
@@ -167,7 +167,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
         api.registerTypeAdapter(HistoryTransaction.class, new ExplorerHistoryTransactionDeserializer());
     }
 
-    @NonNull
+    @Nonnull
     @Override
     protected Class<ExplorerTransactionEndpoint> getServiceClass() {
         return ExplorerTransactionEndpoint.class;

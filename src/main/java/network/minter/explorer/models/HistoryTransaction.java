@@ -26,7 +26,7 @@
 
 package network.minter.explorer.models;
 
-import android.support.annotation.NonNull;
+
 
 import com.annimon.stream.Objects;
 import com.google.gson.annotations.SerializedName;
@@ -39,6 +39,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 import network.minter.core.crypto.BytesData;
 import network.minter.core.crypto.MinterAddress;
@@ -207,7 +209,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
     }
 
     @Override
-    public int compareTo(@NonNull HistoryTransaction o) {
+    public int compareTo(@Nonnull HistoryTransaction o) {
         return o.timestamp.compareTo(timestamp);
     }
 

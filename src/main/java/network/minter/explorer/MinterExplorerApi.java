@@ -57,6 +57,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
  */
 public class MinterExplorerApi {
     public static final String FRONT_URL = BuildConfig.BASE_FRONT_URL;
+    public final static String NET_ID_TESTNET = "odin";
+    public final static String NET_ID_TESTNET_WITH_MULTISIG = "dva";
     private final static String BASE_API_URL = BuildConfig.BASE_API_URL;
     private final static String DATE_FORMAT;
     private static MinterExplorerApi INSTANCE;
@@ -87,7 +89,6 @@ public class MinterExplorerApi {
         mApiService.addHeader("X-Minter-Client-Version", BuildConfig.VERSION_NAME);
         mApiService.setDateFormat(DATE_FORMAT);
     }
-
     private MinterExplorerApi(String baseApiUrl) {
         mApiService = new ApiService.Builder(baseApiUrl, getGsonBuilder());
         mApiService.addHeader("Content-Type", "application/json");
@@ -158,6 +159,10 @@ public class MinterExplorerApi {
      */
     public static MinterExplorerApi getInstance() {
         return INSTANCE;
+    }
+
+    public void setNetworkId(String id) {
+        mApiService.addHeader("X-Minter-Chain-Id", id);
     }
 
     /**

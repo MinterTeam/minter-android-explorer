@@ -1,6 +1,7 @@
 # Release notes
 
 ## 0.2.4
+ - added network id config
  - Reduced android dependencies usage
  - added ability to set custom explorer api url
 

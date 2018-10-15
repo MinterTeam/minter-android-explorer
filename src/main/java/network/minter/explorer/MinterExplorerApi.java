@@ -44,6 +44,8 @@ import network.minter.core.internal.api.converters.MinterAddressDeserializer;
 import network.minter.core.internal.api.converters.MinterCheckDeserializer;
 import network.minter.core.internal.api.converters.MinterHashDeserializer;
 import network.minter.core.internal.api.converters.MinterPublicKeyDeserializer;
+import network.minter.core.internal.log.Mint;
+import network.minter.core.internal.log.TimberLogger;
 import network.minter.explorer.repo.ExplorerAddressRepository;
 import network.minter.explorer.repo.ExplorerCoinsRepository;
 import network.minter.explorer.repo.ExplorerSettingsRepository;
@@ -62,6 +64,7 @@ public class MinterExplorerApi {
     private final static String BASE_API_URL = BuildConfig.BASE_API_URL;
     private final static String DATE_FORMAT;
     private static MinterExplorerApi INSTANCE;
+
 
     static {
         String format = "yyyy-MM-dd HH:mm:ssX";
@@ -83,12 +86,9 @@ public class MinterExplorerApi {
     private ExplorerSettingsRepository mSettingsRepository;
 
     private MinterExplorerApi() {
-        mApiService = new ApiService.Builder(BASE_API_URL, getGsonBuilder());
-        mApiService.addHeader("Content-Type", "application/json");
-        mApiService.addHeader("X-Minter-Client-Name", "MinterAndroid (explorer)");
-        mApiService.addHeader("X-Minter-Client-Version", BuildConfig.VERSION_NAME);
-        mApiService.setDateFormat(DATE_FORMAT);
+        this(BASE_API_URL);
     }
+
     private MinterExplorerApi(String baseApiUrl) {
         mApiService = new ApiService.Builder(baseApiUrl, getGsonBuilder());
         mApiService.addHeader("Content-Type", "application/json");
@@ -115,7 +115,7 @@ public class MinterExplorerApi {
      * Init method with debug logs flag
      * @param debug enable debug logs
      */
-    public static void initialize(String baseExplorerApiUrl, boolean debug) {
+    public static void initialize(String baseExplorerApiUrl, boolean debug, Mint.Leaf logger) {
         if (INSTANCE != null) {
             return;
         }
@@ -124,6 +124,7 @@ public class MinterExplorerApi {
         INSTANCE.mApiService.setDebug(debug);
 
         if (debug) {
+            Mint.brew(logger);
             INSTANCE.mApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
         }
     }
@@ -132,17 +133,24 @@ public class MinterExplorerApi {
      * Init method with debug logs flag
      * @param debug enable debug logs
      */
+    public static void initialize(String baseExplorerApiUrl, boolean debug) {
+        initialize(baseExplorerApiUrl, debug, new TimberLogger());
+    }
+
+    /**
+     * Init method with debug logs flag
+     * @param debug enable debug logs
+     */
     public static void initialize(boolean debug) {
-        if (INSTANCE != null) {
-            return;
-        }
+        initialize(BASE_API_URL, debug, new TimberLogger());
+    }
 
-        INSTANCE = new MinterExplorerApi();
-        INSTANCE.mApiService.setDebug(debug);
-
-        if (debug) {
-            INSTANCE.mApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
-        }
+    /**
+     * Init method with debug logs flag
+     * @param debug enable debug logs
+     */
+    public static void initialize(boolean debug, Mint.Leaf logger) {
+        initialize(BASE_API_URL, debug, logger);
     }
 
     /**

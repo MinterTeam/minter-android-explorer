@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.2.5
+ - Updated core and blockchain libraries
+
 ## 0.2.4
  - added network id config
  - Reduced android dependencies usage

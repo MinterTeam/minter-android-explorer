@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.2.6
+ - Added error and code to base response object
+
 ## 0.2.5
  - Updated core and blockchain libraries
 

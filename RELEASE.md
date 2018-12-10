@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.2.7
+ - Updated blockchain SDK dependency with new fields
+
 ## 0.2.6
  - Added error and code to base response object
 

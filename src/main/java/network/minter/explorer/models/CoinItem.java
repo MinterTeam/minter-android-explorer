@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -28,6 +28,8 @@ package network.minter.explorer.models;
 
 import org.parceler.Parcel;
 
+import java.math.BigDecimal;
+
 /**
  * minter-android-explorer. 2018
  * @author Eduard Maximovich [edward.vstock[at]gmail.com]
@@ -36,4 +38,7 @@ import org.parceler.Parcel;
 public class CoinItem {
     public String symbol;
     public String name;
+    public BigDecimal volume;
+    public int crr;
+    public BigDecimal reserveBalance;
 }

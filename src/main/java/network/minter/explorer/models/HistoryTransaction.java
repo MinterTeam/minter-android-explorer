@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -26,8 +26,6 @@
 
 package network.minter.explorer.models;
 
-
-
 import com.annimon.stream.Objects;
 import com.google.gson.annotations.SerializedName;
 
@@ -37,6 +35,7 @@ import org.parceler.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -103,7 +102,15 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         @SerializedName("setCandidateOnData")
         SetCandidateOnline(TxSetCandidateOnlineOfflineResult.class),
         @SerializedName("setCandidateOffData")
-        SetCandidateOffline(TxSetCandidateOnlineOfflineResult.class);
+        SetCandidateOffline(TxSetCandidateOnlineOfflineResult.class),
+        @SerializedName("multiSig")
+        CreateMultisigAddress(TxCreateMultisigResult.class),
+        @SerializedName("multiSend")
+        MultiSend(TxMultisendResult.class),
+        @SerializedName("editCandidate")
+        EditCandidate(TxEditCandidateResult.class),
+
+        ;
 
         Class<?> mCls;
 
@@ -428,5 +435,35 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         public MinterCheck getRawCheck() {
             return rawCheck;
         }
+    }
+
+    @Parcel
+    public static class TxCreateMultisigResult {
+        public BigInteger threshold;
+        public List<BigInteger> weights = new ArrayList<>();
+        public List<MinterAddress> addresses = new ArrayList<>();
+    }
+
+    @Parcel
+    public static class TxMultisendResult {
+        @SerializedName("list")
+        public List<TxSendCoinResult> items;
+    }
+
+    @Parcel
+    public static class TxEditCandidateResult {
+        @SerializedName("list")
+        public List<CandidateEditResult> items;
+    }
+
+    //@TODO standard! write to Lashin to fix this
+    @Parcel
+    public static class CandidateEditResult {
+        @SerializedName("reward_address")
+        public MinterAddress rewardAddress;
+        @SerializedName("owner_address")
+        public MinterAddress ownerAddress;
+        @SerializedName("pub_key")
+        public MinterPublicKey pubKey;
     }
 }

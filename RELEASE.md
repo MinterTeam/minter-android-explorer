@@ -1,5 +1,12 @@
 # Release notes
 
+## 0.2.8
+ - BREAKING:
+   - new code type in error result, was enum, now it's a integer
+ - New transaction types
+ - Updated SDK versions
+ - Added additional fields to coin info result
+
 ## 0.2.7
  - Updated blockchain SDK dependency with new fields
 

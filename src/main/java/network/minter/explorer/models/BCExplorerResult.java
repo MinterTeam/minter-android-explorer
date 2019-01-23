@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -65,7 +65,7 @@ public class BCExplorerResult<Result> {
             return BCResult.ResultCode.Success;
         }
 
-        return error.code;
+        return BCResult.ResultCode.findByCode(error.code);
     }
 
     public boolean isSuccess() {
@@ -75,7 +75,19 @@ public class BCExplorerResult<Result> {
     public static class ErrorResult {
         @SerializedName("log")
         public String message;
-        public BCResult.ResultCode code = BCResult.ResultCode.Success;
+        public int code;
+
+        public BCResult.ResultCode getResultCode() {
+            return BCResult.ResultCode.findByCode(code);
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getMessage() {
+            return message;
+        }
 
         /**
          * Not null only on send transaction error caused by insufficient funds

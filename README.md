@@ -24,7 +24,7 @@ project build.gradle
 ```groovy
 
 ext {
-    minterExplorerSDK = "0.2.7"
+    minterExplorerSDK = "0.2.8"
 }
 
 dependencies {

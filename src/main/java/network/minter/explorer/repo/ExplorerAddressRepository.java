@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -37,6 +37,7 @@ import network.minter.core.internal.data.DataRepository;
 import network.minter.explorer.api.ExplorerAddressEndpoint;
 import network.minter.explorer.api.converters.ExplorerAddressDataDeserializer;
 import network.minter.explorer.models.AddressData;
+import network.minter.explorer.models.BCExplorerResult;
 import network.minter.explorer.models.BalanceChannel;
 import network.minter.explorer.models.ExpResult;
 import retrofit2.Call;
@@ -60,7 +61,7 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @param addresses list of minter addresses
      * @return Retrofit call
      */
-    public Call<ExpResult<List<AddressData>>> getAddressesData(List<MinterAddress> addresses) {
+    public Call<BCExplorerResult<List<AddressData>>> getAddressesData(List<MinterAddress> addresses) {
         final List<String> sAddresses = new ArrayList<>(addresses.size());
         for (MinterAddress address : addresses) {
             sAddresses.add(address.toString());
@@ -74,7 +75,7 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @param address minter address
      * @return Retrofit call
      */
-    public Call<ExpResult<AddressData>> getAddressData(MinterAddress address) {
+    public Call<BCExplorerResult<AddressData>> getAddressData(MinterAddress address) {
         return getAddressData(address.toString());
     }
 
@@ -83,7 +84,7 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @param address string minter address WITH prefix "Mx"
      * @return Retrofit call
      */
-    public Call<ExpResult<AddressData>> getAddressData(String address) {
+    public Call<BCExplorerResult<AddressData>> getAddressData(String address) {
         return getInstantService().balance(address);
     }
 

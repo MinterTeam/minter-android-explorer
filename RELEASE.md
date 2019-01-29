@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.2.9
+ - BREAKING:
+    - BCExplorerResult instead of ExpResult for those methods what are getting balance  
+
 ## 0.2.8
  - BREAKING:
    - new code type in error result, was enum, now it's a integer

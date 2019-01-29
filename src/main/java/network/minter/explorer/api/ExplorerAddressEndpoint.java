@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -29,6 +29,7 @@ package network.minter.explorer.api;
 import java.util.List;
 
 import network.minter.explorer.models.AddressData;
+import network.minter.explorer.models.BCExplorerResult;
 import network.minter.explorer.models.BalanceChannel;
 import network.minter.explorer.models.ExpResult;
 import retrofit2.Call;
@@ -49,7 +50,7 @@ public interface ExplorerAddressEndpoint {
 	 * @return Retrofit call with {@link ExpResult}
 	 */
 	@GET("v1/address/{address}")
-    Call<ExpResult<AddressData>> balance(@Path("address") String address);
+    Call<BCExplorerResult<AddressData>> balance(@Path("address") String address);
 
 	/**
 	 * Resolve balance by multiple addresses
@@ -58,7 +59,7 @@ public interface ExplorerAddressEndpoint {
 	 * @return Retrofit call with {@link ExpResult}
 	 */
 	@GET("v1/address")
-    Call<ExpResult<List<AddressData>>> balanceMultiple(@Query(value = "addresses[]", encoded = true) List<String> addresses);
+    Call<BCExplorerResult<List<AddressData>>> balanceMultiple(@Query(value = "addresses[]", encoded = true) List<String> addresses);
 
 	/**
 	 * Get WebSocket connection data

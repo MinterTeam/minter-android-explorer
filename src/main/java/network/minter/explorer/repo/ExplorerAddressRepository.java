@@ -38,10 +38,11 @@ import network.minter.explorer.api.ExplorerAddressEndpoint;
 import network.minter.explorer.api.converters.ExplorerAddressDataDeserializer;
 import network.minter.explorer.models.AddressData;
 import network.minter.explorer.models.BCExplorerResult;
-import network.minter.explorer.models.BalanceChannel;
+import network.minter.explorer.models.DelegationInfo;
 import network.minter.explorer.models.ExpResult;
 import retrofit2.Call;
 
+import static network.minter.core.internal.common.Preconditions.checkArgument;
 import static network.minter.core.internal.common.Preconditions.checkNotNull;
 
 
@@ -62,10 +63,18 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @return Retrofit call
      */
     public Call<BCExplorerResult<List<AddressData>>> getAddressesData(List<MinterAddress> addresses) {
+        checkNotNull(addresses, "List can't be null");
+        checkArgument(addresses.size() > 0, "List can't be empty");
+
         final List<String> sAddresses = new ArrayList<>(addresses.size());
         for (MinterAddress address : addresses) {
+            if (address == null) {
+                continue;
+            }
             sAddresses.add(address.toString());
         }
+
+        checkArgument(sAddresses.size() > 0, "List contains all null items");
 
         return getInstantService(this).balanceMultiple(sAddresses);
     }
@@ -89,24 +98,14 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
     }
 
     /**
-     * Get websocket balance update notification
-     * @param addresses minter address to notify about
-     * @param userId optional unique user id
-     * @return Retrofit call
-     * @deprecated Use {@link ExplorerSettingsRepository#getBalanceChannel(List, String)}
+     * Get list of delegated coins to validators
+     * @param address
+     * @return
      */
-    @Deprecated
-    public Call<ExpResult<BalanceChannel>> getBalanceChannel(@Nonnull List<MinterAddress> addresses, String userId) {
-        checkNotNull(addresses, "Addresses can't be null");
-        final List<String> addressStrings = new ArrayList<>(addresses.size());
-        for (MinterAddress address : addresses) {
-            addressStrings.add(address.toString());
-        }
-        if (userId == null) {
-            return getInstantService().getBalanceChannel(addressStrings);
-        }
+    public Call<ExpResult<List<DelegationInfo>>> getDelegations(MinterAddress address) {
+        checkNotNull(address, "Address can't be null");
 
-        return getInstantService().getBalanceChannel(addressStrings, userId);
+        return getInstantService().getDelegationsForAddress(address.toString());
     }
 
     @Nonnull

@@ -41,7 +41,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import network.minter.core.crypto.BytesData;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.crypto.MinterCheck;
 import network.minter.core.crypto.MinterHash;
@@ -151,6 +150,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         return payload;
     }
 
+    @Deprecated
     public String getAvatarUrl() {
         return avatarUrl;
     }
@@ -180,6 +180,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         return (T) data;
     }
 
+    @Deprecated
     public String getAvatar() {
         return avatarUrl;
     }
@@ -263,7 +264,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         @SerializedName("initial_reserve")
         public BigDecimal initialReserve;
         @SerializedName("constant_reserve_ratio")
-        public BigDecimal constantReserveRatio;
+        public int constantReserveRatio;
 
         public String getName() {
             return name;
@@ -285,7 +286,10 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
             return initialReserve;
         }
 
-        public BigDecimal getConstantReserveRatio() {
+        /**
+         * @return Percent
+         */
+        public int getConstantReserveRatio() {
             return constantReserveRatio;
         }
     }
@@ -341,7 +345,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         public MinterAddress address;
         @SerializedName("pub_key")
         public MinterPublicKey publicKey;
-        public BigDecimal commission;
+        public int commission;
         public String coin;
         public BigDecimal stake;
 
@@ -353,10 +357,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
             return publicKey;
         }
 
-        public BigDecimal getCommission() {
-            if (commission == null) {
-                commission = BigDecimal.ZERO;
-            }
+        public int getCommission() {
             return commission;
         }
 
@@ -421,19 +422,59 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
 
     /**
      * Data model for redeeming checks transactions
+     *
+     * "check": {
+     *           "coin": "MNT",
+     *           "nonce": 1,
+     *           "value": "0.27442917",
+     *           "sender": "Mx7633980c000139dd3bd24a3f54e06474fa941e16",
+     *           "due_block": 999999999
+     *         },
+     *         "raw_check": "f8a001843b9ac9ff8a4d4e54000000000000008803cef7e04c59c51cb841654259796e1a58adfe2e98db69c24cafdf7e98e68df069194a591d0ad0c12970499d144385c10bf55f6dc350639f7db00e33d4959796f27c22084d4b21b2135b011ba074c550975b9c7af76d423621d0ad0357145c41026fefb79a4a6efbcf16d9a919a066b0e6ec56ef3d9ea9ef0bbf30fe01d5bf9316df33fddbc97d43b6120b14ebc4",
+     *         "from": "Mx7633980c000139dd3bd24a3f54e06474fa941e16"
      */
     @Parcel
     public static class TxRedeemCheckResult {
         @SerializedName("raw_check")
         public MinterCheck rawCheck;
-        public BytesData proof;
+        public CheckData check;
 
-        public BytesData getProof() {
-            return proof;
+        public CheckData getCheck() {
+            return check;
         }
 
         public MinterCheck getRawCheck() {
             return rawCheck;
+        }
+    }
+
+    @Parcel
+    public static class CheckData {
+        public String coin;
+        public BigInteger nonce;
+        public BigDecimal value;
+        public MinterAddress sender;
+        @SerializedName("due_block")
+        public BigInteger dueBlock;
+
+        public String getCoin() {
+            return coin;
+        }
+
+        public BigInteger getNonce() {
+            return nonce;
+        }
+
+        public MinterAddress getSender() {
+            return sender;
+        }
+
+        public BigInteger getDueBlock() {
+            return dueBlock;
+        }
+
+        public BigDecimal getValue() {
+            return value;
         }
     }
 

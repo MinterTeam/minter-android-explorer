@@ -1,0 +1,19 @@
+{
+  "data": {
+    "txCount": "3",
+    "coins": [
+      {
+        "coin": "PROBLKCH01",
+        "amount": "7440.111883339234899552",
+        "baseCoinAmount": "7440.111883339234899552",
+        "usdAmount": 520.8078318337465
+      },
+      {
+        "coin": "MNT",
+        "amount": "96.880000000000000000",
+        "baseCoinAmount": "96.880000000000000000",
+        "usdAmount": 6.7816
+      }
+    ]
+  }
+}

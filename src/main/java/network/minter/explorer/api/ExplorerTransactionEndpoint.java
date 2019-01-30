@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -53,7 +53,7 @@ public interface ExplorerTransactionEndpoint {
      * @return
      */
     @GET("v1/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@QueryMap Map<String, String> query);
+    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@QueryMap Map<String, Object> query);
 
     @GET("v1/transactions")
     Call<ExpResult<List<HistoryTransaction>>> getTransactions(@Query(value = "addresses[]", encoded = true) List<String> addresses);

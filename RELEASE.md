@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.3.0
+ - Repositories tests
+ - Android-less code
+
 ## 0.2.9
  - BREAKING:
     - BCExplorerResult instead of ExpResult for those methods what are getting balance  

@@ -41,7 +41,7 @@ public class ExpResult<Result> {
     public Object links;
     public Meta meta;
     public int code;
-    public String error;
+    public BCExplorerResult.ErrorResult error;
 
     public Meta getMeta() {
         if (meta == null) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -26,8 +26,6 @@
 
 package network.minter.explorer;
 
-import android.os.Build;
-
 import com.google.gson.GsonBuilder;
 
 import java.math.BigInteger;
@@ -45,10 +43,10 @@ import network.minter.core.internal.api.converters.MinterCheckDeserializer;
 import network.minter.core.internal.api.converters.MinterHashDeserializer;
 import network.minter.core.internal.api.converters.MinterPublicKeyDeserializer;
 import network.minter.core.internal.log.Mint;
+import network.minter.core.internal.log.StdLogger;
 import network.minter.core.internal.log.TimberLogger;
 import network.minter.explorer.repo.ExplorerAddressRepository;
 import network.minter.explorer.repo.ExplorerCoinsRepository;
-import network.minter.explorer.repo.ExplorerSettingsRepository;
 import network.minter.explorer.repo.ExplorerTransactionRepository;
 import okhttp3.HttpUrl;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -70,7 +68,7 @@ public class MinterExplorerApi {
         String format = "yyyy-MM-dd HH:mm:ssX";
         try {
             Class.forName("android.os.Build");
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N) {
                 format = "yyyy-MM-dd HH:mm:ssZ";
             }
         } catch (ClassNotFoundException ignore) {
@@ -83,7 +81,6 @@ public class MinterExplorerApi {
     private ExplorerTransactionRepository mTransactionRepository;
     private ExplorerAddressRepository mAddressRepository;
     private ExplorerCoinsRepository mCoinsRepository;
-    private ExplorerSettingsRepository mSettingsRepository;
 
     private MinterExplorerApi() {
         this(BASE_API_URL);
@@ -123,8 +120,28 @@ public class MinterExplorerApi {
         INSTANCE = new MinterExplorerApi(baseExplorerApiUrl);
         INSTANCE.mApiService.setDebug(debug);
 
+        // we should run this at any teapot
         if (debug) {
-            Mint.brew(logger);
+            boolean isAndroid = true;
+            try {
+                Class.forName("android.util.Log");
+
+                try {
+                    // in case mockable android classes
+                    android.util.Log.d("test", "test");
+                } catch (RuntimeException e) {
+                    isAndroid = false;
+                }
+            } catch (ClassNotFoundException e) {
+                isAndroid = false;
+            }
+
+            if (!isAndroid && logger instanceof TimberLogger) {
+                Mint.brew(new StdLogger());
+            } else {
+                Mint.brew(logger);
+            }
+
             INSTANCE.mApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
         }
     }
@@ -182,17 +199,6 @@ public class MinterExplorerApi {
         }
 
         return mTransactionRepository;
-    }
-
-    /**
-     * @return Settings api repository
-     */
-    public ExplorerSettingsRepository settings() {
-        if (mSettingsRepository == null) {
-            mSettingsRepository = new ExplorerSettingsRepository(mApiService);
-        }
-
-        return mSettingsRepository;
     }
 
     /**

@@ -42,7 +42,7 @@ public class BCExplorerResult<Result> {
     public int statusCode = 200;
     @SerializedName("data")
     public Result result;
-    public ErrorResult error;
+    public BCResult.ErrorResult error;
 
     public static <T> BCExplorerResult<T> copyError(BCExplorerResult<?> another) {
         BCExplorerResult<T> out = new BCExplorerResult<>();
@@ -68,14 +68,20 @@ public class BCExplorerResult<Result> {
         return BCResult.ResultCode.findByCode(error.code);
     }
 
+    @Deprecated
     public boolean isSuccess() {
+        return isOk();
+    }
+
+    public boolean isOk() {
         return statusCode == 200 && getErrorCode() == BCResult.ResultCode.Success;
     }
 
     public static class ErrorResult {
-        @SerializedName("log")
+        //        @SerializedName("log")
         public String message;
         public int code;
+        public String data;
 
         public BCResult.ResultCode getResultCode() {
             return BCResult.ResultCode.findByCode(code);

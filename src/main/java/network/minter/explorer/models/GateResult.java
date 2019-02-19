@@ -28,28 +28,18 @@ package network.minter.explorer.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.math.BigDecimal;
-
-import javax.annotation.Nullable;
-
-import network.minter.blockchain.models.BCResult;
-
 /**
- * minter-android-explorer. 2018
+ * minter-android-explorer. 2019
+ *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-public class BCExplorerResult<Result> {
-    public int statusCode = 200;
-    @SerializedName("data")
-    public Result result;
+public class GateResult<Result> {
+
+    public Result data;
     public ErrorResult error;
 
-    public static <T> BCExplorerResult<T> copyError(BCExplorerResult<?> another) {
-        BCExplorerResult<T> out = new BCExplorerResult<>();
-        out.statusCode = another.statusCode;
-        out.error = another.error;
-
-        return out;
+    public boolean isOk() {
+        return error == null;
     }
 
     public String getMessage() {
@@ -60,51 +50,10 @@ public class BCExplorerResult<Result> {
         return error.message;
     }
 
-    public BCResult.ResultCode getErrorCode() {
-        if (error == null) {
-            return BCResult.ResultCode.Success;
-        }
-
-        return BCResult.ResultCode.findByCode(error.code);
-    }
-
-    @Deprecated
-    public boolean isSuccess() {
-        return isOk();
-    }
-
-    public boolean isOk() {
-        return statusCode == 200 && getErrorCode() == BCResult.ResultCode.Success;
-    }
-
     public static class ErrorResult {
+        @SerializedName("code")
+        public int statusCode;
         @SerializedName("log")
         public String message;
-        public int code;
-        public String data;
-
-        public BCResult.ResultCode getResultCode() {
-            return BCResult.ResultCode.findByCode(code);
-        }
-
-        public int getCode() {
-            return code;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        /**
-         * Not null only on send transaction error caused by insufficient funds
-         */
-        @Nullable
-        public String coin;
-        /**
-         * The same
-         */
-        @Nullable
-        public BigDecimal value;
     }
-
 }

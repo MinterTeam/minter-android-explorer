@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.3.1
+ - Added temporary "Gate" repository to get min gas price directly from gate. Soon it will be separated sdk.
+
 ## 0.3.0
  - Repositories tests
  - Android-less code

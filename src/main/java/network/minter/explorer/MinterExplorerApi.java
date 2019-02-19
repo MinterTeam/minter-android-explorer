@@ -48,6 +48,7 @@ import network.minter.core.internal.log.TimberLogger;
 import network.minter.explorer.repo.ExplorerAddressRepository;
 import network.minter.explorer.repo.ExplorerCoinsRepository;
 import network.minter.explorer.repo.ExplorerTransactionRepository;
+import network.minter.explorer.repo.GateGasRepository;
 import okhttp3.HttpUrl;
 import okhttp3.logging.HttpLoggingInterceptor;
 
@@ -60,7 +61,9 @@ public class MinterExplorerApi {
     public final static String NET_ID_TESTNET = "odin";
     public final static String NET_ID_TESTNET_WITH_MULTISIG = "dva";
     private final static String BASE_API_URL = BuildConfig.BASE_API_URL;
+    private final static String BASE_GATE_URL = "https://gate.minter.network/api/";
     private final static String DATE_FORMAT;
+
     private static MinterExplorerApi INSTANCE;
 
 
@@ -78,9 +81,11 @@ public class MinterExplorerApi {
     }
 
     private ApiService.Builder mApiService;
+    private ApiService.Builder mGateApiService;
     private ExplorerTransactionRepository mTransactionRepository;
     private ExplorerAddressRepository mAddressRepository;
     private ExplorerCoinsRepository mCoinsRepository;
+    private GateGasRepository mGasRepository;
 
     private MinterExplorerApi() {
         this(BASE_API_URL);
@@ -92,6 +97,12 @@ public class MinterExplorerApi {
         mApiService.addHeader("X-Minter-Client-Name", "MinterAndroid (explorer)");
         mApiService.addHeader("X-Minter-Client-Version", BuildConfig.VERSION_NAME);
         mApiService.setDateFormat(DATE_FORMAT);
+
+        mGateApiService = new ApiService.Builder(BASE_GATE_URL, getGsonBuilder());
+        mGateApiService.addHeader("Content-Type", "application/json");
+        mGateApiService.addHeader("X-Minter-Client-Name", "MinterAndroid (gate)");
+        mGateApiService.addHeader("X-Minter-Client-Version", BuildConfig.VERSION_NAME);
+        mGateApiService.setDateFormat(DATE_FORMAT);
     }
 
     /**
@@ -119,6 +130,7 @@ public class MinterExplorerApi {
 
         INSTANCE = new MinterExplorerApi(baseExplorerApiUrl);
         INSTANCE.mApiService.setDebug(debug);
+        INSTANCE.mGateApiService.setDebug(debug);
 
         // we should run this at any teapot
         if (debug) {
@@ -143,6 +155,7 @@ public class MinterExplorerApi {
             }
 
             INSTANCE.mApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
+            INSTANCE.mGateApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
         }
     }
 
@@ -191,6 +204,19 @@ public class MinterExplorerApi {
     }
 
     /**
+     * Gate gas repository
+     *
+     * @return
+     */
+    public GateGasRepository gas() {
+        if (mGasRepository == null) {
+            mGasRepository = new GateGasRepository(mGateApiService);
+        }
+
+        return mGasRepository;
+    }
+
+    /**
      * @return Transactions api repository
      */
     public ExplorerTransactionRepository transactions() {
@@ -214,6 +240,10 @@ public class MinterExplorerApi {
 
     public ApiService.Builder getApiService() {
         return mApiService;
+    }
+
+    public ApiService.Builder getGateApiService() {
+        return mGateApiService;
     }
 
     /**

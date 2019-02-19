@@ -1,6 +1,7 @@
 /*
- * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2019
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -23,15 +24,13 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorer.models;
+package network.minter.explorer.tests.repo;
 
 /**
- * minter-android-explorer. 2018
- *
- * @author Eduard Maximovich <edward.vstock@gmail.com>
+ * minter-android-explorer. 2019
+ * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-public class BalanceChannel {
-	public String channel;
-	public long timestamp;
-	public String token;
+public class TxQuerySearchTest {
+
+
 }

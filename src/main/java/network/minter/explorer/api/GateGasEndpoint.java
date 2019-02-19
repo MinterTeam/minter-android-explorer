@@ -1,6 +1,7 @@
 /*
- * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2019
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -23,20 +24,20 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorer;
+package network.minter.explorer.api;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import network.minter.explorer.models.GasValue;
+import network.minter.explorer.models.GateResult;
+import retrofit2.Call;
+import retrofit2.http.GET;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * minter-android-explorer. 2019
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-public class ExampleUnitTest {
-    @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
-    }
+public interface GateGasEndpoint {
+
+    @GET("v1/min-gas")
+    Call<GateResult<GasValue>> getMinGas();
 }

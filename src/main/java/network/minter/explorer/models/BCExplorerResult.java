@@ -68,7 +68,12 @@ public class BCExplorerResult<Result> {
         return BCResult.ResultCode.findByCode(error.code);
     }
 
+    @Deprecated
     public boolean isSuccess() {
+        return isOk();
+    }
+
+    public boolean isOk() {
         return statusCode == 200 && getErrorCode() == BCResult.ResultCode.Success;
     }
 
@@ -76,6 +81,7 @@ public class BCExplorerResult<Result> {
         @SerializedName("log")
         public String message;
         public int code;
+        public String data;
 
         public BCResult.ResultCode getResultCode() {
             return BCResult.ResultCode.findByCode(code);

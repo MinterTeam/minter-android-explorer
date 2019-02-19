@@ -1,7 +1,11 @@
 -dontobfuscate
+-verbose
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+-keepattributes LineNumberTable
 
 -keep public class network.minter.explorer.** { *; }
--keep public class network.minter.explorer.MinterExplorerApi { *; }
+
 
 # Parceler library
 -keep interface org.parceler.Parcel

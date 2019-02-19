@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -24,37 +24,15 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorer.api;
+package network.minter.explorer.models;
 
-import java.util.List;
-
-import network.minter.explorer.models.BalanceChannel;
-import network.minter.explorer.models.ExpResult;
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
+import java.math.BigInteger;
 
 /**
- * minter-android-explorer. 2018
- * @author Eduard Maximovich [edward.vstock[at]gmail.com]
+ * minter-android-explorer. 2019
+ *
+ * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-public interface ExplorerSettingsEndpoint {
-
-    /**
-     * Get WebSocket connection data
-     * @param addresses
-     * @param user For statistics some user id
-     * @return Retrofit call with {@link ExpResult}
-     */
-    @GET("v1/settings/get-balance-channel")
-    Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query(value = "addresses[]", encoded = true) List<String> addresses, @Query("user") String user);
-
-    /**
-     * Get WebSocket connection data
-     * @param addresses
-     * @return Retrofit call with {@link ExpResult}
-     */
-    @GET("v1/address/get-balance-channel")
-    Call<ExpResult<BalanceChannel>> getBalanceChannel(@Query(value = "addresses[]", encoded = true) List<String> addresses);
-
+public class GasValue {
+    public BigInteger gas;
 }

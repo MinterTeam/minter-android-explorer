@@ -1,0 +1,18 @@
+{
+  "data": [
+    {
+      "symbol": "MNT",
+      "name": "Minter Coin",
+      "crr": 0,
+      "reserveBalance": "0.000000000000000000",
+      "volume": "0.000000000000000000"
+    },
+    {
+      "symbol": "CINEMACOIN",
+      "name": "CINEMACOIN",
+      "crr": 10,
+      "reserveBalance": "1511.999556634186184823",
+      "volume": "104219.946359791633930953"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -37,6 +37,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+import network.minter.core.crypto.MinterAddress;
 import network.minter.explorer.models.AddressData;
 
 /**
@@ -58,6 +59,10 @@ public class ExplorerAddressDataDeserializer implements JsonDeserializer<Address
         AddressData data = new AddressData();
 
         JsonObject root = json.getAsJsonObject();
+
+        if (root.has("address") && !root.get("address").isJsonNull()) {
+            data.address = new MinterAddress(root.get("address").getAsString());
+        }
 
         if (root.has(COINS_BALANCE)) {
             JsonArray coins = root.getAsJsonArray(COINS_BALANCE);

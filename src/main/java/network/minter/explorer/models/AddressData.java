@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -35,13 +35,16 @@ import java.util.Map;
 import network.minter.core.MinterSDK;
 import network.minter.core.crypto.MinterAddress;
 
+import static com.google.common.base.MoreObjects.firstNonNull;
+import static java.math.BigDecimal.ZERO;
+
 /**
  * minter-android-explorer. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 @Parcel
 public class AddressData {
+
     public Map<String, CoinBalance> coins;
     public long txCount;
     // not null only if get list of balances by addresses
@@ -51,47 +54,52 @@ public class AddressData {
         coins = new HashMap<>();
     }
 
-    public void fillDefaultsOnEmpty() {
+    public Map<String, CoinBalance> getCoins() {
         if (coins == null) {
-            coins = new HashMap<>(1);
+            coins = new HashMap<>();
         }
-        if (coins.isEmpty()) {
-            coins.put(MinterSDK.DEFAULT_COIN, new CoinBalance(MinterSDK.DEFAULT_COIN, new BigDecimal(0), new BigDecimal(0)));
+
+        return coins;
+    }
+
+    public void fillDefaultsOnEmpty() {
+        if (getCoins().isEmpty()) {
+            coins.put(MinterSDK.DEFAULT_COIN, new CoinBalance(MinterSDK.DEFAULT_COIN, ZERO, ZERO));
         }
     }
 
     public BigDecimal getTotalBalance() {
-        if (coins == null || coins.isEmpty()) {
-            return new BigDecimal(0);
+        if (getCoins().isEmpty()) {
+            return ZERO;
         }
 
         // @TODO this is not so valid data for now, explorer doesn't know real value in base coin
-        BigDecimal totalOut = new BigDecimal(0.0f);
-        for (Map.Entry<String, CoinBalance> entry : coins.entrySet()) {
+        BigDecimal totalOut = ZERO;
+        for (Map.Entry<String, CoinBalance> entry : getCoins().entrySet()) {
             totalOut = totalOut.add(entry.getValue().getBaseCoinAmount());
         }
 
         return totalOut;
     }
 
-	@Parcel
-	public static class CoinBalance {
-		public String coin;
-		public BigDecimal amount;
-		public BigDecimal usdAmount;
-		public BigDecimal baseCoinAmount;
+    @Parcel
+    public static class CoinBalance {
+        public String coin;
+        public BigDecimal amount;
+        public BigDecimal usdAmount;
+        public BigDecimal baseCoinAmount;
 
-		public CoinBalance() {
-		}
+        public CoinBalance() {
+        }
 
-		public CoinBalance(String coin, BigDecimal value, BigDecimal valueUsd) {
-			this.coin = coin;
-			this.amount = value;
-			this.usdAmount = valueUsd;
-		}
+        public CoinBalance(String coin, BigDecimal value, BigDecimal valueUsd) {
+            this.coin = coin;
+            this.amount = value;
+            this.usdAmount = valueUsd;
+        }
 
         public BigDecimal getBaseCoinAmount() {
-            return baseCoinAmount;
+            return firstNonNull(baseCoinAmount, ZERO);
         }
 
         public String getCoin() {
@@ -99,14 +107,14 @@ public class AddressData {
                 return null;
             }
             return coin.toUpperCase();
-		}
+        }
 
-		public BigDecimal getAmount() {
-			return amount;
-		}
+        public BigDecimal getAmount() {
+            return firstNonNull(amount, ZERO);
+        }
 
-		public BigDecimal getUsdAmount() {
-			return usdAmount;
-		}
-	}
+        public BigDecimal getUsdAmount() {
+            return firstNonNull(usdAmount, ZERO);
+        }
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -48,6 +48,7 @@ import network.minter.explorer.models.ExpResult;
 import network.minter.explorer.models.HistoryTransaction;
 import retrofit2.Call;
 
+import static network.minter.core.internal.common.Preconditions.checkArgument;
 import static network.minter.core.internal.common.Preconditions.checkNotNull;
 import static network.minter.core.internal.helpers.CollectionsHelper.asMap;
 
@@ -58,9 +59,20 @@ import static network.minter.core.internal.helpers.CollectionsHelper.asMap;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  * @link <a href="https://testnet.explorer.minter.network/help/index.html#operations-Transactions-get_api_v1_transactions">swagger</a>
  */
+@SuppressWarnings("ConstantConditions")
 public class ExplorerTransactionRepository extends DataRepository<ExplorerTransactionEndpoint> implements DataRepository.Configurator {
     public ExplorerTransactionRepository(@Nonnull ApiService.Builder apiBuilder) {
         super(apiBuilder);
+    }
+
+    /**
+     * Get transactions list with filter query
+     * @param builder
+     * @return
+     * @see TxSearchQuery
+     */
+    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(TxSearchQuery builder) {
+        return getInstantService().getTransactions(builder.build());
     }
 
     /**
@@ -73,7 +85,8 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * @link https://explorer.beta.minter.network/help/index.html#operations-Transactions-get_api_v1_transactions
      */
     public Call<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address) {
-        Map<String, String> query = new HashMap<>();
+        checkArgument(address != null, "Address can't be null");
+        Map<String, Object> query = new HashMap<>();
         query.put("address", address.toString());
         return getInstantService().getTransactions(query);
     }
@@ -94,6 +107,9 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * @return Retrofit call
      */
     public Call<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses, long page) {
+        checkArgument(addresses != null, "Address list can't be null");
+        checkArgument(addresses.size() > 0, "Address list can't be empty");
+
         List<String> out = new ArrayList<>(addresses.size());
         for (MinterAddress address : addresses) {
             out.add(address.toString());
@@ -109,6 +125,9 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * @return Retrofit call
      */
     public Call<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses, long page, int limit) {
+        checkArgument(addresses != null, "Address list can't be null");
+        checkArgument(addresses.size() > 0, "Address list can't be empty");
+
         List<String> out = new ArrayList<>(addresses.size());
         for (MinterAddress address : addresses) {
             out.add(address.toString());
@@ -117,9 +136,9 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
         return getInstantService().getTransactions(out, page, limit);
     }
 
-    public Call<BCExplorerResult<CountableData>> getTransactionCount(@Nonnull MinterAddress key) {
-        checkNotNull(key, "Public key required!");
-        return getTransactionCount(key.toString());
+    public Call<BCExplorerResult<CountableData>> getTransactionCount(@Nonnull MinterAddress address) {
+        checkArgument(address != null, "Address can't be null");
+        return getTransactionCount(address.toString());
     }
 
     /**
@@ -138,6 +157,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * @see TransactionSendResult
      */
     public Call<BCExplorerResult<TransactionSendResult>> sendTransaction(@Nonnull TransactionSign transactionSign) {
+        checkArgument(transactionSign != null && transactionSign.getTxSign() != null, "Transaction signature required!");
         return getInstantService().sendTransaction(
                 asMap("transaction", transactionSign.getTxSign())
         );
@@ -150,6 +170,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * @see network.minter.blockchain.models.operational.Transaction#sign(PrivateKey)
      */
     public Call<BCExplorerResult<TransactionCommissionValue>> getTransactionCommission(TransactionSign sign) {
+        checkArgument(sign != null, "Transaction signature required!");
         return getTransactionCommission(sign.getTxSign());
     }
 
@@ -159,6 +180,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * @return
      */
     public Call<BCExplorerResult<TransactionCommissionValue>> getTransactionCommission(String sign) {
+        checkArgument(sign != null, "Transaction signature required!");
         return getInstantService().getTxCommission(sign);
     }
 
@@ -172,4 +194,5 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
     protected Class<ExplorerTransactionEndpoint> getServiceClass() {
         return ExplorerTransactionEndpoint.class;
     }
+
 }

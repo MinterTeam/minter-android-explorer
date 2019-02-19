@@ -24,48 +24,22 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorer.api;
+package network.minter.explorer.models;
 
-import java.util.List;
+import com.google.gson.annotations.SerializedName;
 
-import network.minter.explorer.models.AddressData;
-import network.minter.explorer.models.BCExplorerResult;
-import network.minter.explorer.models.DelegationInfo;
-import network.minter.explorer.models.ExpResult;
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
+import java.math.BigDecimal;
+
+import network.minter.core.crypto.MinterPublicKey;
 
 /**
- * minter-android-explorer. 2018
- *
- * @author Eduard Maximovich <edward.vstock@gmail.com>
+ * minter-android-explorer. 2019
+ * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-public interface ExplorerAddressEndpoint {
-	/**
-	 * Resolve balance by address
-	 *
-	 * @param address
-	 * @return Retrofit call with {@link ExpResult}
-	 */
-	@GET("v1/address/{address}")
-    Call<BCExplorerResult<AddressData>> balance(@Path("address") String address);
+public class DelegationInfo {
 
-	/**
-	 * Resolve balance by multiple addresses
-	 *
-	 * @param addresses
-	 * @return Retrofit call with {@link ExpResult}
-	 */
-	@GET("v1/address")
-    Call<BCExplorerResult<List<AddressData>>> balanceMultiple(@Query(value = "addresses[]", encoded = true) List<String> addresses);
-
-    /**
-     * List of delegated validators
-     * @param address
-     * @return
-     */
-    @GET("v1/address/delegations/{address}")
-    Call<ExpResult<List<DelegationInfo>>> getDelegationsForAddress(@Path("address") String address);
+    public String coin;
+    @SerializedName("pub_key")
+    public MinterPublicKey pubKey;
+    public BigDecimal value;
 }

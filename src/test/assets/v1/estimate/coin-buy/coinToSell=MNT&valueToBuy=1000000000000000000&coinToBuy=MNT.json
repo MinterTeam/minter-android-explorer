@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": -32603,
+    "message": "Internal error",
+    "data": "\"From\" coin equals to \"to\" coin"
+  }
+}

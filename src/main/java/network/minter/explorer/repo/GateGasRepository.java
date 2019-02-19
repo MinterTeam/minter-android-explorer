@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2019
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -26,52 +26,35 @@
 
 package network.minter.explorer.repo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Nonnull;
 
-import network.minter.core.crypto.MinterAddress;
 import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.data.DataRepository;
-import network.minter.explorer.api.ExplorerSettingsEndpoint;
-import network.minter.explorer.models.BalanceChannel;
-import network.minter.explorer.models.ExpResult;
+import network.minter.explorer.api.GateGasEndpoint;
+import network.minter.explorer.models.GasValue;
+import network.minter.explorer.models.GateResult;
 import retrofit2.Call;
 
-import static network.minter.core.internal.common.Preconditions.checkNotNull;
-
 /**
- * minter-android-explorer. 2018
- * @author Eduard Maximovich [edward.vstock[at]gmail.com]
+ * minter-android-explorer. 2019
+ *
+ * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-public class ExplorerSettingsRepository extends DataRepository<ExplorerSettingsEndpoint> {
-    public ExplorerSettingsRepository(@Nonnull ApiService.Builder apiBuilder) {
+public class GateGasRepository extends DataRepository<GateGasEndpoint> {
+    public GateGasRepository(@Nonnull ApiService.Builder apiBuilder) {
         super(apiBuilder);
     }
 
     /**
-     * Get websocket balance update notification
-     * @param addresses minter address to notify about
-     * @param userId optional unique user id
-     * @return Retrofit call
+     * @return Minimum required gas price for current block to send valid transaction
      */
-    public Call<ExpResult<BalanceChannel>> getBalanceChannel(@Nonnull List<MinterAddress> addresses, String userId) {
-        checkNotNull(addresses, "Addresses can't be null");
-        final List<String> addressStrings = new ArrayList<>(addresses.size());
-        for (MinterAddress address : addresses) {
-            addressStrings.add(address.toString());
-        }
-        if (userId == null) {
-            return getInstantService().getBalanceChannel(addressStrings);
-        }
-
-        return getInstantService().getBalanceChannel(addressStrings, userId);
+    public Call<GateResult<GasValue>> getMinGas() {
+        return getInstantService().getMinGas();
     }
 
     @Nonnull
     @Override
-    protected Class<ExplorerSettingsEndpoint> getServiceClass() {
-        return ExplorerSettingsEndpoint.class;
+    protected Class<GateGasEndpoint> getServiceClass() {
+        return GateGasEndpoint.class;
     }
 }

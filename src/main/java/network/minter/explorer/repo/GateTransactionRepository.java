@@ -26,52 +26,44 @@
 
 package network.minter.explorer.repo;
 
-import java.util.List;
-
 import javax.annotation.Nonnull;
 
+import network.minter.blockchain.models.TransactionSendResult;
+import network.minter.blockchain.models.operational.TransactionSign;
 import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.data.DataRepository;
-import network.minter.explorer.api.ExplorerCoinsEndpoint;
-import network.minter.explorer.models.CoinItem;
-import network.minter.explorer.models.ExpResult;
+import network.minter.explorer.api.GateTransactionEndpoint;
+import network.minter.explorer.models.GateResult;
 import retrofit2.Call;
 
 import static network.minter.core.internal.common.Preconditions.checkArgument;
+import static network.minter.core.internal.helpers.CollectionsHelper.asMap;
 
 /**
- * minter-android-explorer. 2018
- *
- * @author Eduard Maximovich [edward.vstock[at]gmail.com]
+ * minter-android-explorer. 2019
+ * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-public class ExplorerCoinsRepository extends DataRepository<ExplorerCoinsEndpoint> {
-    public ExplorerCoinsRepository(@Nonnull ApiService.Builder apiBuilder) {
+public class GateTransactionRepository extends DataRepository<GateTransactionEndpoint> {
+    public GateTransactionRepository(@Nonnull ApiService.Builder apiBuilder) {
         super(apiBuilder);
     }
 
     /**
-     * Get list of all known coins in network
-     *
-     * @return Retrofit call
+     * SendCoin transaction
+     * @param transactionSign Raw signed TX
+     * @return Prepared request
+     * @see TransactionSendResult
      */
-    public Call<ExpResult<List<CoinItem>>> getAll() {
-        return getInstantService().getAll();
+    public Call<GateResult<TransactionSendResult>> sendTransaction(@Nonnull TransactionSign transactionSign) {
+        checkArgument(transactionSign != null && transactionSign.getTxSign() != null, "Transaction signature required!");
+        return getInstantService().sendTransaction(
+                asMap("transaction", transactionSign.getTxSign())
+        );
     }
-
-    /**
-     * Search coin by it symbol
-     *
-     * @return Retrofit call
-     */
-    public Call<ExpResult<List<CoinItem>>> search(String symbol) {
-        checkArgument(symbol != null, "Symbol must be not null");
-        return getInstantService().search(symbol.toUpperCase());
-    }
-
 
     @Nonnull
     @Override
-    protected Class<ExplorerCoinsEndpoint> getServiceClass() {
-        return ExplorerCoinsEndpoint.class;
+    protected Class<GateTransactionEndpoint> getServiceClass() {
+        return GateTransactionEndpoint.class;
     }
 }

@@ -1,0 +1,15 @@
+{
+  "data": {
+    "address": "Mx601609b85ee21b9493dffbca1079c74d47b75f2a",
+    "balances": [
+      {
+        "coin": "MNT",
+        "amount": "0.000000000000000000"
+      },
+      {
+        "coin": "PROBLKCH02",
+        "amount": "165695681186885.069475041566967905"
+      }
+    ]
+  }
+}

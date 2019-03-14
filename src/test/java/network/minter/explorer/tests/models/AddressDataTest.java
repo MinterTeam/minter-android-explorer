@@ -54,7 +54,6 @@ public class AddressDataTest {
         AddressData data = new AddressData();
         assertNotNull(data.coins); //empty default
         assertNull(data.address);
-        Assert.assertEquals(0, data.txCount);
         Assert.assertEquals(new BigDecimal("0"), data.getTotalBalance());
 
 
@@ -69,10 +68,6 @@ public class AddressDataTest {
         assertNotNull(def);
         Assert.assertEquals(MinterSDK.DEFAULT_COIN, def.getCoin());
         Assert.assertEquals(def.getCoin(), def.coin);
-        Assert.assertEquals(ZERO, def.getUsdAmount());
-        Assert.assertEquals(def.getUsdAmount(), def.usdAmount);
-        Assert.assertEquals(ZERO, def.getBaseCoinAmount());
-        assertNull(def.baseCoinAmount);
 
         def.coin = null;
         assertNull(def.getCoin());
@@ -89,10 +84,6 @@ public class AddressDataTest {
         assertNotNull(nitem);
         nitem.amount = null;
         Assert.assertEquals(ZERO, nitem.getAmount());
-        nitem.usdAmount = null;
-        Assert.assertEquals(ZERO, nitem.getUsdAmount());
-        nitem.baseCoinAmount = null;
-        Assert.assertEquals(ZERO, nitem.getBaseCoinAmount());
 
         data.coins.clear();
         assertEquals(ZERO, data.getTotalBalance());
@@ -101,7 +92,7 @@ public class AddressDataTest {
         data.coins = null;
         assertNotNull(data.getCoins());
         data.fillDefaultsOnEmpty();
-        data.coins.put("a", new AddressData.CoinBalance(null, null, null));
+        data.coins.put("a", new AddressData.CoinBalance(null, null));
         data.fillDefaultsOnEmpty();
         assertEquals(2, data.getCoins().size());
     }

@@ -28,6 +28,8 @@ package network.minter.explorer.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import network.minter.blockchain.models.BCResult;
+
 /**
  * minter-android-explorer. 2019
  *
@@ -35,8 +37,18 @@ import com.google.gson.annotations.SerializedName;
  */
 public class GateResult<Result> {
 
-    public Result data;
+    @SerializedName("data")
+    public Result result;
     public ErrorResult error;
+    public int statusCode;
+
+    public static <T> GateResult<T> copyError(GateResult<?> another) {
+        GateResult<T> out = new GateResult<>();
+        out.statusCode = another.statusCode;
+        out.error = another.error;
+
+        return out;
+    }
 
     public boolean isOk() {
         return error == null;
@@ -51,9 +63,19 @@ public class GateResult<Result> {
     }
 
     public static class ErrorResult {
-        @SerializedName("code")
-        public int statusCode;
+        public int code;
+
         @SerializedName("log")
         public String message;
+        public String value;
+        public String coin;
+
+        public String getMessage() {
+            return message;
+        }
+
+        public BCResult.ResultCode getResultCode() {
+            return BCResult.ResultCode.findByCode(code);
+        }
     }
 }

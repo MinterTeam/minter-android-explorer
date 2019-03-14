@@ -1,0 +1,17 @@
+{
+  "data": [
+    {
+      "address": "Mx06431236daf96979aa6cdf470a7df26430ad8efb",
+      "balances": [
+        {
+          "coin": "BTCSECURE",
+          "amount": "1.970000000000000000"
+        },
+        {
+          "coin": "MNT",
+          "amount": "899.590579976503661317"
+        }
+      ]
+    }
+  ]
+}

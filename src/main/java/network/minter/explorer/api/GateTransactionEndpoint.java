@@ -26,42 +26,20 @@
 
 package network.minter.explorer.api;
 
-import java.util.List;
 import java.util.Map;
 
-import network.minter.explorer.models.ExpResult;
-import network.minter.explorer.models.HistoryTransaction;
+import network.minter.blockchain.models.TransactionSendResult;
+import network.minter.explorer.models.GateResult;
 import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
-import retrofit2.http.QueryMap;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
 
 /**
- * minter-android-explorer. 2018
- * @author Eduard Maximovich <edward.vstock@gmail.com>
+ * minter-android-explorer. 2019
+ * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-public interface ExplorerTransactionEndpoint {
-    /**
-     * @param query
-     * @return
-     */
-    @GET("v1/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@QueryMap Map<String, Object> query);
+public interface GateTransactionEndpoint {
 
-    @GET("v1/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@Query(value = "addresses[]", encoded = true) List<String> addresses);
-
-    @GET("v1/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@Query(value = "addresses[]", encoded = true) List<String> addresses, @Query("page") long page);
-
-    @GET("v1/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(
-            @Query(value = "addresses[]", encoded = true) List<String> addresses,
-            @Query("page") long page,
-            @Query("perPage") int limit
-    );
-
-    @GET("v1/transaction/{hash}")
-    Call<ExpResult<HistoryTransaction>> findTransactionByHash(@Path("hash") String hash);
+    @POST("v1/transaction/push")
+    Call<GateResult<TransactionSendResult>> sendTransaction(@Body Map<String, String> data);
 }

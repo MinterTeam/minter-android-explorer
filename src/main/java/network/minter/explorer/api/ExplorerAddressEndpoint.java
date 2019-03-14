@@ -49,7 +49,7 @@ public interface ExplorerAddressEndpoint {
 	 * @param address
 	 * @return Retrofit call with {@link ExpResult}
 	 */
-	@GET("v1/address/{address}")
+    @GET("v1/addresses/{address}")
     Call<BCExplorerResult<AddressData>> balance(@Path("address") String address);
 
 	/**
@@ -58,7 +58,7 @@ public interface ExplorerAddressEndpoint {
 	 * @param addresses
 	 * @return Retrofit call with {@link ExpResult}
 	 */
-	@GET("v1/address")
+    @GET("v1/addresses")
     Call<BCExplorerResult<List<AddressData>>> balanceMultiple(@Query(value = "addresses[]", encoded = true) List<String> addresses);
 
     /**
@@ -66,6 +66,6 @@ public interface ExplorerAddressEndpoint {
      * @param address
      * @return
      */
-    @GET("v1/address/delegations/{address}")
+    @GET("v1/addresses/{address}/delegations")
     Call<ExpResult<List<DelegationInfo>>> getDelegationsForAddress(@Path("address") String address);
 }

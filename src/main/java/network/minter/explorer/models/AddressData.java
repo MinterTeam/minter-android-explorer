@@ -40,13 +40,13 @@ import static java.math.BigDecimal.ZERO;
 
 /**
  * minter-android-explorer. 2018
+ *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 @Parcel
 public class AddressData {
 
     public Map<String, CoinBalance> coins;
-    public long txCount;
     // not null only if get list of balances by addresses
     public MinterAddress address;
 
@@ -64,7 +64,7 @@ public class AddressData {
 
     public void fillDefaultsOnEmpty() {
         if (getCoins().isEmpty()) {
-            coins.put(MinterSDK.DEFAULT_COIN, new CoinBalance(MinterSDK.DEFAULT_COIN, ZERO, ZERO));
+            coins.put(MinterSDK.DEFAULT_COIN, new CoinBalance(MinterSDK.DEFAULT_COIN, ZERO));
         }
     }
 
@@ -76,7 +76,7 @@ public class AddressData {
         // @TODO this is not so valid data for now, explorer doesn't know real value in base coin
         BigDecimal totalOut = ZERO;
         for (Map.Entry<String, CoinBalance> entry : getCoins().entrySet()) {
-            totalOut = totalOut.add(entry.getValue().getBaseCoinAmount());
+            totalOut = totalOut.add(entry.getValue().getAmount());
         }
 
         return totalOut;
@@ -86,20 +86,15 @@ public class AddressData {
     public static class CoinBalance {
         public String coin;
         public BigDecimal amount;
-        public BigDecimal usdAmount;
-        public BigDecimal baseCoinAmount;
+//        public BigDecimal usdAmount;
+//        public BigDecimal baseCoinAmount;
 
         public CoinBalance() {
         }
 
-        public CoinBalance(String coin, BigDecimal value, BigDecimal valueUsd) {
+        public CoinBalance(String coin, BigDecimal value) {
             this.coin = coin;
             this.amount = value;
-            this.usdAmount = valueUsd;
-        }
-
-        public BigDecimal getBaseCoinAmount() {
-            return firstNonNull(baseCoinAmount, ZERO);
         }
 
         public String getCoin() {
@@ -111,10 +106,6 @@ public class AddressData {
 
         public BigDecimal getAmount() {
             return firstNonNull(amount, ZERO);
-        }
-
-        public BigDecimal getUsdAmount() {
-            return firstNonNull(usdAmount, ZERO);
         }
     }
 }

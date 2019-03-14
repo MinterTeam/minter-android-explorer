@@ -42,14 +42,14 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import network.minter.core.crypto.MinterAddress;
-import network.minter.core.crypto.MinterCheck;
 import network.minter.core.crypto.MinterHash;
 import network.minter.core.crypto.MinterPublicKey;
 
 /**
  * minter-android-explorer. 2018
- * @author Eduard Maximovich [edward.vstock@gmail.com]
  *
+ * @author Eduard Maximovich [edward.vstock@gmail.com]
+ * <p>
  * Common data model for explorer transaction
  * @link <a href="https://testnet.explorer.minter.network/help/index.html">Swagger API doc</a>
  */
@@ -65,62 +65,11 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
     public MinterAddress from;
     @Transient
     public Object data;
-    public Status status;
     public String payload;
     @Deprecated
     public transient String username;
     @Deprecated
     public transient String avatarUrl;
-
-    public enum Status {
-        @SerializedName("success")
-        Success,
-        @SerializedName("error")
-        Error,
-    }
-
-    public enum Type {
-        @SerializedName("send")
-        Send(TxSendCoinResult.class),
-        @SerializedName("sellCoin")
-        SellCoin(TxConvertCoinResult.class),
-        @SerializedName("sellAllCoin")
-        SellAllCoins(TxConvertCoinResult.class),
-        @SerializedName("buyCoin")
-        BuyCoin(TxConvertCoinResult.class),
-        @SerializedName("createCoin")
-        CreateCoin(TxCreateResult.class),
-        @SerializedName("declareCandidacy")
-        DeclareCandidacy(TxDeclareCandidacyResult.class),
-        @SerializedName("delegate")
-        Delegate(TxDelegateUnbondResult.class),
-        @SerializedName("unbond")
-        Unbond(TxDelegateUnbondResult.class),
-        @SerializedName("redeemCheckData")
-        RedeemCheck(TxRedeemCheckResult.class),
-        @SerializedName("setCandidateOnData")
-        SetCandidateOnline(TxSetCandidateOnlineOfflineResult.class),
-        @SerializedName("setCandidateOffData")
-        SetCandidateOffline(TxSetCandidateOnlineOfflineResult.class),
-        @SerializedName("multiSig")
-        CreateMultisigAddress(TxCreateMultisigResult.class),
-        @SerializedName("multiSend")
-        MultiSend(TxMultisendResult.class),
-        @SerializedName("editCandidate")
-        EditCandidate(TxEditCandidateResult.class),
-
-        ;
-
-        Class<?> mCls;
-
-        Type(Class<?> cls) {
-            mCls = cls;
-        }
-
-        public Class<?> getCls() {
-            return mCls;
-        }
-    }
 
     public Type getType() {
         return type;
@@ -132,10 +81,6 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
 
     public BigInteger getBlock() {
         return block;
-    }
-
-    public Status getStatus() {
-        return status;
     }
 
     public BigInteger getNonce() {
@@ -221,6 +166,56 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         return o.timestamp.compareTo(timestamp);
     }
 
+    public enum Status {
+        @SerializedName("success")
+        Success,
+        @SerializedName("error")
+        Error,
+    }
+
+    public enum Type {
+        @SerializedName("1")
+        Send(TxSendCoinResult.class),
+        @SerializedName("2")
+        SellCoin(TxConvertCoinResult.class),
+        @SerializedName("3")
+        SellAllCoins(TxConvertCoinResult.class),
+        @SerializedName("4")
+        BuyCoin(TxConvertCoinResult.class),
+        @SerializedName("5")
+        CreateCoin(TxCreateResult.class),
+        @SerializedName("6")
+        DeclareCandidacy(TxDeclareCandidacyResult.class),
+        @SerializedName("7")
+        Delegate(TxDelegateUnbondResult.class),
+        @SerializedName("8")
+        Unbond(TxDelegateUnbondResult.class),
+        @SerializedName("9")
+        RedeemCheck(TxRedeemCheckResult.class),
+        @SerializedName("10")
+        SetCandidateOnline(TxSetCandidateOnlineOfflineResult.class),
+        @SerializedName("11")
+        SetCandidateOffline(TxSetCandidateOnlineOfflineResult.class),
+        @SerializedName("12")
+        CreateMultisigAddress(TxCreateMultisigResult.class),
+        @SerializedName("13")
+        MultiSend(TxMultisendResult.class),
+        @SerializedName("14")
+        EditCandidate(TxEditCandidateResult.class),
+
+        ;
+
+        Class<?> mCls;
+
+        Type(Class<?> cls) {
+            mCls = cls;
+        }
+
+        public Class<?> getCls() {
+            return mCls;
+        }
+    }
+
     /**
      * Fallback data class
      */
@@ -234,6 +229,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
     public static class TxSendCoinResult {
         public MinterAddress to;
         public String coin;
+        @SerializedName("value")
         public BigDecimal amount;
 
         public MinterAddress getTo() {
@@ -307,6 +303,18 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         public BigDecimal valueToBuy;
         @SerializedName("value_to_sell")
         public BigDecimal valueToSell;
+        @SerializedName("maximum_value_to_sell")
+        public BigDecimal maxValueToSell;
+        @SerializedName("minimum_value_to_buy")
+        public BigDecimal minValueToBuy;
+
+        public BigDecimal getMinValueToBuy() {
+            return minValueToBuy;
+        }
+
+        public BigDecimal getMaxValueToSell() {
+            return maxValueToSell;
+        }
 
         public String getCoinToSell() {
             if (coinToSell == null) {
@@ -398,6 +406,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         public MinterPublicKey publicKey;
         public String coin;
         public String stake;
+        public String value;
 
         public MinterPublicKey getPublicKey() {
             return publicKey;
@@ -411,6 +420,14 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
             return new BigDecimal(stake);
         }
 
+        public BigDecimal getValue() {
+            if (value == null || value.isEmpty()) {
+                value = "0";
+            }
+
+            return new BigDecimal(value);
+        }
+
         public String getCoin() {
             if (coin == null) {
                 return null;
@@ -422,28 +439,35 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
 
     /**
      * Data model for redeeming checks transactions
-     *
+     * <p>
      * "check": {
-     *           "coin": "MNT",
-     *           "nonce": 1,
-     *           "value": "0.27442917",
-     *           "sender": "Mx7633980c000139dd3bd24a3f54e06474fa941e16",
-     *           "due_block": 999999999
-     *         },
-     *         "raw_check": "f8a001843b9ac9ff8a4d4e54000000000000008803cef7e04c59c51cb841654259796e1a58adfe2e98db69c24cafdf7e98e68df069194a591d0ad0c12970499d144385c10bf55f6dc350639f7db00e33d4959796f27c22084d4b21b2135b011ba074c550975b9c7af76d423621d0ad0357145c41026fefb79a4a6efbcf16d9a919a066b0e6ec56ef3d9ea9ef0bbf30fe01d5bf9316df33fddbc97d43b6120b14ebc4",
-     *         "from": "Mx7633980c000139dd3bd24a3f54e06474fa941e16"
+     * "coin": "MNT",
+     * "nonce": 1,
+     * "value": "0.27442917",
+     * "sender": "Mx7633980c000139dd3bd24a3f54e06474fa941e16",
+     * "due_block": 999999999
+     * },
+     * "raw_check": "f8a001843b9ac9ff8a4d4e54000000000000008803cef7e04c59c51cb841654259796e1a58adfe2e98db69c24cafdf7e98e68df069194a591d0ad0c12970499d144385c10bf55f6dc350639f7db00e33d4959796f27c22084d4b21b2135b011ba074c550975b9c7af76d423621d0ad0357145c41026fefb79a4a6efbcf16d9a919a066b0e6ec56ef3d9ea9ef0bbf30fe01d5bf9316df33fddbc97d43b6120b14ebc4",
+     * "from": "Mx7633980c000139dd3bd24a3f54e06474fa941e16"
      */
     @Parcel
     public static class TxRedeemCheckResult {
         @SerializedName("raw_check")
-        public MinterCheck rawCheck;
+        public String rawCheck;
+        public String proof;
+        @Deprecated
         public CheckData check;
 
+        public String getRawProof() {
+            return proof;
+        }
+
+        @Deprecated
         public CheckData getCheck() {
             return check;
         }
 
-        public MinterCheck getRawCheck() {
+        public String getRawCheck() {
             return rawCheck;
         }
     }
@@ -493,11 +517,28 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
 
     @Parcel
     public static class TxEditCandidateResult {
-        @SerializedName("list")
-        public List<CandidateEditResult> items;
+        @SerializedName("reward_address")
+        public MinterAddress rewardAddress;
+        @SerializedName("owner_address")
+        public MinterAddress ownerAddress;
+        @SerializedName("pub_key")
+        public MinterPublicKey pubKey;
+
+        public MinterPublicKey getPublicKey() {
+            return pubKey;
+        }
+
+        public MinterAddress getRewardAddress() {
+            return rewardAddress;
+        }
+
+        public MinterAddress getOwnerAddress() {
+            return ownerAddress;
+        }
     }
 
     //@TODO standard! write to Lashin to fix this
+    @Deprecated
     @Parcel
     public static class CandidateEditResult {
         @SerializedName("reward_address")

@@ -27,9 +27,16 @@
 package network.minter.explorer;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import network.minter.blockchain.models.operational.Transaction;
 import network.minter.core.crypto.BytesData;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.crypto.MinterCheck;
@@ -48,12 +55,15 @@ import network.minter.core.internal.log.TimberLogger;
 import network.minter.explorer.repo.ExplorerAddressRepository;
 import network.minter.explorer.repo.ExplorerCoinsRepository;
 import network.minter.explorer.repo.ExplorerTransactionRepository;
+import network.minter.explorer.repo.GateEstimateRepository;
 import network.minter.explorer.repo.GateGasRepository;
+import network.minter.explorer.repo.GateTransactionRepository;
 import okhttp3.HttpUrl;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * minter-android-explorer. 2018
+ *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
 public class MinterExplorerApi {
@@ -86,6 +96,8 @@ public class MinterExplorerApi {
     private ExplorerAddressRepository mAddressRepository;
     private ExplorerCoinsRepository mCoinsRepository;
     private GateGasRepository mGasRepository;
+    private GateEstimateRepository mGateEstimateRepo;
+    private GateTransactionRepository mGateTxRepo;
 
     private MinterExplorerApi() {
         this(BASE_API_URL);
@@ -121,6 +133,7 @@ public class MinterExplorerApi {
 
     /**
      * Init method with debug logs flag
+     *
      * @param debug enable debug logs
      */
     public static void initialize(String baseExplorerApiUrl, boolean debug, Mint.Leaf logger) {
@@ -161,6 +174,7 @@ public class MinterExplorerApi {
 
     /**
      * Init method with debug logs flag
+     *
      * @param debug enable debug logs
      */
     public static void initialize(String baseExplorerApiUrl, boolean debug) {
@@ -169,6 +183,7 @@ public class MinterExplorerApi {
 
     /**
      * Init method with debug logs flag
+     *
      * @param debug enable debug logs
      */
     public static void initialize(boolean debug) {
@@ -177,6 +192,7 @@ public class MinterExplorerApi {
 
     /**
      * Init method with debug logs flag
+     *
      * @param debug enable debug logs
      */
     public static void initialize(boolean debug, Mint.Leaf logger) {
@@ -185,6 +201,7 @@ public class MinterExplorerApi {
 
     /**
      * Create new front url using HttpUrl.Builder
+     *
      * @return HttpUrl.Builder
      * @see HttpUrl.Builder
      */
@@ -214,6 +231,22 @@ public class MinterExplorerApi {
         }
 
         return mGasRepository;
+    }
+
+    public GateTransactionRepository transactionsGate() {
+        if (mGateTxRepo == null) {
+            mGateTxRepo = new GateTransactionRepository(mGateApiService);
+        }
+
+        return mGateTxRepo;
+    }
+
+    public GateEstimateRepository estimate() {
+        if (mGateEstimateRepo == null) {
+            mGateEstimateRepo = new GateEstimateRepository(mGateApiService);
+        }
+
+        return mGateEstimateRepo;
     }
 
     /**
@@ -265,8 +298,25 @@ public class MinterExplorerApi {
         out.registerTypeAdapter(MinterHash.class, new MinterHashDeserializer());
         out.registerTypeAdapter(MinterCheck.class, new MinterCheckDeserializer());
         out.registerTypeAdapter(BigInteger.class, new BigIntegerDeserializer());
+        out.registerTypeAdapter(BigDecimal.class, new BigDecimalDeserializer());
         out.registerTypeAdapter(BytesData.class, new BytesDataDeserializer());
 
         return out;
+    }
+
+    private final static class BigDecimalDeserializer implements JsonDeserializer<BigDecimal> {
+
+        @Override
+        public BigDecimal deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            if (json.isJsonNull() || !json.isJsonPrimitive()) {
+                return new BigDecimal("0");
+            }
+
+            if (json.getAsString().isEmpty()) {
+                return new BigDecimal("0").setScale(Transaction.VALUE_MUL_DEC.scale());
+            }
+
+            return new BigDecimal(json.getAsString());
+        }
     }
 }

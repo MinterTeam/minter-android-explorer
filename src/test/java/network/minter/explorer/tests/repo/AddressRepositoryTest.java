@@ -47,7 +47,6 @@ import retrofit2.Response;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -74,38 +73,33 @@ public class AddressRepositoryTest extends BaseRepoTest {
     public void getBalanceForSingleAddress() throws IOException {
         ExplorerAddressRepository addressRepository = MinterExplorerApi.getInstance().address();
 
-        Response<BCExplorerResult<AddressData>> result = addressRepository.getAddressData("Mx06431236daf96979aa6cdf470a7df26430ad8efb").execute();
+        Response<BCExplorerResult<AddressData>> result = addressRepository.getAddressData("Mx601609b85ee21b9493dffbca1079c74d47b75f2a").execute();
 
         checkResponseSuccess(result);
 
         AddressData data = result.body().result;
-        assertEquals(3, data.txCount);
         assertEquals(2, data.coins.size());
-        assertNull(data.address);
+        assertNotNull(data.address);
 
-        assertNotNull(data.coins.get("PROBLKCH01"));
-        AddressData.CoinBalance b1 = data.coins.get("PROBLKCH01");
-        assertEquals("PROBLKCH01", b1.getCoin());
-        assertEquals(new BigDecimal("7440.111883339234899552"), b1.getAmount());
-        assertEquals(new BigDecimal("7440.111883339234899552"), b1.getBaseCoinAmount());
-        assertEquals(new BigDecimal("520.8078318337465"), b1.getUsdAmount());
+        assertNotNull(data.coins.get("PROBLKCH02"));
+        AddressData.CoinBalance b1 = data.coins.get("PROBLKCH02");
+        assertEquals("PROBLKCH02", b1.getCoin());
+        assertEquals(new BigDecimal("165695681186885.069475041566967905"), b1.getAmount());
 
         assertNotNull(data.coins.get("MNT"));
         AddressData.CoinBalance b2 = data.coins.get("MNT");
         assertEquals("MNT", b2.getCoin());
-        assertEquals(new BigDecimal("96.880000000000000000"), b2.getAmount());
-        assertEquals(new BigDecimal("96.880000000000000000"), b2.getBaseCoinAmount());
-        assertEquals(new BigDecimal("6.7816"), b2.getUsdAmount());
+        assertEquals(new BigDecimal("0e-18"), b2.getAmount());
 
 
-        assertEquals(new BigDecimal("7536.991883339234899552"), data.getTotalBalance());
+        assertEquals(new BigDecimal("165695681186885.069475041566967905"), data.getTotalBalance());
     }
 
     @Test
     public void getBalanceForSingleObjectAddress() throws IOException {
         ExplorerAddressRepository addressRepository = MinterExplorerApi.getInstance().address();
 
-        Response<BCExplorerResult<AddressData>> result = addressRepository.getAddressData(new MinterAddress("Mx06431236daf96979aa6cdf470a7df26430ad8efb")).execute();
+        Response<BCExplorerResult<AddressData>> result = addressRepository.getAddressData(new MinterAddress("Mx601609b85ee21b9493dffbca1079c74d47b75f2a")).execute();
 
         checkResponseSuccess(result);
     }
@@ -136,7 +130,7 @@ public class AddressRepositoryTest extends BaseRepoTest {
 
         checkResponseSuccess(result);
         BCExplorerResult<List<AddressData>> data = result.body();
-        assertEquals(1, data.result.size());
+        assertEquals(2, data.result.size());
     }
 
     @Test
@@ -175,25 +169,19 @@ public class AddressRepositoryTest extends BaseRepoTest {
 
         assertNotNull(data.address);
 
-        assertEquals(3, data.txCount);
-        assertEquals(2, data.coins.size());
 
-        assertNotNull(data.coins.get("PROBLKCH01"));
-        AddressData.CoinBalance b1 = data.coins.get("PROBLKCH01");
-        assertEquals("PROBLKCH01", b1.getCoin());
-        assertEquals(new BigDecimal("7440.111883339234899552"), b1.getAmount());
-        assertEquals(new BigDecimal("7440.111883339234899552"), b1.getBaseCoinAmount());
-        assertEquals(new BigDecimal("520.8078318337465"), b1.getUsdAmount());
+        assertNotNull(data.coins.get("BTCSECURE"));
+        AddressData.CoinBalance b1 = data.coins.get("BTCSECURE");
+        assertEquals("BTCSECURE", b1.getCoin());
+        assertEquals(new BigDecimal("1.970000000000000000"), b1.getAmount());
 
         assertNotNull(data.coins.get("MNT"));
         AddressData.CoinBalance b2 = data.coins.get("MNT");
         assertEquals("MNT", b2.getCoin());
-        assertEquals(new BigDecimal("96.880000000000000000"), b2.getAmount());
-        assertEquals(new BigDecimal("96.880000000000000000"), b2.getBaseCoinAmount());
-        assertEquals(new BigDecimal("6.7816"), b2.getUsdAmount());
+        assertEquals(new BigDecimal("899.590579976503661317"), b2.getAmount());
 
 
-        assertEquals(new BigDecimal("7536.991883339234899552"), data.getTotalBalance());
+        assertEquals(new BigDecimal("901.560579976503661317"), data.getTotalBalance());
     }
 
     @Test
@@ -263,7 +251,7 @@ public class AddressRepositoryTest extends BaseRepoTest {
     @Test
     public void getNonEmptyDelegations() throws IOException {
         ExplorerAddressRepository addressRepository = MinterExplorerApi.getInstance().address();
-        MinterAddress address = new MinterAddress("Mx2258ac2807e20d8462828eaf301f8a03e4f7d7c8");
+        MinterAddress address = new MinterAddress("Mx601609b85ee21b9493dffbca1079c74d47b75f2a");
         Response<ExpResult<List<DelegationInfo>>> result = addressRepository.getDelegations(address).execute();
 
         checkResponseSuccess(result);
@@ -272,14 +260,14 @@ public class AddressRepositoryTest extends BaseRepoTest {
 
 
         DelegationInfo info1 = data.result.get(0);
-        assertEquals("MNT", info1.coin);
-        assertEquals(new MinterPublicKey("Mpabc77bdfc5348f4310bf5bda024fa3bbf4d1017dcf218733ce4bb37058ede09c"), info1.pubKey);
-        assertEquals(new BigDecimal("374.427000000000000000"), info1.value);
+        assertEquals("PROBLKCH02", info1.coin);
+        assertEquals(new MinterPublicKey("Mpeb60e7864833a9fc1537795175bb2c4044518f96e68291cdb3c50a81a68d3a1c"), info1.pubKey);
+        assertEquals(new BigDecimal("150000000000000.000000000000000000"), info1.value);
 
         DelegationInfo info2 = data.result.get(1);
-        assertEquals("VALIDATOR", info2.coin);
-        assertEquals(new MinterPublicKey("Mpabc77bdfc5348f4310bf5bda024fa3bbf4d1017dcf218733ce4bb37058ede09c"), info2.pubKey);
-        assertEquals(new BigDecimal("9400.000000000000000000"), info2.value);
+        assertEquals("PROBLKCH01", info2.coin);
+        assertEquals(new MinterPublicKey("Mpeb60e7864833a9fc1537795175bb2c4044518f96e68291cdb3c50a81a68d3a1c"), info2.pubKey);
+        assertEquals(new BigDecimal("11000.000000000000000000"), info2.value);
     }
 
     @Test

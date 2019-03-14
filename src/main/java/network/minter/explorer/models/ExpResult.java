@@ -55,18 +55,30 @@ public class ExpResult<Result> {
         return error == null;
     }
 
-	@Parcel
-	public static class Meta {
-		@SerializedName("current_page")
-		public int currentPage;
-		public int from;
-		public int to;
-		public int total;
-		@SerializedName("last_page")
-		public int lastPage;
-		public String path;
-		@SerializedName("per_page")
-		public int perPage;
-	}
+    /*
+    "current_page":1,
+    "last_page":3714,
+    "path":"explorer-api.testnet.minter.network/api/v1/transactions",
+    "per_page":50,
+    "total":185690
+     */
+    @Parcel
+    public static class Meta {
+        @SerializedName("current_page")
+        public int currentPage;
+        @SerializedName("last_page")
+        public int lastPage;
+        public String path;
+        @SerializedName("per_page")
+        public int perPage;
+        public int total;
+
+        @Deprecated
+        public int from;
+        @Deprecated
+        public int to;
+
+
+    }
 
 }

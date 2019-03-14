@@ -1,11 +1,11 @@
 {
   "data": [
     {
-      "symbol": "CINEMACOIN",
-      "name": "CINEMACOIN",
       "crr": 10,
-      "reserveBalance": "1511.999556634186184823",
-      "volume": "104219.946359791633930953"
+      "volume": "100000.000000000000000000",
+      "reserveBalance": "100.000000000000000000",
+      "name": "CINEMACOIN",
+      "symbol": "CINEMACOIN"
     }
   ]
 }

@@ -1,0 +1,39 @@
+0 = {
+  HashMap$Node@2721
+} "delegate" -> "Mtb6adda32da97d1a546f716ab20bd16db3741ecd3c678823407da96df4a539fb5"
+1 = {
+  HashMap$Node@2792
+} "redeemCheckData" -> "Mt90b35e9bd8c9c608904d1dac951fafbfe5deef68c2f436b04129897a1c133965"
+2 = {
+  HashMap$Node@2722
+} "sellAll" -> "Mt8a015333abd6880b0c6bbf58cef2ef622df71cbb977a8c74307da929b1a58e8c"
+3 = {
+  HashMap$Node@2723
+} "buyCoin" -> "Mtae23edff662a4b05deb1149bfd1134b0799f5fb52e3ddcc821fe422e8b251b49"
+4 = {
+  HashMap$Node@2724
+} "declareCandidacy" -> "Mtd19ff45caf9646b5a623a61f54f9a1f9c532c0b530609889b556af9184de3a83"
+5 = {
+  HashMap$Node@2725
+} "sell" -> "Mtaf65de532a143474eb89dafb7ed0f6edfa6d73aa2eb28c1681d2e8ec9e6867aa"
+6 = {
+  HashMap$Node@2726
+} "editCandidate" -> "Mt9c56e26297062323d0a044e405060fcf37e3015f7a3fcd853941832d8d616f0f"
+7 = {
+  HashMap$Node@2727
+} "createCoin" -> "Mt2200a6e5a59857ea07e307343cc792242315a5b4eb417e193c6c4efe06578179"
+8 = {
+  HashMap$Node@2728
+} "setCandidateOnData" -> "Mte1d14abe75986bae6c092824622f34d66fe9f92e93ccd5a6802feacecbb48a83"
+9 = {
+  HashMap$Node@2729
+} "setCandidateOffData" -> "Mte07c210f80ef43d6fafa56b6656f06db8db41a8db6f8381741ee4b12c262f813"
+10 = {
+  HashMap$Node@2730
+} "send" -> "Mt0170cd73082a22ea52cbb851697a1b5f8469326eae6aec92d3b41f5db0dbcb48"
+11 = {
+  HashMap$Node@2731
+} "unbond" -> "Mt27015c2f205654fb1e0f40b956c668842d975ecd71bceff499163ec937af95f9"
+
+to find:
+type 12

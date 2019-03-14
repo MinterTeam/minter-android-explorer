@@ -1,5 +1,11 @@
 # Release notes
 
+## 0.4.0
+ - BREAKING CHANGES:
+    - This version is FULLY incompatible with previously
+    - New explorer api, much methods moved to Gate repositories. 
+    - Updated tests
+
 ## 0.3.1
  - Added temporary "Gate" repository to get min gas price directly from gate. Soon it will be separated sdk.
 

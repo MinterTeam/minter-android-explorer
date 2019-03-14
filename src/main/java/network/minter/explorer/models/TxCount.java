@@ -24,25 +24,17 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorer.api;
+package network.minter.explorer.models;
 
-import java.util.List;
+import com.google.gson.annotations.SerializedName;
 
-import network.minter.explorer.models.CoinItem;
-import network.minter.explorer.models.ExpResult;
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
+import java.math.BigInteger;
 
 /**
- * minter-android-explorer. 2018
- * @author Eduard Maximovich [edward.vstock[at]gmail.com]
+ * minter-android-explorer. 2019
+ * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-public interface ExplorerCoinsEndpoint {
-
-    @GET("v1/coins")
-    Call<ExpResult<List<CoinItem>>> getAll();
-
-    @GET("v1/coins")
-    Call<ExpResult<List<CoinItem>>> search(@Query("symbol") String symbol);
+public class TxCount {
+    @SerializedName("nonce")
+    public BigInteger count;
 }

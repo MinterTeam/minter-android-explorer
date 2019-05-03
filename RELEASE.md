@@ -1,9 +1,13 @@
 # Release notes
 
+## 0.4.1
+ - Updated core library
+ - Fixed incorrect deserialization of the Redeem Check transaction
+    
 ## 0.4.0
  - BREAKING CHANGES:
     - This version is FULLY incompatible with previously
-    - New explorer api, much methods moved to Gate repositories. 
+    - New explorer api, much methods moved to Gate repositories
     - Updated tests
 
 ## 0.3.1

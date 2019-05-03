@@ -475,7 +475,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
     @Parcel
     public static class CheckData {
         public String coin;
-        public BigInteger nonce;
+        public String nonce;
         public BigDecimal value;
         public MinterAddress sender;
         @SerializedName("due_block")
@@ -485,7 +485,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
             return coin;
         }
 
-        public BigInteger getNonce() {
+        public String getNonce() {
             return nonce;
         }
 

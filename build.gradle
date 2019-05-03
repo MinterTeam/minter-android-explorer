@@ -56,15 +56,15 @@ apply plugin: 'com.jfrog.bintray'
 //apply plugin: 'jacoco'
 
 group = 'network.minter.android'
-version = '0.4.0'
+version = '0.4.1'
 
 ext {
     minterMinSdk = 16
     minterMaxSdk = 28
     minterBuildTools = "28.0.3"
     minterLibSupport = "28.0.0"
-    minterCoreSDK = "0.2.4"
-    minterBlockchainSDK = "0.5.2"
+    minterCoreSDK = "0.2.5"
+    minterBlockchainSDK = "0.6.1"
 
     buildArtifactName = project.name
     buildArtifactVersion = version

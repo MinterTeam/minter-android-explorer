@@ -60,7 +60,6 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * minter-android-explorer. 2019
- *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
 public class TransactionRepositoryTest extends BaseRepoTest {
@@ -222,8 +221,8 @@ public class TransactionRepositoryTest extends BaseRepoTest {
         int page = 1;
         int lastPage = 0;
         while (page == 1 || page < lastPage) {
-            System.err.println("Search in page: " + String.valueOf(page));
-            System.err.println("Left to find types: " + String.valueOf(required.size() - typeMap.size()));
+            System.err.println("Search in page: " + page);
+            System.err.println("Left to find types: " + (required.size() - typeMap.size()));
             query.setPage(page);
             Response<ExpResult<List<HistoryTransaction>>> txResp = repo.getTransactions(query).execute();
 
@@ -687,10 +686,6 @@ public class TransactionRepositoryTest extends BaseRepoTest {
         // public BigInteger threshold;
         //        public List<BigInteger> weights = new ArrayList<>();
         //        public List<MinterAddress> addresses = new ArrayList<>();
-    }
-
-    private void testMultisend(HistoryTransaction tx) {
-        // @TODO
     }
 
     /*

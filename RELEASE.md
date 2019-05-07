@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.4.2
+ - Main Net base urls
+
 ## 0.4.1
  - Updated core library
  - Fixed incorrect deserialization of the Redeem Check transaction

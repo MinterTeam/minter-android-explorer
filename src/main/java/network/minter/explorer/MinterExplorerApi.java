@@ -68,10 +68,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
  */
 public class MinterExplorerApi {
     public static final String FRONT_URL = BuildConfig.BASE_FRONT_URL;
-    public final static String NET_ID_TESTNET = "odin";
-    public final static String NET_ID_TESTNET_WITH_MULTISIG = "dva";
     private final static String BASE_API_URL = BuildConfig.BASE_API_URL;
-    private final static String BASE_GATE_URL = "https://gate.minter.network/api/";
+    private final static String BASE_GATE_URL = BuildConfig.GATE_API_URL;
     private final static String DATE_FORMAT;
 
     private static MinterExplorerApi INSTANCE;

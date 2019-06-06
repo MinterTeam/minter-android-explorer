@@ -67,5 +67,6 @@ public interface ExplorerAddressEndpoint {
      * @return
      */
     @GET("v1/addresses/{address}/delegations")
-    Call<ExpResult<List<DelegationInfo>>> getDelegationsForAddress(@Path("address") String address);
+    Call<ExpResult<List<DelegationInfo>>> getDelegationsForAddress(@Path("address") String address,
+																   @Query("page") long page);
 }

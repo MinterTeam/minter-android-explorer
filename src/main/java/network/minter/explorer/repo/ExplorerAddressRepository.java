@@ -102,10 +102,10 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @param address
      * @return
      */
-    public Call<ExpResult<List<DelegationInfo>>> getDelegations(MinterAddress address) {
+    public Call<ExpResult<List<DelegationInfo>>> getDelegations(MinterAddress address, int page) {
         checkNotNull(address, "Address can't be null");
 
-        return getInstantService().getDelegationsForAddress(address.toString());
+        return getInstantService().getDelegationsForAddress(address.toString(), page);
     }
 
     @Nonnull

@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.4.3
+ - Added pagination when retrieving delegations for address
+ - Added additional field to the response Meta
+ 
 ## 0.4.2
  - Main Net base urls
 

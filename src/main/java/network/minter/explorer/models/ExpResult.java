@@ -30,6 +30,8 @@ import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
+import java.math.BigDecimal;
+
 /**
  * minter-android-explorer. 2018
  *
@@ -72,12 +74,18 @@ public class ExpResult<Result> {
         @SerializedName("per_page")
         public int perPage;
         public int total;
+        public Additional additional;
 
         @Deprecated
         public int from;
         @Deprecated
         public int to;
 
+        @Parcel
+        public static class Additional {
+            @SerializedName("total_delegated_bip_value")
+            public BigDecimal delegatedAmount;
+        }
 
     }
 

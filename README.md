@@ -21,12 +21,10 @@ allprojects {
 ```
 
 project build.gradle
-
-**Be carefully! 0.4.0 is absolutely incompatible with previous 0.3.1. You need to make huge changes to get it work**
 ```groovy
 
 ext {
-    minterExplorerSDK = "0.4.3"
+    minterExplorerSDK = "0.4.4"
 }
 
 dependencies {

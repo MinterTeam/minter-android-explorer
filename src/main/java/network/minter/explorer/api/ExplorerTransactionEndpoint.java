@@ -42,10 +42,15 @@ import retrofit2.http.QueryMap;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public interface ExplorerTransactionEndpoint {
-    /**
-     * @param query
-     * @return
-     */
+    @GET("v1/addresses/{address}/transactions")
+    Call<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(@Path("address") String address);
+
+    @GET("v1/addresses/{address}/transactions")
+    Call<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(@Path("address") String address, @Query("page") long page);
+
+    @GET("v1/addresses/{address}/transactions")
+    Call<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(@Path("address") String address, @Query("startblock") long fromBlock, @Query("endblock") long toBlock);
+
     @GET("v1/transactions")
     Call<ExpResult<List<HistoryTransaction>>> getTransactions(@QueryMap Map<String, Object> query);
 

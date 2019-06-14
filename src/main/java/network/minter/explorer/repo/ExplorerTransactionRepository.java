@@ -27,9 +27,7 @@
 package network.minter.explorer.repo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -74,13 +72,43 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * @param address minter address
      * @return Retrofit call
      * @TODO query builder
-     * @link https://explorer.beta.minter.network/help/index.html#operations-Transactions-get_api_v1_transactions
+     * @link https://app.swaggerhub.com/apis/GrKamil/minter-explorer_api/1.2.0#/Addresses/getAddressTransactions
      */
     public Call<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address) {
         checkArgument(address != null, "Address can't be null");
-        Map<String, Object> query = new HashMap<>();
-        query.put("address", address.toString());
-        return getInstantService().getTransactions(query);
+        return getInstantService().getTransactionsByAddress(address.toString());
+    }
+
+    /**
+     * Get transactions list for given minter address
+     * Method not finished
+     * see link below
+     * @param address minter address
+     * @param page Pagination
+     * @return Retrofit call
+     * @TODO query builder
+     * @link https://app.swaggerhub.com/apis/GrKamil/minter-explorer_api/1.2.0#/Addresses/getAddressTransactions
+     */
+    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address, long page) {
+        checkArgument(address != null, "Address can't be null");
+        return getInstantService().getTransactionsByAddress(address.toString(), page);
+    }
+
+    /**
+     * Get transactions list for given minter address
+     * Method not finished
+     * see link below
+     * @param address minter address
+     * @param fromBlock get list started from specified block
+     * @param endBlock get list ended on specified block
+     * @return Retrofit call
+     * @TODO query builder
+     * @link https://app.swaggerhub.com/apis/GrKamil/minter-explorer_api/1.2.0#/Addresses/getAddressTransactions
+     */
+    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address, long fromBlock, long toBlock) {
+        checkArgument(address != null, "Address can't be null");
+        checkArgument(fromBlock >= 0 && toBlock >= 0, "Start and End block must be greater or equals to zero");
+        return getInstantService().getTransactionsByAddress(address.toString(), fromBlock, toBlock);
     }
 
     /**

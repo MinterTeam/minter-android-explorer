@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.4.4
+ - Fixed getting list by single address: new api method
+ - Added couple of methods to get transactions by block numbers
+
 ## 0.4.3
  - Added pagination when retrieving delegations for address
  - Added additional field to the response Meta

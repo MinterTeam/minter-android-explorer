@@ -1,5 +1,10 @@
 # Release notes
 
+## 0.4.5
+ - Added query param to get balance with all coins sum and in USD
+ - Updated SDK
+ - Fixed getting transactions with limit
+
 ## 0.4.4
  - Fixed getting list by single address: new api method
  - Added couple of methods to get transactions by block numbers

@@ -32,8 +32,11 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.crypto.MinterPublicKey;
@@ -42,7 +45,10 @@ import network.minter.explorer.models.AddressData;
 import network.minter.explorer.models.BCExplorerResult;
 import network.minter.explorer.models.DelegationInfo;
 import network.minter.explorer.models.ExpResult;
+import network.minter.explorer.models.HistoryTransaction;
+import network.minter.explorer.models.RewardData;
 import network.minter.explorer.repo.ExplorerAddressRepository;
+import network.minter.explorer.repo.ExplorerTransactionRepository;
 import retrofit2.Response;
 
 import static org.junit.Assert.assertEquals;
@@ -58,7 +64,7 @@ public class AddressRepositoryTest extends BaseRepoTest {
 
     static {
         MinterExplorerApi.initialize(true);
-        MinterExplorerApi.getInstance().getApiService().addHttpInterceptor(new ApiMockInterceptor());
+//        MinterExplorerApi.getInstance().getApiService().addHttpInterceptor(new ApiMockInterceptor());
     }
 
     @Before
@@ -67,6 +73,88 @@ public class AddressRepositoryTest extends BaseRepoTest {
 
     @After
     public void tearDown() {
+    }
+
+    @Test
+    public void findUnbonds() throws IOException {
+        MinterAddress address = new MinterAddress("Mxade67668f504274ecc5064f2cc0706e2046848e9");
+        ExplorerTransactionRepository txRepo = MinterExplorerApi.getInstance().transactions();
+
+        int page = 1;
+        int totalPages = -1;
+
+        while (page != totalPages) {
+            System.out.println(String.format("Getting page %d", page));
+
+            Response<ExpResult<List<HistoryTransaction>>> transactions = txRepo.getTransactions(address, page).execute();
+            if (totalPages == -1) {
+
+                totalPages = transactions.body().meta.lastPage;
+                System.out.println(String.format("Total pages: %d", totalPages));
+            }
+
+            for (HistoryTransaction tx : transactions.body().result) {
+                if (tx.type == HistoryTransaction.Type.Unbond) {
+                    System.out.println(String.format("Found unbond tx hash: %s", tx.hash));
+                }
+            }
+
+
+            page++;
+        }
+
+
+    }
+
+
+    @Test
+    public void testRewards() {
+        //https://explorer-api.apps.minter.network/api/v1/addresses/Mx69ebd94f75444b22953c7a439f7ccef6d9e9be5a/events/rewards
+        MinterAddress address = new MinterAddress("Mxade67668f504274ecc5064f2cc0706e2046848e9");
+        ExplorerAddressRepository addressRepository = MinterExplorerApi.getInstance().address();
+
+        int getPages = 10;
+        Map<Long, List<RewardData>> rewards = new LinkedHashMap<>();
+
+        for (int i = 1; i <= getPages; i++) {
+            System.out.println(String.format("Getting page: %d", i));
+            Response<ExpResult<List<RewardData>>> result;
+            try {
+                result = addressRepository.getRewards(address).execute();
+            } catch (ConnectException retry) {
+                System.err.println("Connection timed out. Retrying...");
+                i--;
+                continue;
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+                i--;
+                continue;
+            }
+
+            for (RewardData reward : result.body().result) {
+                if (!rewards.containsKey(reward.block)) {
+                    rewards.put(reward.block, new ArrayList<>());
+                }
+
+                rewards.get(reward.block).add(reward);
+            }
+        }
+
+        Map<Long, BigDecimal> rewardAmounts = new LinkedHashMap<>();
+
+        for (Map.Entry<Long, List<RewardData>> entry : rewards.entrySet()) {
+            for (RewardData re : entry.getValue()) {
+                rewardAmounts.put(entry.getKey(), rewardAmounts.getOrDefault(entry.getKey(), BigDecimal.ZERO.setScale(18)).add(re.amount.setScale(18)));
+            }
+        }
+
+        for (Map.Entry<Long, BigDecimal> val : rewardAmounts.entrySet()) {
+//            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+//            String sdf = formatter.format(new Date(val.getKey()));
+
+            System.out.println(String.format("%d: %s", val.getKey(), val.getValue().toPlainString()));
+        }
+
     }
 
     @Test

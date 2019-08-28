@@ -44,8 +44,6 @@ import network.minter.explorer.models.AddressData;
  * minter-android-explorer. 2018
  *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
- */ /*
-{"txCount":1,"coins":[{"coin":"mnt","amount":39.999999,"baseCoinAmount":39.999999,"usdAmount":0.002999999925}]}
  */
 public class ExplorerAddressDataDeserializer implements JsonDeserializer<AddressData> {
     private final static String COINS_BALANCE = "balances";
@@ -63,6 +61,14 @@ public class ExplorerAddressDataDeserializer implements JsonDeserializer<Address
 
         if (root.has("address") && !root.get("address").isJsonNull()) {
             data.address = new MinterAddress(root.get("address").getAsString());
+        }
+
+        if (root.has("balanceSumInBaseCoin") && !root.get("balanceSumInBaseCoin").isJsonNull()) {
+            data.balanceSumInBaseCoin = root.get("balanceSumInBaseCoin").getAsBigDecimal();
+        }
+
+        if (root.has("balanceSumInUSD") && !root.get("balanceSumInUSD").isJsonNull()) {
+            data.balanceSumInUSD = root.get("balanceSumInUSD").getAsBigDecimal();
         }
 
         if (root.has(COINS_BALANCE)) {

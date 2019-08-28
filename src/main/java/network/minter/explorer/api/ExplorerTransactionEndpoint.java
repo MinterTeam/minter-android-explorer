@@ -64,7 +64,7 @@ public interface ExplorerTransactionEndpoint {
     Call<ExpResult<List<HistoryTransaction>>> getTransactions(
             @Query(value = "addresses[]", encoded = true) List<String> addresses,
             @Query("page") long page,
-            @Query("perPage") int limit
+            @Query("limit") int limit
     );
 
     @GET("v1/transaction/{hash}")

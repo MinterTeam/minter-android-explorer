@@ -40,6 +40,7 @@ import network.minter.explorer.models.AddressData;
 import network.minter.explorer.models.BCExplorerResult;
 import network.minter.explorer.models.DelegationInfo;
 import network.minter.explorer.models.ExpResult;
+import network.minter.explorer.models.RewardData;
 import retrofit2.Call;
 
 import static network.minter.core.internal.common.Preconditions.checkArgument;
@@ -90,11 +91,30 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
 
     /**
      * Get full information about given address
+     * @param address minter address
+     * @return Retrofit call
+     */
+    public Call<BCExplorerResult<AddressData>> getAddressData(MinterAddress address, boolean withSum) {
+        return getAddressData(address.toString(), withSum);
+    }
+
+    /**
+     * Get full information about given address
      * @param address string minter address WITH prefix "Mx"
      * @return Retrofit call
      */
     public Call<BCExplorerResult<AddressData>> getAddressData(String address) {
         return getInstantService().balance(address);
+    }
+
+    /**
+     * Get full information about given address
+     * @param address string minter address WITH prefix "Mx"
+     * @param withSum Show total balance
+     * @return Retrofit call
+     */
+    public Call<BCExplorerResult<AddressData>> getAddressData(String address, boolean withSum) {
+        return getInstantService().balance(address, withSum ? 1 : 0);
     }
 
     /**
@@ -117,6 +137,22 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
         checkNotNull(address, "Address can't be null");
 
         return getInstantService().getDelegationsForAddress(address.toString(), page);
+    }
+
+    /**
+     * Get list of reward events
+     * @param address
+     * @param page
+     * @return
+     */
+    public Call<ExpResult<List<RewardData>>> getRewards(MinterAddress address, long page) {
+        checkNotNull(address, "Address can't be null");
+
+        return getInstantService().getRewards(address.toString(), page);
+    }
+
+    public Call<ExpResult<List<RewardData>>> getRewards(MinterAddress address) {
+        return getRewards(address, 1);
     }
 
     @Nonnull

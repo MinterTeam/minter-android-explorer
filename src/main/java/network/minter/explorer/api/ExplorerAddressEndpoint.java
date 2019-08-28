@@ -32,6 +32,7 @@ import network.minter.explorer.models.AddressData;
 import network.minter.explorer.models.BCExplorerResult;
 import network.minter.explorer.models.DelegationInfo;
 import network.minter.explorer.models.ExpResult;
+import network.minter.explorer.models.RewardData;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -43,21 +44,29 @@ import retrofit2.http.Query;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public interface ExplorerAddressEndpoint {
-	/**
-	 * Resolve balance by address
-	 *
-	 * @param address
-	 * @return Retrofit call with {@link ExpResult}
-	 */
+    /**
+     * Resolve balance by address
+     *
+     * @param address
+     * @return Retrofit call with {@link ExpResult}
+     */
     @GET("v1/addresses/{address}")
     Call<BCExplorerResult<AddressData>> balance(@Path("address") String address);
 
-	/**
-	 * Resolve balance by multiple addresses
-	 *
-	 * @param addresses
-	 * @return Retrofit call with {@link ExpResult}
-	 */
+    /**
+     * Resolve balance by address
+     * @param address
+     * @return Retrofit call with {@link ExpResult}
+     */
+    @GET("v1/addresses/{address}")
+    Call<BCExplorerResult<AddressData>> balance(@Path("address") String address, @Query("withSum") Integer withSum);
+
+    /**
+     * Resolve balance by multiple addresses
+     *
+     * @param addresses
+     * @return Retrofit call with {@link ExpResult}
+     */
     @GET("v1/addresses")
     Call<BCExplorerResult<List<AddressData>>> balanceMultiple(@Query(value = "addresses[]", encoded = true) List<String> addresses);
 
@@ -68,5 +77,8 @@ public interface ExplorerAddressEndpoint {
      */
     @GET("v1/addresses/{address}/delegations")
     Call<ExpResult<List<DelegationInfo>>> getDelegationsForAddress(@Path("address") String address,
-																   @Query("page") long page);
+                                                                   @Query("page") long page);
+
+    @GET("v1/addresses/{address}/events/rewards")
+    Call<ExpResult<List<RewardData>>> getRewards(@Path("address") String address, @Query("page") long page);
 }

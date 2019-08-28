@@ -49,6 +49,8 @@ public class AddressData {
     public Map<String, CoinBalance> coins;
     // not null only if get list of balances by addresses
     public MinterAddress address;
+    public BigDecimal balanceSumInBaseCoin = ZERO;
+    public BigDecimal balanceSumInUSD = ZERO;
 
     public AddressData() {
         coins = new HashMap<>();

@@ -63,12 +63,20 @@ public class ExplorerAddressDataDeserializer implements JsonDeserializer<Address
             data.address = new MinterAddress(root.get("address").getAsString());
         }
 
-        if (root.has("balanceSumInBaseCoin") && !root.get("balanceSumInBaseCoin").isJsonNull()) {
-            data.balanceSumInBaseCoin = root.get("balanceSumInBaseCoin").getAsBigDecimal();
+        if (root.has("available_balance_sum") && !root.get("available_balance_sum").isJsonNull()) {
+            data.availableBalanceInBase = root.get("available_balance_sum").getAsBigDecimal();
         }
 
-        if (root.has("balanceSumInUSD") && !root.get("balanceSumInUSD").isJsonNull()) {
-            data.balanceSumInUSD = root.get("balanceSumInUSD").getAsBigDecimal();
+        if (root.has("available_balance_sum_usd") && !root.get("available_balance_sum_usd").isJsonNull()) {
+            data.availableBalanceInUSD = root.get("available_balance_sum_usd").getAsBigDecimal();
+        }
+
+        if (root.has("total_balance_sum") && !root.get("total_balance_sum").isJsonNull()) {
+            data.totalBalanceInBase = root.get("total_balance_sum").getAsBigDecimal();
+        }
+
+        if (root.has("total_balance_sum_usd") && !root.get("total_balance_sum_usd").isJsonNull()) {
+            data.totalBalanceInUSD = root.get("total_balance_sum_usd").getAsBigDecimal();
         }
 
         if (root.has(COINS_BALANCE)) {

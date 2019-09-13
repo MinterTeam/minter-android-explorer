@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.5.0
+ - Migrated to androidx
+ - Additional fields for balance: total balance, usd balance, etcr
+
 ## 0.4.5
  - Added query param to get balance with all coins sum and in USD
  - Updated SDK

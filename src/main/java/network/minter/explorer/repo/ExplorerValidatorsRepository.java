@@ -24,30 +24,39 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorer.models;
+package network.minter.explorer.repo;
 
-import com.google.gson.annotations.SerializedName;
+import java.util.List;
 
-import org.parceler.Parcel;
+import javax.annotation.Nonnull;
 
-import java.math.BigDecimal;
-
-import network.minter.core.crypto.MinterPublicKey;
+import network.minter.core.internal.api.ApiService;
+import network.minter.core.internal.data.DataRepository;
+import network.minter.explorer.api.ExplorerValidatorsEndpoint;
+import network.minter.explorer.models.ExpResult;
+import network.minter.explorer.models.ValidatorItem;
+import retrofit2.Call;
 
 /**
  * minter-android-explorer. 2019
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-@Parcel
-public class DelegationInfo {
+public class ExplorerValidatorsRepository extends DataRepository<ExplorerValidatorsEndpoint> {
+    public ExplorerValidatorsRepository(@Nonnull ApiService.Builder apiBuilder) {
+        super(apiBuilder);
+    }
 
-    public String coin;
-    public BigDecimal value;
-    @SerializedName("bip_value")
-    public BigDecimal bipValue;
-    @SerializedName("pub_key")
-    public MinterPublicKey pubKey;
-    @SerializedName("validator_meta")
-    public ValidatorMeta meta;
+    /**
+     * Get list of validators with full information about them
+     * @return Retrofit call
+     */
+    public Call<ExpResult<List<ValidatorItem>>> getValidators() {
+        return getInstantService().getValidators();
+    }
 
+    @Nonnull
+    @Override
+    protected Class<ExplorerValidatorsEndpoint> getServiceClass() {
+        return ExplorerValidatorsEndpoint.class;
+    }
 }

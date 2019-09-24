@@ -40,7 +40,6 @@ import static java.math.BigDecimal.ZERO;
 
 /**
  * minter-android-explorer. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 @Parcel
@@ -49,8 +48,6 @@ public class AddressData {
     public Map<String, CoinBalance> coins;
     // not null only if get list of balances by addresses
     public MinterAddress address;
-    public BigDecimal availableBalanceInBase = ZERO;
-    public BigDecimal availableBalanceInUSD = ZERO;
     public BigDecimal totalBalanceInBase = ZERO;
     public BigDecimal totalBalanceInUSD = ZERO;
 
@@ -72,26 +69,26 @@ public class AddressData {
         }
     }
 
-    public BigDecimal getTotalBalance() {
-        if (getCoins().isEmpty()) {
+    public BigDecimal getAvailableBalanceBIP() {
+        if (!coins.containsKey(MinterSDK.DEFAULT_COIN)) {
             return ZERO;
         }
 
-        // @TODO this is not so valid data for now, explorer doesn't know real value in base coin
-        BigDecimal totalOut = ZERO;
-        for (Map.Entry<String, CoinBalance> entry : getCoins().entrySet()) {
-            totalOut = totalOut.add(entry.getValue().getAmount());
-        }
+        return firstNonNull(coins.get(MinterSDK.DEFAULT_COIN), new CoinBalance(MinterSDK.DEFAULT_COIN, ZERO)).getAmount();
+    }
 
-        return totalOut;
+    public BigDecimal getTotalBalance() {
+        return totalBalanceInBase;
+    }
+
+    public BigDecimal getTotalBalanceUSD() {
+        return totalBalanceInUSD;
     }
 
     @Parcel
     public static class CoinBalance {
         public String coin;
         public BigDecimal amount;
-//        public BigDecimal usdAmount;
-//        public BigDecimal baseCoinAmount;
 
         public CoinBalance() {
         }

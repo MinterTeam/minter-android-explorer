@@ -1,5 +1,10 @@
 # Release notes
 
+## 0.6.0
+ - Removed `available_balance_*` from address balance result
+ - Added more info about validators
+ - Also added repository to get all validators list
+
 ## 0.5.0
  - Migrated to androidx
  - Additional fields for balance: total balance, usd balance, etcr

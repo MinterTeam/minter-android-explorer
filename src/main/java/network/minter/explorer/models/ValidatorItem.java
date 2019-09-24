@@ -39,15 +39,11 @@ import network.minter.core.crypto.MinterPublicKey;
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
 @Parcel
-public class DelegationInfo {
-
-    public String coin;
-    public BigDecimal value;
-    @SerializedName("bip_value")
-    public BigDecimal bipValue;
-    @SerializedName("pub_key")
+public class ValidatorItem {
+    @SerializedName("public_key")
     public MinterPublicKey pubKey;
-    @SerializedName("validator_meta")
+    public int status;
+    public BigDecimal stake;
+    public BigDecimal part;
     public ValidatorMeta meta;
-
 }

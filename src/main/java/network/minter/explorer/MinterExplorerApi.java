@@ -55,6 +55,7 @@ import network.minter.core.internal.log.TimberLogger;
 import network.minter.explorer.repo.ExplorerAddressRepository;
 import network.minter.explorer.repo.ExplorerCoinsRepository;
 import network.minter.explorer.repo.ExplorerTransactionRepository;
+import network.minter.explorer.repo.ExplorerValidatorsRepository;
 import network.minter.explorer.repo.GateEstimateRepository;
 import network.minter.explorer.repo.GateGasRepository;
 import network.minter.explorer.repo.GateTransactionRepository;
@@ -63,7 +64,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * minter-android-explorer. 2018
- *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
 public class MinterExplorerApi {
@@ -93,6 +93,7 @@ public class MinterExplorerApi {
     private ExplorerTransactionRepository mTransactionRepository;
     private ExplorerAddressRepository mAddressRepository;
     private ExplorerCoinsRepository mCoinsRepository;
+    private ExplorerValidatorsRepository mValidatorsRepository;
     private GateGasRepository mGasRepository;
     private GateEstimateRepository mGateEstimateRepo;
     private GateTransactionRepository mGateTxRepo;
@@ -131,7 +132,6 @@ public class MinterExplorerApi {
 
     /**
      * Init method with debug logs flag
-     *
      * @param debug enable debug logs
      */
     public static void initialize(String baseExplorerApiUrl, boolean debug, Mint.Leaf logger) {
@@ -172,7 +172,6 @@ public class MinterExplorerApi {
 
     /**
      * Init method with debug logs flag
-     *
      * @param debug enable debug logs
      */
     public static void initialize(String baseExplorerApiUrl, boolean debug) {
@@ -181,7 +180,6 @@ public class MinterExplorerApi {
 
     /**
      * Init method with debug logs flag
-     *
      * @param debug enable debug logs
      */
     public static void initialize(boolean debug) {
@@ -190,7 +188,6 @@ public class MinterExplorerApi {
 
     /**
      * Init method with debug logs flag
-     *
      * @param debug enable debug logs
      */
     public static void initialize(boolean debug, Mint.Leaf logger) {
@@ -199,7 +196,6 @@ public class MinterExplorerApi {
 
     /**
      * Create new front url using HttpUrl.Builder
-     *
      * @return HttpUrl.Builder
      * @see HttpUrl.Builder
      */
@@ -220,7 +216,6 @@ public class MinterExplorerApi {
 
     /**
      * Gate gas repository
-     *
      * @return
      */
     public GateGasRepository gas() {
@@ -267,6 +262,17 @@ public class MinterExplorerApi {
         }
 
         return mCoinsRepository;
+    }
+
+    /**
+     * @return Validators api repository
+     */
+    public ExplorerValidatorsRepository validators() {
+        if (mValidatorsRepository == null) {
+            mValidatorsRepository = new ExplorerValidatorsRepository(mApiService);
+        }
+
+        return mValidatorsRepository;
     }
 
     public ApiService.Builder getApiService() {

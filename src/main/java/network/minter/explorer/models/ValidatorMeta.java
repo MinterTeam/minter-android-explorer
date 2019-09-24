@@ -30,24 +30,16 @@ import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
-import java.math.BigDecimal;
-
-import network.minter.core.crypto.MinterPublicKey;
-
 /**
  * minter-android-explorer. 2019
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
 @Parcel
-public class DelegationInfo {
-
-    public String coin;
-    public BigDecimal value;
-    @SerializedName("bip_value")
-    public BigDecimal bipValue;
-    @SerializedName("pub_key")
-    public MinterPublicKey pubKey;
-    @SerializedName("validator_meta")
-    public ValidatorMeta meta;
-
+public final class ValidatorMeta {
+    public String name;
+    public String description;
+    @SerializedName("icon_url")
+    public String iconUrl;
+    @SerializedName("site_url")
+    public String siteUrl;
 }

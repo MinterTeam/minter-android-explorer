@@ -24,30 +24,21 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorer.models;
+package network.minter.explorer.api;
 
-import com.google.gson.annotations.SerializedName;
+import java.util.List;
 
-import org.parceler.Parcel;
-
-import java.math.BigDecimal;
-
-import network.minter.core.crypto.MinterPublicKey;
+import network.minter.explorer.models.ExpResult;
+import network.minter.explorer.models.ValidatorItem;
+import retrofit2.Call;
+import retrofit2.http.GET;
 
 /**
  * minter-android-explorer. 2019
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-@Parcel
-public class DelegationInfo {
+public interface ExplorerValidatorsEndpoint {
 
-    public String coin;
-    public BigDecimal value;
-    @SerializedName("bip_value")
-    public BigDecimal bipValue;
-    @SerializedName("pub_key")
-    public MinterPublicKey pubKey;
-    @SerializedName("validator_meta")
-    public ValidatorMeta meta;
-
+    @GET("v1/validators")
+    Call<ExpResult<List<ValidatorItem>>> getValidators();
 }

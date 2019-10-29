@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.6.1
+ - Updated core and blockchain sdk
+
 ## 0.6.0
  - Removed `available_balance_*` from address balance result
  - Added more info about validators

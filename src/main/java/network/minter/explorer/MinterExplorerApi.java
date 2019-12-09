@@ -31,6 +31,9 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -43,12 +46,12 @@ import network.minter.core.crypto.MinterCheck;
 import network.minter.core.crypto.MinterHash;
 import network.minter.core.crypto.MinterPublicKey;
 import network.minter.core.internal.api.ApiService;
-import network.minter.core.internal.api.converters.BigIntegerDeserializer;
-import network.minter.core.internal.api.converters.BytesDataDeserializer;
-import network.minter.core.internal.api.converters.MinterAddressDeserializer;
-import network.minter.core.internal.api.converters.MinterCheckDeserializer;
-import network.minter.core.internal.api.converters.MinterHashDeserializer;
-import network.minter.core.internal.api.converters.MinterPublicKeyDeserializer;
+import network.minter.core.internal.api.converters.BigIntegerJsonConverter;
+import network.minter.core.internal.api.converters.BytesDataJsonConverter;
+import network.minter.core.internal.api.converters.MinterAddressJsonConverter;
+import network.minter.core.internal.api.converters.MinterCheckJsonConverter;
+import network.minter.core.internal.api.converters.MinterHashJsonConverter;
+import network.minter.core.internal.api.converters.MinterPublicKeyJsonConverter;
 import network.minter.core.internal.log.Mint;
 import network.minter.core.internal.log.StdLogger;
 import network.minter.core.internal.log.TimberLogger;
@@ -74,7 +77,6 @@ public class MinterExplorerApi {
 
     private static MinterExplorerApi INSTANCE;
 
-
     static {
         String format = "yyyy-MM-dd HH:mm:ssX";
         try {
@@ -99,17 +101,17 @@ public class MinterExplorerApi {
     private GateTransactionRepository mGateTxRepo;
 
     private MinterExplorerApi() {
-        this(BASE_API_URL);
+        this(BASE_API_URL, BASE_GATE_URL);
     }
 
-    private MinterExplorerApi(String baseApiUrl) {
+    private MinterExplorerApi(String baseApiUrl, String baseGateUrl) {
         mApiService = new ApiService.Builder(baseApiUrl, getGsonBuilder());
         mApiService.addHeader("Content-Type", "application/json");
         mApiService.addHeader("X-Minter-Client-Name", "MinterAndroid (explorer)");
         mApiService.addHeader("X-Minter-Client-Version", BuildConfig.VERSION_NAME);
         mApiService.setDateFormat(DATE_FORMAT);
 
-        mGateApiService = new ApiService.Builder(BASE_GATE_URL, getGsonBuilder());
+        mGateApiService = new ApiService.Builder(baseGateUrl, getGsonBuilder());
         mGateApiService.addHeader("Content-Type", "application/json");
         mGateApiService.addHeader("X-Minter-Client-Name", "MinterAndroid (gate)");
         mGateApiService.addHeader("X-Minter-Client-Version", BuildConfig.VERSION_NAME);
@@ -126,20 +128,20 @@ public class MinterExplorerApi {
     /**
      * Init method
      */
-    public static void initialize(String baseExplorerApiUrl) {
-        initialize(baseExplorerApiUrl, false);
+    public static void initialize(String baseExplorerApiUrl, String baseGateUrl) {
+        initialize(baseExplorerApiUrl, baseGateUrl, false);
     }
 
     /**
      * Init method with debug logs flag
      * @param debug enable debug logs
      */
-    public static void initialize(String baseExplorerApiUrl, boolean debug, Mint.Leaf logger) {
+    public static void initialize(String baseExplorerApiUrl, String baseGateUrl, boolean debug, Mint.Leaf logger) {
         if (INSTANCE != null) {
             return;
         }
 
-        INSTANCE = new MinterExplorerApi(baseExplorerApiUrl);
+        INSTANCE = new MinterExplorerApi(baseExplorerApiUrl, baseGateUrl);
         INSTANCE.mApiService.setDebug(debug);
         INSTANCE.mGateApiService.setDebug(debug);
 
@@ -174,8 +176,8 @@ public class MinterExplorerApi {
      * Init method with debug logs flag
      * @param debug enable debug logs
      */
-    public static void initialize(String baseExplorerApiUrl, boolean debug) {
-        initialize(baseExplorerApiUrl, debug, new TimberLogger());
+    public static void initialize(String baseExplorerApiUrl, String baseGateUrl, boolean debug) {
+        initialize(baseExplorerApiUrl, baseGateUrl, debug, new TimberLogger());
     }
 
     /**
@@ -183,7 +185,7 @@ public class MinterExplorerApi {
      * @param debug enable debug logs
      */
     public static void initialize(boolean debug) {
-        initialize(BASE_API_URL, debug, new TimberLogger());
+        initialize(BASE_API_URL, BASE_GATE_URL, debug, new TimberLogger());
     }
 
     /**
@@ -191,7 +193,7 @@ public class MinterExplorerApi {
      * @param debug enable debug logs
      */
     public static void initialize(boolean debug, Mint.Leaf logger) {
-        initialize(BASE_API_URL, debug, logger);
+        initialize(BASE_API_URL, BASE_GATE_URL, debug, logger);
     }
 
     /**
@@ -297,18 +299,18 @@ public class MinterExplorerApi {
     public GsonBuilder getGsonBuilder() {
         GsonBuilder out = new GsonBuilder();
         out.setDateFormat(DATE_FORMAT);
-        out.registerTypeAdapter(MinterAddress.class, new MinterAddressDeserializer());
-        out.registerTypeAdapter(MinterPublicKey.class, new MinterPublicKeyDeserializer());
-        out.registerTypeAdapter(MinterHash.class, new MinterHashDeserializer());
-        out.registerTypeAdapter(MinterCheck.class, new MinterCheckDeserializer());
-        out.registerTypeAdapter(BigInteger.class, new BigIntegerDeserializer());
-        out.registerTypeAdapter(BigDecimal.class, new BigDecimalDeserializer());
-        out.registerTypeAdapter(BytesData.class, new BytesDataDeserializer());
+        out.registerTypeAdapter(MinterAddress.class, new MinterAddressJsonConverter());
+        out.registerTypeAdapter(MinterPublicKey.class, new MinterPublicKeyJsonConverter());
+        out.registerTypeAdapter(MinterHash.class, new MinterHashJsonConverter());
+        out.registerTypeAdapter(MinterCheck.class, new MinterCheckJsonConverter());
+        out.registerTypeAdapter(BigInteger.class, new BigIntegerJsonConverter());
+        out.registerTypeAdapter(BigDecimal.class, new BigDecimalJsonConverter());
+        out.registerTypeAdapter(BytesData.class, new BytesDataJsonConverter());
 
         return out;
     }
 
-    private final static class BigDecimalDeserializer implements JsonDeserializer<BigDecimal> {
+    private final static class BigDecimalJsonConverter implements JsonDeserializer<BigDecimal>, JsonSerializer<BigDecimal> {
 
         @Override
         public BigDecimal deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
@@ -321,6 +323,11 @@ public class MinterExplorerApi {
             }
 
             return new BigDecimal(json.getAsString());
+        }
+
+        @Override
+        public JsonElement serialize(BigDecimal src, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(src.toPlainString());
         }
     }
 }

@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.6.3
+ - Added base Gate api url to initialize(...) methods
+ - Cleanup
+
 ## 0.6.1
  - Updated core and blockchain sdk
 

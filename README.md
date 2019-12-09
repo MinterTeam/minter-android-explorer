@@ -4,7 +4,7 @@ Minter Android Explorer API SDK
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
-Minter explorer sdk library
+Minter Explorer API SDK library for Android
 ---------------------------
 
 ## Setup
@@ -24,7 +24,7 @@ project build.gradle
 ```groovy
 
 ext {
-    minterExplorerSDK = "0.6.1"
+    minterExplorerSDK = "0.6.3"
 }
 
 dependencies {

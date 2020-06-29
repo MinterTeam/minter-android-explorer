@@ -34,12 +34,6 @@ import network.minter.blockchain.models.BCResult;
  * minter-android-explorer. 2019
  *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
- * <p>
- * {"error":{
- * "code":412,
- * "message":"Check tx error",
- * "tx_result":{
- * "code":107,"log":"Insufficient funds for sender account: Mxfade4768150c25232a7518fc29ed8ccfcef211ce. Wanted 1000.01 MNT."}}}
  */
 public class GateResult<Result> {
     @SerializedName("data")

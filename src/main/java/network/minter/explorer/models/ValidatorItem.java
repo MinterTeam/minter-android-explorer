@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -26,24 +26,28 @@
 
 package network.minter.explorer.models;
 
-import com.google.gson.annotations.SerializedName;
-
 import org.parceler.Parcel;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import network.minter.core.crypto.MinterPublicKey;
 
 /**
  * minter-android-explorer. 2019
+ *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
 @Parcel
 public class ValidatorItem {
-    @SerializedName("public_key")
+
+    public final static int STATUS_ONLINE = 2;
+    public final static int STATUS_CANDIDATE = 1;
+
     public MinterPublicKey pubKey;
     public int status;
-    public BigDecimal stake;
-    public BigDecimal part;
+    public BigDecimal stake = BigDecimal.ZERO;
+    public BigDecimal part = BigDecimal.ZERO;
+    public BigInteger delegatorCount = BigInteger.ZERO;
     public ValidatorMeta meta;
 }

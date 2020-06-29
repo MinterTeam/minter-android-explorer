@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -33,21 +33,24 @@ import javax.annotation.Nonnull;
 import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.data.DataRepository;
 import network.minter.explorer.api.ExplorerValidatorsEndpoint;
+import network.minter.explorer.api.converters.ExplorerValidatorsDeserializer;
 import network.minter.explorer.models.ExpResult;
 import network.minter.explorer.models.ValidatorItem;
 import retrofit2.Call;
 
 /**
  * minter-android-explorer. 2019
+ *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-public class ExplorerValidatorsRepository extends DataRepository<ExplorerValidatorsEndpoint> {
+public class ExplorerValidatorsRepository extends DataRepository<ExplorerValidatorsEndpoint> implements DataRepository.Configurator {
     public ExplorerValidatorsRepository(@Nonnull ApiService.Builder apiBuilder) {
         super(apiBuilder);
     }
 
     /**
      * Get list of validators with full information about them
+     *
      * @return Retrofit call
      */
     public Call<ExpResult<List<ValidatorItem>>> getValidators() {
@@ -58,5 +61,11 @@ public class ExplorerValidatorsRepository extends DataRepository<ExplorerValidat
     @Override
     protected Class<ExplorerValidatorsEndpoint> getServiceClass() {
         return ExplorerValidatorsEndpoint.class;
+    }
+
+
+    @Override
+    public void configure(ApiService.Builder api) {
+        api.registerTypeAdapter(ValidatorItem.class, new ExplorerValidatorsDeserializer());
     }
 }

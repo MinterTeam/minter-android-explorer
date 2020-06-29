@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -26,28 +26,40 @@
 
 package network.minter.explorer.models;
 
-import com.google.gson.annotations.SerializedName;
-
 import org.parceler.Parcel;
 
-import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import network.minter.core.crypto.MinterPublicKey;
 
 /**
- * minter-android-explorer. 2019
- * @author Eduard Maximovich [edward.vstock@gmail.com]
+ * minter-android-explorer. 2020
+ *
+ * @author Eduard Maximovich (edward.vstock@gmail.com)
  */
 @Parcel
-public class DelegationInfo {
+public class DelegationList {
+    public Map<MinterPublicKey, List<CoinDelegation>> delegations = new HashMap<>();
 
-    public String coin;
-    public BigDecimal value;
-    @SerializedName("bip_value")
-    public BigDecimal bipValue;
-    @SerializedName("pub_key")
-    public MinterPublicKey pubKey;
-    @SerializedName("validator_meta")
-    public ValidatorMeta meta;
+    public int size() {
+        return delegations.size();
+    }
 
+    public boolean isEmpty() {
+        return delegations.isEmpty();
+    }
+
+    public List<CoinDelegation> getDelegatedByPublicKey(MinterPublicKey publicKey) {
+        if (!hasDelegations(publicKey)) {
+            return Collections.emptyList();
+        }
+        return delegations.get(publicKey);
+    }
+
+    public boolean hasDelegations(MinterPublicKey publicKey) {
+        return publicKey != null && delegations.containsKey(publicKey) && delegations.get(publicKey) != null;
+    }
 }

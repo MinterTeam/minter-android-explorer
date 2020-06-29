@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -26,7 +26,6 @@
 
 package network.minter.explorer.tests.repo;
 
-import network.minter.explorer.models.BCExplorerResult;
 import network.minter.explorer.models.ExpResult;
 import retrofit2.Response;
 
@@ -36,6 +35,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * minter-android-explorer. 2019
+ *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
 public abstract class BaseRepoTest {
@@ -44,10 +44,6 @@ public abstract class BaseRepoTest {
         assertTrue(result.isSuccessful());
         if (result.body() instanceof ExpResult) {
             final ExpResult<?> body = ((ExpResult) result.body());
-            assertNull(bodyError(body), body.error);
-            assertTrue(body.isOk());
-        } else if (result.body() instanceof BCExplorerResult) {
-            final BCExplorerResult<?> body = ((BCExplorerResult) result.body());
             assertNull(bodyError(body), body.error);
             assertTrue(body.isOk());
         }
@@ -59,24 +55,12 @@ public abstract class BaseRepoTest {
             final ExpResult<?> body = ((ExpResult) result.body());
             assertNotNull("Body has no error!", body.error);
             assertTrue(!body.isOk());
-        } else if (result.body() instanceof BCExplorerResult) {
-            final BCExplorerResult<?> body = ((BCExplorerResult) result.body());
-            assertNotNull("Body has no error!", body.error);
-            assertTrue(!body.isOk());
         }
     }
 
     protected String bodyError(ExpResult<?> res) {
         if (res.error != null) {
-            return res.error.getMessage();
-        }
-
-        return "No error";
-    }
-
-    protected String bodyError(BCExplorerResult<?> res) {
-        if (res.error != null) {
-            return res.error.getMessage();
+            return res.getMessage();
         }
 
         return "No error";

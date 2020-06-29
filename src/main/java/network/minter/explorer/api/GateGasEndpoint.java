@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -38,6 +38,6 @@ import retrofit2.http.GET;
  */
 public interface GateGasEndpoint {
 
-    @GET("v1/min-gas")
+    @GET("min-gas")
     Call<GateResult<GasValue>> getMinGas();
 }

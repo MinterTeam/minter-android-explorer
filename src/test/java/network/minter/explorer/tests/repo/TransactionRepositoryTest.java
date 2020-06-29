@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -45,7 +45,7 @@ import network.minter.core.crypto.MinterAddress;
 import network.minter.core.crypto.MinterHash;
 import network.minter.core.crypto.MinterPublicKey;
 import network.minter.core.internal.log.StdLogger;
-import network.minter.explorer.MinterExplorerApi;
+import network.minter.explorer.MinterExplorerSDK;
 import network.minter.explorer.models.ExpResult;
 import network.minter.explorer.models.HistoryTransaction;
 import network.minter.explorer.repo.ExplorerTransactionRepository;
@@ -65,13 +65,13 @@ import static org.junit.Assert.assertTrue;
 public class TransactionRepositoryTest extends BaseRepoTest {
 
     static {
-        MinterExplorerApi.initialize(true, new StdLogger());
-        MinterExplorerApi.getInstance().getApiService().addHttpInterceptor(new ApiMockInterceptor());
+        MinterExplorerSDK.initialize(true, new StdLogger());
+        MinterExplorerSDK.getInstance().getApiService().addHttpInterceptor(new ApiMockInterceptor());
     }
 
     @Test
     public void transactionsData() throws IOException {
-        ExplorerTransactionRepository repo = MinterExplorerApi.getInstance().transactions();
+        ExplorerTransactionRepository repo = MinterExplorerSDK.getInstance().transactions();
         MinterAddress address = new MinterAddress("Mx06431236daf96979aa6cdf470a7df26430ad8efb");
         Response<ExpResult<List<HistoryTransaction>>> response = repo.getTransactions(address).execute();
 
@@ -95,15 +95,14 @@ public class TransactionRepositoryTest extends BaseRepoTest {
         11 EditCandidate(TxEditCandidateResult.class),
         -- MultiSend(TxMultisendResult.class), no example
          */
-        ExpResult.Meta meta = response.body().meta;
+        ExpResult.Meta meta = response.body().getMeta();
         List<HistoryTransaction> transactions = response.body().result;
 
         assertNotNull(meta);
         assertNotNull(transactions);
 
         assertEquals(1, meta.currentPage);
-        assertEquals(0, meta.from);
-        assertEquals(0, meta.to);
+
         assertEquals(1, meta.lastPage);
         assertEquals(50, meta.perPage);
         assertEquals(12, meta.total);
@@ -165,7 +164,7 @@ public class TransactionRepositoryTest extends BaseRepoTest {
 
     @Test
     public void getTransactionsByMultipleAddresses() {
-//        ExplorerTransactionRepository repo = MinterExplorerApi.getInstance().transactions();
+//        ExplorerTransactionRepository repo = MinterExplorerSDK.getInstance().transactions();
 //        MinterAddress address1 = new MinterAddress("Mx0acbd5df9bc4bdc9fcf2f87e8393907739401a27");
 //        MinterAddress address2 = new MinterAddress("Mx91d56aa8bbcc796ed0183838d56600e7780e16f9");
 //        TxSearchQuery query = new TxSearchQuery()
@@ -178,7 +177,7 @@ public class TransactionRepositoryTest extends BaseRepoTest {
 
     //    @Test
     public void getTransactionsCount() throws IOException {
-        ExplorerTransactionRepository repo = MinterExplorerApi.getInstance().transactions();
+        ExplorerTransactionRepository repo = MinterExplorerSDK.getInstance().transactions();
         TxSearchQuery query = new TxSearchQuery();
 
         /*
@@ -218,8 +217,8 @@ public class TransactionRepositoryTest extends BaseRepoTest {
         }};
         Map<String, String> typeMap = new HashMap<>();
 
-        int page = 1;
-        int lastPage = 0;
+        long page = 1;
+        long lastPage = 0;
         while (page == 1 || page < lastPage) {
             System.err.println("Search in page: " + page);
             System.err.println("Left to find types: " + (required.size() - typeMap.size()));
@@ -240,7 +239,7 @@ public class TransactionRepositoryTest extends BaseRepoTest {
             }
 
             if (lastPage == 0) {
-                lastPage = txResp.body().meta.lastPage;
+                lastPage = txResp.body().getMeta().lastPage;
             }
             page++;
         }

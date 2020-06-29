@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -39,34 +39,69 @@ import retrofit2.http.QueryMap;
 
 /**
  * minter-android-explorer. 2018
+ *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public interface ExplorerTransactionEndpoint {
-    @GET("v1/addresses/{address}/transactions")
+    @GET("addresses/{address}/transactions")
     Call<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(@Path("address") String address);
 
-    @GET("v1/addresses/{address}/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(@Path("address") String address, @Query("page") long page);
-
-    @GET("v1/addresses/{address}/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(@Path("address") String address, @Query("startblock") long fromBlock, @Query("endblock") long toBlock);
-
-    @GET("v1/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@QueryMap Map<String, Object> query);
-
-    @GET("v1/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@Query(value = "addresses[]", encoded = true) List<String> addresses);
-
-    @GET("v1/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@Query(value = "addresses[]", encoded = true) List<String> addresses, @Query("page") long page);
-
-    @GET("v1/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(
-            @Query(value = "addresses[]", encoded = true) List<String> addresses,
-            @Query("page") long page,
-            @Query("limit") int limit
+    @GET("addresses/{address}/transactions")
+    Call<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(
+            @Path("address") String address,
+            @Query("page") Integer page
     );
 
-    @GET("v1/transaction/{hash}")
+    @GET("addresses/{address}/transactions")
+    Call<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(
+            @Path("address") String address,
+            @Query("page") Integer page,
+            @Query("send_type") String filter
+    );
+
+    @GET("addresses/{address}/transactions")
+    Call<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(
+            @Path("address") String address,
+            @Query("startblock") Long fromBlock,
+            @Query("endblock") Long toBlock
+    );
+
+    @GET("addresses/{address}/transactions")
+    Call<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(
+            @Path("address") String address,
+            @Query("startblock") Long fromBlock,
+            @Query("endblock") Long toBlock,
+            @Query("send_type") String sendType
+    );
+
+    @GET("transactions")
+    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@QueryMap Map<String, Object> query);
+
+    @GET("transactions")
+    Call<ExpResult<List<HistoryTransaction>>> getTransactions(
+            @Query(value = "addresses[]", encoded = true) List<String> addresses
+    );
+
+    @GET("transactions")
+    Call<ExpResult<List<HistoryTransaction>>> getTransactions(
+            @Query(value = "addresses[]", encoded = true) List<String> addresses,
+            @Query("page") Integer page
+    );
+
+    @GET("transactions")
+    Call<ExpResult<List<HistoryTransaction>>> getTransactions(
+            @Query(value = "addresses[]", encoded = true) List<String> addresses,
+            @Query("page") Integer page,
+            @Query("limit") Integer limit
+    );
+
+    @GET("transactions")
+    Call<ExpResult<List<HistoryTransaction>>> getTransactions(
+            @Query(value = "addresses[]", encoded = true) List<String> addresses,
+            @Query("page") Integer page,
+            @Query("send_type") String sendType
+    );
+
+    @GET("transactions/{hash}")
     Call<ExpResult<HistoryTransaction>> findTransactionByHash(@Path("hash") String hash);
 }

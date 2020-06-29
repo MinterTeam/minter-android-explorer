@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -40,7 +40,7 @@ import network.minter.blockchain.models.ExchangeBuyValue;
 import network.minter.blockchain.models.ExchangeSellValue;
 import network.minter.blockchain.models.operational.Transaction;
 import network.minter.core.internal.log.StdLogger;
-import network.minter.explorer.MinterExplorerApi;
+import network.minter.explorer.MinterExplorerSDK;
 import network.minter.explorer.models.CoinItem;
 import network.minter.explorer.models.ExpResult;
 import network.minter.explorer.models.GateResult;
@@ -62,14 +62,14 @@ import static org.junit.Assert.assertNull;
 public class CoinsRepositoryTest extends BaseRepoTest {
 
     static {
-        MinterExplorerApi.initialize(true, new StdLogger());
-//        MinterExplorerApi.getInstance().getApiService().addHttpInterceptor(new ApiMockInterceptor());
+        MinterExplorerSDK.initialize(true, new StdLogger());
+//        MinterExplorerSDK.getInstance().getApiService().addHttpInterceptor(new ApiMockInterceptor());
     }
 
     @SuppressWarnings("SimplifiableJUnitAssertion")
     @Test
     public void getAll() throws IOException {
-        ExplorerCoinsRepository repo = MinterExplorerApi.getInstance().coins();
+        ExplorerCoinsRepository repo = MinterExplorerSDK.getInstance().coins();
 
         Response<ExpResult<List<CoinItem>>> result = repo.getAll().execute();
         checkResponseSuccess(result);
@@ -103,7 +103,7 @@ public class CoinsRepositoryTest extends BaseRepoTest {
 
     @Test
     public void getCinemacoin() throws IOException {
-        ExplorerCoinsRepository repo = MinterExplorerApi.getInstance().coins();
+        ExplorerCoinsRepository repo = MinterExplorerSDK.getInstance().coins();
 
         Response<ExpResult<List<CoinItem>>> result = repo.search("cinemacoin").execute();
         checkResponseSuccess(result);
@@ -126,7 +126,7 @@ public class CoinsRepositoryTest extends BaseRepoTest {
 
     @Test
     public void getUnknownCoin() throws IOException {
-        ExplorerCoinsRepository repo = MinterExplorerApi.getInstance().coins();
+        ExplorerCoinsRepository repo = MinterExplorerSDK.getInstance().coins();
 
         Response<ExpResult<List<CoinItem>>> result = repo.search("unknown").execute();
         checkResponseSuccess(result);
@@ -139,7 +139,7 @@ public class CoinsRepositoryTest extends BaseRepoTest {
 
     @Test
     public void buyCoinCurrency() throws IOException {
-        GateEstimateRepository repo = MinterExplorerApi.getInstance().estimate();
+        GateEstimateRepository repo = MinterExplorerSDK.getInstance().estimate();
         Response<GateResult<ExchangeBuyValue>> result =
                 repo.getCoinExchangeCurrencyToBuy("MNT", new BigDecimal("1"), "CINEMACOIN").execute();
 
@@ -162,7 +162,7 @@ public class CoinsRepositoryTest extends BaseRepoTest {
 
     @Test
     public void buyCoinWrongName() throws IOException {
-        GateEstimateRepository repo = MinterExplorerApi.getInstance().estimate();
+        GateEstimateRepository repo = MinterExplorerSDK.getInstance().estimate();
         Response<GateResult<ExchangeBuyValue>> result =
                 repo.getCoinExchangeCurrencyToBuy("MNT", new BigDecimal("1"), "MNT").execute();
 
@@ -177,7 +177,7 @@ public class CoinsRepositoryTest extends BaseRepoTest {
 
     @Test
     public void sellCoinCurrency() throws IOException {
-        GateEstimateRepository repo = MinterExplorerApi.getInstance().estimate();
+        GateEstimateRepository repo = MinterExplorerSDK.getInstance().estimate();
         Response<GateResult<ExchangeSellValue>> result =
                 repo.getCoinExchangeCurrencyToSell("MNT", new BigDecimal("1"), "CINEMACOIN").execute();
 
@@ -200,7 +200,7 @@ public class CoinsRepositoryTest extends BaseRepoTest {
 
     @Test
     public void sellCoinWrongName() throws IOException {
-        GateEstimateRepository repo = MinterExplorerApi.getInstance().estimate();
+        GateEstimateRepository repo = MinterExplorerSDK.getInstance().estimate();
         Response<GateResult<ExchangeSellValue>> result =
                 repo.getCoinExchangeCurrencyToSell("MNT", new BigDecimal("1"), "MNT").execute();
 

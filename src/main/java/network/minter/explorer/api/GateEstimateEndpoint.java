@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -42,7 +42,7 @@ import retrofit2.http.Query;
  */
 public interface GateEstimateEndpoint {
 
-    @GET("v1/estimate/tx-commission")
+    @GET("estimate/tx-commission")
     Call<GateResult<TransactionCommissionValue>> getTxCommission();
 
     /**
@@ -52,7 +52,7 @@ public interface GateEstimateEndpoint {
      * @param coinToBuy coin to convert to
      * @return
      */
-    @GET("v1/estimate/coin-sell")
+    @GET("estimate/coin-sell")
     Call<GateResult<ExchangeSellValue>> getCoinExchangeCurrencyToSell(
             @Query("coinToSell") String coinToSell,
             @Query("valueToSell") String valueToSell,
@@ -66,7 +66,7 @@ public interface GateEstimateEndpoint {
      * @param coinToBuy coin to convert to
      * @return
      */
-    @GET("v1/estimate/coin-buy")
+    @GET("estimate/coin-buy")
     Call<GateResult<ExchangeBuyValue>> getCoinExchangeCurrencyToBuy(
             @Query("coinToSell") String coinToSell,
             @Query("valueToBuy") String valueToBuy,
@@ -78,10 +78,10 @@ public interface GateEstimateEndpoint {
      * @param signedTx Valid transaction, signed with private key
      * @return
      */
-    @GET("v1/estimate/tx-commission")
+    @GET("estimate/tx-commission")
     Call<GateResult<TransactionCommissionValue>> getTxCommission(@Query("transaction") String signedTx);
 
 
-    @GET("v1/nonce/{address}")
+    @GET("nonce/{address}")
     Call<GateResult<TxCount>> getTransactionsCount(@Path("address") String address);
 }

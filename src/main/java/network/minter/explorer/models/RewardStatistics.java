@@ -26,24 +26,13 @@
 
 package network.minter.explorer.models;
 
-import com.google.gson.annotations.SerializedName;
-
 import org.parceler.Parcel;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
-/**
- * minter-android-explorer. 2018
- * @author Eduard Maximovich [edward.vstock[at]gmail.com]
- */
 @Parcel
-public class CoinItem {
-    public String symbol;
-    public String name;
-    public BigDecimal volume;
-    public int crr;
-    @SerializedName("reserve_balance")
-    public BigDecimal reserveBalance;
-    @SerializedName("max_supply")
-    public BigDecimal maxSupply;
+public class RewardStatistics {
+    public Date time;
+    public BigDecimal amount;
 }

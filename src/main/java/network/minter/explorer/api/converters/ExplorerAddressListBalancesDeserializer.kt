@@ -23,27 +23,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package network.minter.explorer.api.converters
 
-package network.minter.explorer.models;
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonParseException
+import network.minter.explorer.MinterExplorerSDK
+import network.minter.explorer.models.AddressBalance
+import network.minter.explorer.models.AddressListBalances
+import java.lang.reflect.Type
 
-import com.google.gson.annotations.SerializedName;
+class ExplorerAddressListBalancesDeserializer : JsonDeserializer<AddressListBalances?> {
+    val gson = MinterExplorerSDK.getInstance().gsonBuilder
+            .registerTypeAdapter(AddressBalance::class.java, ExplorerAddressBalanceDeserializer())
+            .create()
 
-import org.parceler.Parcel;
+    @Throws(JsonParseException::class)
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): AddressListBalances? {
+        if (json.isJsonNull) {
+            return null
+        }
 
-import java.math.BigDecimal;
-
-/**
- * minter-android-explorer. 2018
- * @author Eduard Maximovich [edward.vstock[at]gmail.com]
- */
-@Parcel
-public class CoinItem {
-    public String symbol;
-    public String name;
-    public BigDecimal volume;
-    public int crr;
-    @SerializedName("reserve_balance")
-    public BigDecimal reserveBalance;
-    @SerializedName("max_supply")
-    public BigDecimal maxSupply;
+        val balances = AddressListBalances()
+        val root = json.asJsonArray
+        for (i in 0 until root.size()) {
+            val balanceJson = root[i].asJsonObject
+            val balance = gson.fromJson(balanceJson, AddressBalance::class.java)
+            balances.balances.add(balance)
+        }
+        return balances
+    }
 }

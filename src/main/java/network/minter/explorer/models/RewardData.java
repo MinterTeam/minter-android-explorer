@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -26,6 +26,10 @@
 
 package network.minter.explorer.models;
 
+import com.google.gson.annotations.SerializedName;
+
+import org.parceler.Parcel;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -34,14 +38,17 @@ import network.minter.core.crypto.MinterPublicKey;
 
 /**
  * minter-android-explorer. 2019
+ *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
+@Parcel
 public class RewardData {
-
-    public long block;
+    @SerializedName("time_id")
+    public Date time;
     public String role;
     public BigDecimal amount;
     public MinterAddress address;
     public MinterPublicKey validator;
-    public Date timestamp;
+    @SerializedName("validator_meta")
+    public ValidatorMeta validatorMeta;
 }

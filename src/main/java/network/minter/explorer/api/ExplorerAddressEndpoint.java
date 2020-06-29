@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -28,11 +28,11 @@ package network.minter.explorer.api;
 
 import java.util.List;
 
-import network.minter.explorer.models.AddressData;
-import network.minter.explorer.models.BCExplorerResult;
-import network.minter.explorer.models.DelegationInfo;
+import network.minter.explorer.models.AddressBalance;
+import network.minter.explorer.models.AddressListBalances;
+import network.minter.explorer.models.DelegationList;
 import network.minter.explorer.models.ExpResult;
-import network.minter.explorer.models.RewardData;
+import network.minter.explorer.models.RewardStatistics;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -48,37 +48,54 @@ public interface ExplorerAddressEndpoint {
      * Resolve balance by address
      *
      * @param address
-     * @return Retrofit call with {@link ExpResult}
+     * @return Retrofit call with [ExpResult]
      */
-    @GET("v1/addresses/{address}")
-    Call<BCExplorerResult<AddressData>> balance(@Path("address") String address);
+    @GET("addresses/{address}")
+    Call<ExpResult<AddressBalance>> balance(@Path("address") String address);
 
     /**
      * Resolve balance by address
+     *
      * @param address
-     * @return Retrofit call with {@link ExpResult}
+     * @return Retrofit call with [ExpResult]
      */
-    @GET("v1/addresses/{address}")
-    Call<BCExplorerResult<AddressData>> balance(@Path("address") String address, @Query("withSum") Integer withSum);
+    @GET("addresses/{address}")
+    Call<ExpResult<AddressBalance>> balance(@Path("address") String address, @Query("with_sum") Integer withSum);
 
     /**
      * Resolve balance by multiple addresses
      *
      * @param addresses
-     * @return Retrofit call with {@link ExpResult}
+     * @return Retrofit call with [ExpResult]
      */
-    @GET("v1/addresses")
-    Call<BCExplorerResult<List<AddressData>>> balanceMultiple(@Query(value = "addresses[]", encoded = true) List<String> addresses);
+    @GET("addresses")
+    Call<ExpResult<AddressListBalances>> balanceMultiple(@Query(value = "addresses[]", encoded = true) List<String> addresses);
 
     /**
      * List of delegated validators
+     *
      * @param address
      * @return
      */
-    @GET("v1/addresses/{address}/delegations")
-    Call<ExpResult<List<DelegationInfo>>> getDelegationsForAddress(@Path("address") String address,
-                                                                   @Query("page") long page);
+    @GET("addresses/{address}/delegations")
+    Call<ExpResult<DelegationList>> getDelegationsForAddress(
+            @Path("address") String address,
+            @Query("page") Integer page
+    );
 
-    @GET("v1/addresses/{address}/events/rewards")
-    Call<ExpResult<List<RewardData>>> getRewards(@Path("address") String address, @Query("page") long page);
+    /**
+     * Aggregated reward statistics with just sum and date
+     *
+     * @param address
+     * @return
+     */
+    @GET("addresses/{address}/statistics/rewards")
+    Call<ExpResult<List<RewardStatistics>>> getRewardStatistics(@Path("address") String address);
+
+    @GET("addresses/{address}/statistics/rewards")
+    Call<ExpResult<List<RewardStatistics>>> getRewardStatistics(
+            @Path("address") String address,
+            @Query("start_time") String startTime,
+            @Query("end_time") String endTime
+    );
 }

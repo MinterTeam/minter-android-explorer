@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -26,15 +26,25 @@
 
 package network.minter.explorer.tests.models;
 
+import com.google.gson.Gson;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import network.minter.core.MinterSDK;
-import network.minter.explorer.models.AddressData;
+import network.minter.core.crypto.MinterPublicKey;
+import network.minter.explorer.MinterExplorerSDK;
+import network.minter.explorer.models.AddressBalance;
+import network.minter.explorer.models.CoinBalance;
+import network.minter.explorer.models.CoinDelegation;
 
 import static java.math.BigDecimal.ZERO;
 import static org.junit.Assert.assertEquals;
@@ -44,17 +54,47 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * minter-android-explorer. 2019
+ *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AddressDataTest {
+public class AddressBalanceTest {
+
+    @Test
+    public void encodeGsonCoinDelegation() {
+        MinterExplorerSDK.initialize(true);
+
+        Map<MinterPublicKey, List<CoinDelegation>> delegations = new HashMap<>();
+        MinterPublicKey pk1 = new MinterPublicKey("Mp47f5c19c3ac5d66c960f36aa1a2d74ec8127f96308b67054332c988ee9eafaf0");
+        MinterPublicKey pk2 = new MinterPublicKey("Mp57f5c19c3ac5d66c960f36aa1a2d74ec8127f96308b67054332c988ee9eafaf0");
+        delegations.put(pk1, new ArrayList<>());
+        delegations.put(pk2, new ArrayList<>());
+
+        CoinDelegation v1 = new CoinDelegation("BIP", ZERO, ZERO);
+        CoinDelegation v2 = new CoinDelegation("MNT", new BigDecimal("1"), new BigDecimal("1"));
+        CoinDelegation v3 = new CoinDelegation("ZERO", new BigDecimal("2"), new BigDecimal("2"));
+        delegations.get(pk1).add(v1);
+        delegations.get(pk2).add(v1);
+        delegations.get(pk1).add(v2);
+        delegations.get(pk2).add(v2);
+        delegations.get(pk1).add(v3);
+        delegations.get(pk2).add(v3);
+
+        Gson gson = MinterExplorerSDK.getInstance().getGsonBuilder().create();
+        String res = gson.toJson(delegations);
+
+
+        CoinDelegation res2 = gson.fromJson(res, CoinDelegation.class);
+
+        System.out.println(res);
+    }
 
     @Test
     public void fillEmptyWithDefaultValue() {
-        AddressData data = new AddressData();
+        AddressBalance data = new AddressBalance();
         assertNotNull(data.coins); //empty default
         assertNull(data.address);
-        Assert.assertEquals(new BigDecimal("0"), data.getTotalBalance());
+        Assert.assertEquals(new BigDecimal("0"), data.totalBalance);
 
 
         assertTrue(data.coins.isEmpty());
@@ -64,47 +104,46 @@ public class AddressDataTest {
         assertNull(data.address);
         Assert.assertEquals(1, data.coins.size());
 
-        AddressData.CoinBalance def = data.coins.get(MinterSDK.DEFAULT_COIN);
+        CoinBalance def = data.coins.get(MinterSDK.DEFAULT_COIN);
         assertNotNull(def);
-        Assert.assertEquals(MinterSDK.DEFAULT_COIN, def.getCoin());
-        Assert.assertEquals(def.getCoin(), def.coin);
+        Assert.assertEquals(MinterSDK.DEFAULT_COIN, def.coin);
+        Assert.assertEquals(def.coin, def.coin);
 
         def.coin = null;
-        assertNull(def.getCoin());
+        assertNull(def.coin);
 
-        def.coin = MinterSDK.DEFAULT_COIN.toLowerCase();
-        Assert.assertEquals(MinterSDK.DEFAULT_COIN.toUpperCase(), def.getCoin());
+        def.coin = (MinterSDK.DEFAULT_COIN.toLowerCase());
+        Assert.assertEquals(MinterSDK.DEFAULT_COIN.toUpperCase(), def.coin);
 
-        data.coins = null;
-        assertEquals(ZERO, data.getTotalBalance());
+        assertEquals(ZERO, data.totalBalance);
         data.fillDefaultsOnEmpty();
         assertNotNull(data.coins);
 
-        AddressData.CoinBalance nitem = data.coins.get(MinterSDK.DEFAULT_COIN);
+        CoinBalance nitem = data.coins.get(MinterSDK.DEFAULT_COIN);
         assertNotNull(nitem);
-        nitem.amount = null;
-        Assert.assertEquals(ZERO, nitem.getAmount());
+        nitem.amount = (ZERO);
+        Assert.assertEquals(ZERO, nitem.amount);
 
         data.coins.clear();
-        assertEquals(ZERO, data.getTotalBalance());
+        assertEquals(ZERO, data.totalBalance);
         data.fillDefaultsOnEmpty();
 
-        data.coins = null;
-        assertNotNull(data.getCoins());
+
+        assertNotNull(data.coins);
         data.fillDefaultsOnEmpty();
-        data.coins.put("a", new AddressData.CoinBalance(null, null));
+        data.coins.put("a", new CoinBalance(null, ZERO, ZERO, null));
         data.fillDefaultsOnEmpty();
-        assertEquals(2, data.getCoins().size());
+        assertEquals(2, data.coins.size());
     }
 
     @Test
     public void parcelAndUnparcel() {
-//        AddressData ad = new AddressData();
+//        AddressBalance ad = new AddressBalance();
 //        Parcelable ads = Parcels.wrap(ad);
 //
 //        Parcel parcel = Mockito.spy(Parcel.class);
 //
-//        AddressData$$Parcelable p = new AddressData$$Parcelable(ad);
+//        AddressBalance$$Parcelable p = new AddressBalance$$Parcelable(ad);
 //        p.getParcel();
 //        p.writeToParcel(parcel, 0);
 //        p.describeContents();

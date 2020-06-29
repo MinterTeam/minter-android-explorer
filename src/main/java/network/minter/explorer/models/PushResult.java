@@ -28,22 +28,17 @@ package network.minter.explorer.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.parceler.Parcel;
-
-import java.math.BigDecimal;
+import network.minter.blockchain.models.HistoryTransaction;
+import network.minter.core.crypto.MinterHash;
 
 /**
- * minter-android-explorer. 2018
- * @author Eduard Maximovich [edward.vstock[at]gmail.com]
+ * minter-android-explorer. 2020
+ *
+ * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-@Parcel
-public class CoinItem {
-    public String symbol;
-    public String name;
-    public BigDecimal volume;
-    public int crr;
-    @SerializedName("reserve_balance")
-    public BigDecimal reserveBalance;
-    @SerializedName("max_supply")
-    public BigDecimal maxSupply;
+public class PushResult {
+    @SerializedName("hash")
+    public MinterHash txHash;
+    @SerializedName("transaction")
+    public HistoryTransaction txData;
 }

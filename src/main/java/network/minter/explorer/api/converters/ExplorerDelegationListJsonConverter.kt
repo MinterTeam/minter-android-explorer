@@ -23,24 +23,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package network.minter.explorer.api.converters
 
-package network.minter.explorer.models;
-
-import com.google.gson.annotations.SerializedName;
-
-import org.parceler.Parcel;
+import com.google.gson.*
+import network.minter.explorer.models.CoinDelegation
+import network.minter.explorer.models.DelegationList
+import java.lang.reflect.Type
 
 /**
  * minter-android-explorer. 2020
  *
  * @author Eduard Maximovich (edward.vstock@gmail.com)
  */
-@Parcel
-public class ValidatorMeta {
-    public String name;
-    public String description;
-    @SerializedName("icon_url")
-    public String iconUrl;
-    @SerializedName("site_url")
-    public String siteUrl;
+class ExplorerDelegationListJsonConverter : JsonDeserializer<DelegationList> {
+    private val gson: Gson = GsonBuilder().registerTypeAdapter(CoinDelegation::class.java, ExplorerCoinDelegationJsonConverter())
+            .create()
+
+    override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): DelegationList {
+        val delegationList = DelegationList()
+
+        if (json == null || json.isJsonNull) {
+            return delegationList
+        }
+
+        val root: JsonArray = json.asJsonArray
+
+        for (it in root) {
+            val obj = it.asJsonObject
+            val item = gson.fromJson(obj, CoinDelegation::class.java)
+            if (!delegationList.delegations.containsKey(item.publicKey)) {
+                delegationList.delegations[item.publicKey!!] = ArrayList()
+            }
+            delegationList.delegations[item.publicKey]!!.add(item)
+        }
+
+        for (entry in delegationList.delegations) {
+            entry.value.sortByDescending { it.bipValue }
+        }
+
+        return delegationList
+    }
+
 }

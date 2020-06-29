@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -39,6 +39,8 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import javax.annotation.Nonnull;
+
 import network.minter.blockchain.models.operational.Transaction;
 import network.minter.core.crypto.BytesData;
 import network.minter.core.crypto.MinterAddress;
@@ -67,15 +69,16 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * minter-android-explorer. 2018
+ *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-public class MinterExplorerApi {
+public class MinterExplorerSDK {
     public static final String FRONT_URL = BuildConfig.BASE_FRONT_URL;
-    private final static String BASE_API_URL = BuildConfig.BASE_API_URL;
-    private final static String BASE_GATE_URL = BuildConfig.GATE_API_URL;
+    private final static String BASE_API_URL = BuildConfig.BASE_API_URL + BuildConfig.BASE_API_VERSION + "/";
+    private final static String BASE_GATE_URL = BuildConfig.GATE_API_URL + BuildConfig.GATE_API_VERSION + "/";
     private final static String DATE_FORMAT;
 
-    private static MinterExplorerApi INSTANCE;
+    private static MinterExplorerSDK INSTANCE;
 
     static {
         String format = "yyyy-MM-dd HH:mm:ssX";
@@ -90,8 +93,13 @@ public class MinterExplorerApi {
         }
     }
 
-    private ApiService.Builder mApiService;
-    private ApiService.Builder mGateApiService;
+    private final ApiService.Builder mApiService;
+    private final ApiService.Builder mGateApiService;
+
+    private MinterExplorerSDK() {
+        this(BASE_API_URL, BASE_GATE_URL);
+    }
+
     private ExplorerTransactionRepository mTransactionRepository;
     private ExplorerAddressRepository mAddressRepository;
     private ExplorerCoinsRepository mCoinsRepository;
@@ -100,11 +108,7 @@ public class MinterExplorerApi {
     private GateEstimateRepository mGateEstimateRepo;
     private GateTransactionRepository mGateTxRepo;
 
-    private MinterExplorerApi() {
-        this(BASE_API_URL, BASE_GATE_URL);
-    }
-
-    private MinterExplorerApi(String baseApiUrl, String baseGateUrl) {
+    private MinterExplorerSDK(String baseApiUrl, String baseGateUrl) {
         mApiService = new ApiService.Builder(baseApiUrl, getGsonBuilder());
         mApiService.addHeader("Content-Type", "application/json");
         mApiService.addHeader("X-Minter-Client-Name", "MinterAndroid (explorer)");
@@ -120,28 +124,36 @@ public class MinterExplorerApi {
 
     /**
      * Init method
+     *
+     * @deprecated Use {@link Setup} instead
      */
+    @Deprecated
     public static void initialize() {
         initialize(false);
     }
 
     /**
      * Init method
+     * @deprecated Use {@link Setup} instead
      */
+    @Deprecated
     public static void initialize(String baseExplorerApiUrl, String baseGateUrl) {
         initialize(baseExplorerApiUrl, baseGateUrl, false);
     }
 
     /**
      * Init method with debug logs flag
+     *
      * @param debug enable debug logs
+     * @deprecated Use {@link Setup} instead
      */
+    @Deprecated
     public static void initialize(String baseExplorerApiUrl, String baseGateUrl, boolean debug, Mint.Leaf logger) {
         if (INSTANCE != null) {
             return;
         }
 
-        INSTANCE = new MinterExplorerApi(baseExplorerApiUrl, baseGateUrl);
+        INSTANCE = new MinterExplorerSDK(baseExplorerApiUrl, baseGateUrl);
         INSTANCE.mApiService.setDebug(debug);
         INSTANCE.mGateApiService.setDebug(debug);
 
@@ -174,31 +186,41 @@ public class MinterExplorerApi {
 
     /**
      * Init method with debug logs flag
+     *
      * @param debug enable debug logs
+     * @deprecated Use {@link Setup} instead
      */
+    @Deprecated
     public static void initialize(String baseExplorerApiUrl, String baseGateUrl, boolean debug) {
         initialize(baseExplorerApiUrl, baseGateUrl, debug, new TimberLogger());
     }
 
     /**
      * Init method with debug logs flag
+     *
      * @param debug enable debug logs
+     * @deprecated Use {@link Setup} instead
      */
+    @Deprecated
     public static void initialize(boolean debug) {
         initialize(BASE_API_URL, BASE_GATE_URL, debug, new TimberLogger());
     }
 
     /**
      * Init method with debug logs flag
+     *
      * @param debug enable debug logs
+     * @deprecated Use {@link Setup} instead
      */
+    @Deprecated
     public static void initialize(boolean debug, Mint.Leaf logger) {
         initialize(BASE_API_URL, BASE_GATE_URL, debug, logger);
     }
 
     /**
-     * Create new front url using HttpUrl.Builder
-     * @return HttpUrl.Builder
+     * Create new front url using HttpUrl.Setup
+     *
+     * @return HttpUrl.Setup
      * @see HttpUrl.Builder
      */
     public static HttpUrl.Builder newFrontUrl() {
@@ -208,16 +230,13 @@ public class MinterExplorerApi {
     /**
      * @return Singleton instance
      */
-    public static MinterExplorerApi getInstance() {
+    public static MinterExplorerSDK getInstance() {
         return INSTANCE;
-    }
-
-    public void setNetworkId(String id) {
-        mApiService.addHeader("X-Minter-Chain-Id", id);
     }
 
     /**
      * Gate gas repository
+     *
      * @return
      */
     public GateGasRepository gas() {
@@ -226,6 +245,43 @@ public class MinterExplorerApi {
         }
 
         return mGasRepository;
+    }
+
+    public void setNetworkId(String id) {
+        mApiService.addHeader("X-Minter-Chain-Id", id);
+    }
+
+    public static class Setup {
+        private String mExplorerApiUrl = BuildConfig.BASE_API_URL + BuildConfig.BASE_API_VERSION + "/";
+        private String mGateApiUrl = BuildConfig.GATE_API_URL + BuildConfig.GATE_API_VERSION + "/";
+        private boolean mDebug = false;
+        private Mint.Leaf mLogger = null;
+
+        public Setup setLogger(Mint.Leaf loggerIml) {
+            mLogger = loggerIml;
+            return this;
+        }
+
+        public Setup setEnableDebug(boolean enable) {
+            mDebug = enable;
+            return this;
+        }
+
+        public Setup setExplorerApiUrl(@Nonnull String url) {
+            mExplorerApiUrl = url;
+            return this;
+        }
+
+        public Setup setGateApiUrl(@Nonnull String url) {
+            mGateApiUrl = url;
+            return this;
+        }
+
+        public MinterExplorerSDK init() {
+            MinterExplorerSDK.initialize(mExplorerApiUrl, mGateApiUrl, mDebug, mLogger);
+            return MinterExplorerSDK.getInstance();
+        }
+
     }
 
     public GateTransactionRepository transactionsGate() {

@@ -1,7 +1,19 @@
 # Release notes
 
+## 0.8.0
+ - Renamed AddressData to AddressBalance
+ - Added AddressListBalance instead of List<AddressData> for multiple addresses
+ - Added a few models to represent delegated stakes and like
+ - BREAKING: Renamed `MinterExplorerApi` base class to `MinterExplorerSDK` and marked as deprecated `initialize` methods. 
+ Use `new MinterExplorerSDK.Setup()` to configure SDK
+ - BREAKING: `GateTransactionRepository.sendTransaction` not returns `GateResult<PushResult>` instead of `GateResult<TransactionSendResult>`
+
+## 0.7.1
+ - Added "latest_block_time" to base explorer result model
+ - Updated blockchain sdk to 0.12.2
+
 ## 0.7.0
- - Updated blockchain sdk
+ - Updated blockchain sdk to to 0.12.0
 
 ## 0.6.3
  - Added base Gate api url to initialize(...) methods

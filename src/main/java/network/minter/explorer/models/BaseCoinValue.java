@@ -26,24 +26,37 @@
 
 package network.minter.explorer.models;
 
-import com.google.gson.annotations.SerializedName;
-
 import org.parceler.Parcel;
 
 import java.math.BigDecimal;
 
 /**
- * minter-android-explorer. 2018
- * @author Eduard Maximovich [edward.vstock[at]gmail.com]
+ * minter-android-explorer. 2020
+ *
+ * @author Eduard Maximovich (edward.vstock@gmail.com)
  */
 @Parcel
-public class CoinItem {
-    public String symbol;
-    public String name;
-    public BigDecimal volume;
-    public int crr;
-    @SerializedName("reserve_balance")
-    public BigDecimal reserveBalance;
-    @SerializedName("max_supply")
-    public BigDecimal maxSupply;
+public class BaseCoinValue {
+    public String coin;
+    public BigDecimal amount = BigDecimal.ZERO;
+    public BigDecimal bipValue = BigDecimal.ZERO;
+
+    @SuppressWarnings("EqualsReplaceableByObjectsCall")
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BaseCoinValue)) return false;
+
+        BaseCoinValue that = (BaseCoinValue) o;
+
+        if (coin != null ? !coin.equals(that.coin) : that.coin != null) return false;
+        return amount.equals(that.amount);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = coin != null ? coin.hashCode() : 0;
+        result = 31 * result + amount.hashCode();
+        return result;
+    }
 }

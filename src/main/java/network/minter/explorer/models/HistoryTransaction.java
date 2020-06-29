@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -36,6 +36,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -58,18 +59,17 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
     public BigInteger txn;
     public MinterHash hash;
     public BigInteger nonce;
+    @SerializedName("height")
     public BigInteger block;
     public Date timestamp;
     public BigDecimal fee;
+    @SerializedName("gas_coin")
+    public String gasCoin;
     public Type type;
     public MinterAddress from;
     @Transient
     public Object data;
     public String payload;
-    @Deprecated
-    public transient String username;
-    @Deprecated
-    public transient String avatarUrl;
 
     public Type getType() {
         return type;
@@ -95,11 +95,6 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         return payload;
     }
 
-    @Deprecated
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
     public MinterHash getHash() {
         return hash;
     }
@@ -113,33 +108,27 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
     }
 
     public boolean isIncoming(List<MinterAddress> addressList) {
-        if (type != Type.Send) {
-            return false;
+        if (type == Type.Send) {
+            return addressList.contains(this.<TxSendCoinResult>getData().to);
+        } else if (type == Type.MultiSend) {
+            final TxMultisendResult res = getData();
+            if (res.items == null || res.items.isEmpty()) {
+                return false;
+            }
+
+            for (TxSendCoinResult sendData : res.items) {
+                if (addressList.contains(sendData.to)) {
+                    return true;
+                }
+            }
         }
 
-        return addressList.contains(this.<TxSendCoinResult>getData().to);
+        return false;
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getData() {
         return (T) data;
-    }
-
-    @Deprecated
-    public String getAvatar() {
-        return avatarUrl;
-    }
-
-    @Deprecated
-    public HistoryTransaction setAvatar(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-        return this;
-    }
-
-    @Deprecated
-    public HistoryTransaction setUsername(String username) {
-        this.username = username;
-        return this;
     }
 
     @Override
@@ -261,6 +250,8 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         public BigDecimal initialReserve;
         @SerializedName("constant_reserve_ratio")
         public int constantReserveRatio;
+        @SerializedName("max_supply")
+        public BigDecimal maxSupply = BigDecimal.ZERO;
 
         public String getName() {
             return name;
@@ -405,27 +396,25 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         @SerializedName("pub_key")
         public MinterPublicKey publicKey;
         public String coin;
-        public String stake;
-        public String value;
+        public BigDecimal value = BigDecimal.ZERO;
 
         public MinterPublicKey getPublicKey() {
             return publicKey;
         }
 
+        /**
+         * Return delegated/unbonded stake
+         *
+         * @return human decimal value
+         * @deprecated use {@link #getValue()}
+         */
+        @Deprecated
         public BigDecimal getStake() {
-            if (stake == null || stake.isEmpty()) {
-                stake = "0";
-            }
-
-            return new BigDecimal(stake);
+            return getValue();
         }
 
         public BigDecimal getValue() {
-            if (value == null || value.isEmpty()) {
-                value = "0";
-            }
-
-            return new BigDecimal(value);
+            return value;
         }
 
         public String getCoin() {
@@ -507,12 +496,29 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         public BigInteger threshold;
         public List<BigInteger> weights = new ArrayList<>();
         public List<MinterAddress> addresses = new ArrayList<>();
+        @SerializedName("multisig_address")
+        public MinterAddress multisigAddress;
     }
 
     @Parcel
     public static class TxMultisendResult {
         @SerializedName("list")
         public List<TxSendCoinResult> items;
+
+        @Nonnull
+        public List<TxSendCoinResult> findByRecipient(@Nonnull MinterAddress address) {
+            if (items == null || items.isEmpty()) {
+                return Collections.emptyList();
+            }
+            List<TxSendCoinResult> out = new ArrayList<>(1);
+            for (TxSendCoinResult item : items) {
+                if (item.to.equals(address)) {
+                    out.add(item);
+                }
+            }
+
+            return out;
+        }
     }
 
     @Parcel
@@ -522,10 +528,10 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         @SerializedName("owner_address")
         public MinterAddress ownerAddress;
         @SerializedName("pub_key")
-        public MinterPublicKey pubKey;
+        public MinterPublicKey publicKey;
 
         public MinterPublicKey getPublicKey() {
-            return pubKey;
+            return publicKey;
         }
 
         public MinterAddress getRewardAddress() {
@@ -535,17 +541,5 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         public MinterAddress getOwnerAddress() {
             return ownerAddress;
         }
-    }
-
-    //@TODO standard! write to Lashin to fix this
-    @Deprecated
-    @Parcel
-    public static class CandidateEditResult {
-        @SerializedName("reward_address")
-        public MinterAddress rewardAddress;
-        @SerializedName("owner_address")
-        public MinterAddress ownerAddress;
-        @SerializedName("pub_key")
-        public MinterPublicKey pubKey;
     }
 }

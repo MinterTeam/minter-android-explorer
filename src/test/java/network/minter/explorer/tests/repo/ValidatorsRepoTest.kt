@@ -24,26 +24,26 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorer.models;
+package network.minter.explorer.tests.repo
 
-import com.google.gson.annotations.SerializedName;
+import network.minter.explorer.MinterExplorerSDK
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
-import org.parceler.Parcel;
+class ValidatorsRepoTest {
 
-import java.math.BigDecimal;
+    init {
+        MinterExplorerSDK.initialize(true)
+    }
 
-/**
- * minter-android-explorer. 2018
- * @author Eduard Maximovich [edward.vstock[at]gmail.com]
- */
-@Parcel
-public class CoinItem {
-    public String symbol;
-    public String name;
-    public BigDecimal volume;
-    public int crr;
-    @SerializedName("reserve_balance")
-    public BigDecimal reserveBalance;
-    @SerializedName("max_supply")
-    public BigDecimal maxSupply;
+    @Test
+    fun getValidators() {
+        val repo = MinterExplorerSDK.getInstance().validators()
+        val result = repo.validators.execute()
+
+        assertTrue(result.isSuccessful)
+        assertTrue(result.body()!!.isOk)
+        assertTrue(result.body()!!.result != null)
+        assertTrue(result.body()!!.result.size > 0)
+    }
 }

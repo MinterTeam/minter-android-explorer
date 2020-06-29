@@ -1,6 +1,7 @@
 /*
- * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2020
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -34,7 +35,7 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-import network.minter.explorer.MinterExplorerApi;
+import network.minter.explorer.MinterExplorerSDK;
 import network.minter.explorer.models.HistoryTransaction;
 
 /**
@@ -45,7 +46,7 @@ import network.minter.explorer.models.HistoryTransaction;
 public class ExplorerHistoryTransactionDeserializer implements JsonDeserializer<HistoryTransaction> {
     @Override
     public HistoryTransaction deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        final Gson gson = MinterExplorerApi.getInstance().getGsonBuilder().create();
+        final Gson gson = MinterExplorerSDK.getInstance().getGsonBuilder().create();
         final HistoryTransaction tx = gson.fromJson(json, HistoryTransaction.class);
 
 	    if (tx.type != null && tx.type.getCls() != null) {

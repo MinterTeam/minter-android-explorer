@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -28,18 +28,19 @@ package network.minter.explorer.api;
 
 import java.util.Map;
 
-import network.minter.blockchain.models.TransactionSendResult;
 import network.minter.explorer.models.GateResult;
+import network.minter.explorer.models.PushResult;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 /**
  * minter-android-explorer. 2019
+ *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
 public interface GateTransactionEndpoint {
 
-    @POST("v1/transaction/push")
-    Call<GateResult<TransactionSendResult>> sendTransaction(@Body Map<String, String> data);
+    @POST("transaction/push")
+    Call<GateResult<PushResult>> sendTransaction(@Body Map<String, String> data);
 }

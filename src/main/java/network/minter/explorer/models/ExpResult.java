@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -31,19 +31,28 @@ import com.google.gson.annotations.SerializedName;
 import org.parceler.Parcel;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Map;
 
 /**
- * minter-android-explorer. 2018
+ * minter-android-explorer. 2020
  *
- * @author Eduard Maximovich <edward.vstock@gmail.com>
+ * @author Eduard Maximovich (edward.vstock@gmail.com)
  */
 public class ExpResult<Result> {
     @SerializedName("data")
     public Result result;
     public Object links;
     public Meta meta;
-    public int code;
-    public BCExplorerResult.ErrorResult error;
+    @SerializedName("latest_block_time")
+    public Date latestBlockTime;
+    public ErrorResult error;
+
+    public static <T> ExpResult<T> copyError(ExpResult<?> another) {
+        ExpResult<T> out = new ExpResult<>();
+        out.error = another.error;
+        return out;
+    }
 
     public Meta getMeta() {
         if (meta == null) {
@@ -53,17 +62,30 @@ public class ExpResult<Result> {
         return meta;
     }
 
+    public String getMessage() {
+        if (error == null) return null;
+        return error.message;
+    }
+
     public boolean isOk() {
         return error == null;
     }
 
-    /*
-    "current_page":1,
-    "last_page":3714,
-    "path":"explorer-api.testnet.minter.network/api/v1/transactions",
-    "per_page":50,
-    "total":185690
-     */
+    @Parcel
+    public static class ErrorResult {
+        public int code;
+        public String message;
+        public Map<String, String> fields;
+
+        public String getMessage() {
+            return message;
+        }
+
+        public int getCode() {
+            return code;
+        }
+    }
+
     @Parcel
     public static class Meta {
         @SerializedName("current_page")
@@ -75,11 +97,6 @@ public class ExpResult<Result> {
         public int perPage;
         public int total;
         public Additional additional;
-
-        @Deprecated
-        public int from;
-        @Deprecated
-        public int to;
 
         @Parcel
         public static class Additional {

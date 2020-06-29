@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2018
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -27,10 +27,8 @@
 package network.minter.explorer;
 
 import android.os.Build;
-import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,9 +39,10 @@ import static org.junit.Assert.assertNull;
 
 /**
  * Instrumented test, which will execute on an Android device.
+ *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-@RunWith(AndroidJUnit4.class)
+//@RunWith(AndroidJUnit4.class)
 public class DateParseFromExplorerTest {
     @Test
     public void parseDateWithTZ() {

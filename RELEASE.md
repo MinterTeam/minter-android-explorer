@@ -1,5 +1,8 @@
 # Release notes
 
+## 0.8.1
+ - Added `minStake` and `commission` value for validator data
+
 ## 0.8.0
  - Renamed AddressData to AddressBalance
  - Added AddressListBalance instead of List<AddressData> for multiple addresses

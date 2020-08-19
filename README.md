@@ -1,6 +1,6 @@
 Minter Android Explorer API SDK
 ===============================
-[![Download](https://api.bintray.com/packages/minterteam/android/minter-android-explorer-testnet/images/download.svg) ](https://bintray.com/minterteam/android/minter-android-explorer-testnet/_latestVersion)
+[![Download](https://api.bintray.com/packages/minterteam/android/minter-android-explorer/images/download.svg)](https://bintray.com/minterteam/android/minter-android-explorer-testnet/_latestVersion)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
@@ -24,7 +24,7 @@ project build.gradle
 ```groovy
 
 ext {
-    minterExplorerSDK = "0.8.0"
+    minterExplorerSDK = "0.8.1"
 }
 
 dependencies {
@@ -39,29 +39,52 @@ dependencies {
 ## Basic Usage
 ### Initialize it
 ```java
+class MyProject {
+    public static void main(String[] args) {
+        MinterExplorerSDK.Setup explorerSdk = new MinterExplorerSDK.Setup().setEnableDebug(true /*set true or false to see logs*/);
 
-MinterExplorerApi.initialize();
+        // Optional: you can set your own explorer api url
+        explorerSdk.setExplorerApiUrl(BuildConfig.EXPLORER_API_URL);
+        // Optional: you can set your own gate api url
+        explorerSdk.setGateApiUrl(BuildConfig.GATE_API_URL);
+        
+        // Optional: also you can set your own logger by interface {@link Mint.Leaf}
+        explorerSdk.setLogger(new TimberLogger());
+        // Finally, initialize singletone instance and get it
+        explorerSdk.init();    
+        
+        // Now you can use SDK, see example below
+    }
+    
+}
 ```
 
 ### Usage
 SDK uses retrofit http client [see](https://square.github.io/retrofit/)
 ```java
 // get transactions (or other) repository
-ExplorerTransactionsRepository txRepo = MinterExplorerApi.getInstance().transactions();
+class MyProject {
+    
+    public static void main(String[] args) {
+        ExplorerTransactionsRepository txRepo = MinterExplorerSDK.getInstance().transactions();
 
-// get list of transactions by given address
-MinterAddress address = new MinterAddress("Mx01c8af77721c9666c672de62a4deadda0dafb03a");
-txRepo.getTransactions(address).enqueue(new Callback<ExpResult<List<HistoryTransaction>>>() {
-    @Override
-    public void onResponse(@NonNull Call<ExpResult<List<HistoryTransaction>>> call, @NonNull Response<ExpResult<List<HistoryTransaction>>> response) {
-        // handle response
+        // get list of transactions by given address
+        MinterAddress address = new MinterAddress("Mx01c8af77721c9666c672de62a4deadda0dafb03a");
+        txRepo.getTransactions(address).enqueue(new Callback<ExpResult<List<HistoryTransaction>>>() {
+            @Override
+            public void onResponse(@NonNull Call<ExpResult<List<HistoryTransaction>>> call, @NonNull Response<ExpResult<List<HistoryTransaction>>> response) {
+                // handle response
+            }
+        
+            @Override
+            public void onFailure(@NonNull Call<ExpResult<List<HistoryTransaction>>> call, @NonNull Throwable t) {
+                // handle error
+            }
+        });
     }
-
-    @Override
-    public void onFailure(@NonNull Call<ExpResult<List<HistoryTransaction>>> call, @NonNull Throwable t) {
-        // handle error
-    }
-});
+    
+    
+}
 ```
 For more examples, see our [wallet app](https://github.com/MinterTeam/minter-android-wallet)
 

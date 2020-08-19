@@ -31,7 +31,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.0'
+        classpath 'com.android.tools.build:gradle:4.0.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
@@ -60,14 +60,14 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 group = 'network.minter.android'
-version = '0.8.0'
+version = '0.8.1'
 
 ext {
     minterMinSdk = 16
     minterMaxSdk = 29
     minterBuildTools = "29.0.3"
     minterCoreSDK = "0.7.1"
-    minterBlockchainSDK = "0.13.0"
+    minterBlockchainSDK = "0.13.1"
 
     buildArtifactName = project.name
     buildArtifactVersion = version

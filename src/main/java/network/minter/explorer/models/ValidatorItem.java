@@ -47,6 +47,8 @@ public class ValidatorItem {
     public MinterPublicKey pubKey;
     public int status;
     public BigDecimal stake = BigDecimal.ZERO;
+    public BigDecimal minStake = BigDecimal.ZERO;
+    public int commission = 0;
     public BigDecimal part = BigDecimal.ZERO;
     public BigInteger delegatorCount = BigInteger.ZERO;
     public ValidatorMeta meta;

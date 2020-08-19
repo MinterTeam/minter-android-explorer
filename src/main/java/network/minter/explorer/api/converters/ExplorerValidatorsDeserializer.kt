@@ -48,6 +48,12 @@ class ExplorerValidatorsDeserializer : JsonDeserializer<ValidatorItem?> {
         validator.pubKey = MinterPublicKey(root["public_key"].asString)
         validator.part = root["part"].asBigDecimal
         validator.stake = root["stake"].asBigDecimal
+        if (root.has("min_stake")) {
+            validator.minStake = root["min_stake"].asBigDecimal
+        }
+        if (root.has("commission")) {
+            validator.commission = root["commission"].asInt
+        }
         validator.status = root["status"].asInt
         if (root.has("delegator_count") && !root["delegator_count"].isJsonNull) {
             validator.delegatorCount = root["delegator_count"].asBigInteger

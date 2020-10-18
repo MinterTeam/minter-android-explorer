@@ -7,3 +7,4 @@
 /captures
 .externalNativeBuild
 gradle/wrapper/gradle-wrapper.jar
+src/test/java/network/minter/explorer/tests/repo/LocalTest.kt

@@ -31,6 +31,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import io.reactivex.Observable;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.data.DataRepository;
@@ -38,7 +39,6 @@ import network.minter.explorer.api.ExplorerTransactionEndpoint;
 import network.minter.explorer.api.converters.ExplorerHistoryTransactionDeserializer;
 import network.minter.explorer.models.ExpResult;
 import network.minter.explorer.models.HistoryTransaction;
-import retrofit2.Call;
 
 import static network.minter.core.internal.common.Preconditions.checkArgument;
 
@@ -63,7 +63,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * @TODO query builder
      * @link https://app.swaggerhub.com/apis/GrKamil/minter-explorer_api/1.2.0#/Addresses/getAddressTransactions
      */
-    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address, int page) {
+    public Observable<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address, int page) {
         checkArgument(address != null, "Address can't be null");
         return getInstantService().getTransactionsByAddress(address.toString(), page);
     }
@@ -74,11 +74,12 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
 
     /**
      * Get transactions list with filter query
+     *
      * @param builder
      * @return
      * @see TxSearchQuery
      */
-    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(TxSearchQuery builder) {
+    public Observable<ExpResult<List<HistoryTransaction>>> getTransactions(TxSearchQuery builder) {
         return getInstantService().getTransactions(builder.build());
     }
 
@@ -86,12 +87,13 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * Get transactions list for given minter address
      * Method not finished
      * see link below
+     *
      * @param address minter address
      * @return Retrofit call
      * @TODO query builder
      * @link https://app.swaggerhub.com/apis/GrKamil/minter-explorer_api/1.2.0#/Addresses/getAddressTransactions
      */
-    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address) {
+    public Observable<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address) {
         checkArgument(address != null, "Address can't be null");
         return getInstantService().getTransactionsByAddress(address.toString());
     }
@@ -107,7 +109,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * @TODO query builder
      * @link https://app.swaggerhub.com/apis/GrKamil/minter-explorer_api/1.2.0#/Addresses/getAddressTransactions
      */
-    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address, int page, TxFilter filter) {
+    public Observable<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address, int page, TxFilter filter) {
         checkArgument(address != null, "Address can't be null");
         if (filter == null || filter == TxFilter.None) {
             return getInstantService().getTransactionsByAddress(address.toString(), page);
@@ -122,12 +124,12 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      *
      * @param address   minter address
      * @param fromBlock get list started from specified block
-     * @param endBlock  get list ended on specified block
+     * @param toBlock   get list ended on specified block
      * @return Retrofit call
      * @TODO query builder
      * @link https://app.swaggerhub.com/apis/GrKamil/minter-explorer_api/1.2.0#/Addresses/getAddressTransactions
      */
-    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address, long fromBlock, long toBlock, TxFilter filter) {
+    public Observable<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address, long fromBlock, long toBlock, TxFilter filter) {
         if (filter == null || filter == TxFilter.None) {
             return getTransactions(address, fromBlock, toBlock);
         }
@@ -144,12 +146,12 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      *
      * @param address   minter address
      * @param fromBlock get list started from specified block
-     * @param endBlock  get list ended on specified block
+     * @param toBlock   get list ended on specified block
      * @return Retrofit call
      * @TODO query builder
      * @link https://app.swaggerhub.com/apis/GrKamil/minter-explorer_api/1.2.0#/Addresses/getAddressTransactions
      */
-    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address, long fromBlock, long toBlock) {
+    public Observable<ExpResult<List<HistoryTransaction>>> getTransactions(MinterAddress address, long fromBlock, long toBlock) {
         checkArgument(address != null, "Address can't be null");
         checkArgument(fromBlock >= 0 && toBlock >= 0, "Start and End block must be greater or equals to zero");
         return getInstantService().getTransactionsByAddress(address.toString(), fromBlock, toBlock);
@@ -162,7 +164,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * @param page      page number
      * @return Retrofit call
      */
-    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses, int page) {
+    public Observable<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses, int page) {
         checkArgument(addresses != null, "Address list can't be null");
         checkArgument(addresses.size() > 0, "Address list can't be empty");
 
@@ -180,7 +182,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * @param addresses list of minter addresses
      * @return Retrofit call
      */
-    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses) {
+    public Observable<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses) {
         return getTransactions(addresses, 1);
     }
 
@@ -191,7 +193,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * @param page      page number
      * @return Retrofit call
      */
-    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses, int page, TxFilter filter) {
+    public Observable<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses, int page, TxFilter filter) {
         checkArgument(addresses != null, "Address list can't be null");
         checkArgument(addresses.size() > 0, "Address list can't be empty");
 
@@ -214,7 +216,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
      * @param page      page number
      * @return Retrofit call
      */
-    public Call<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses, int page, int limit) {
+    public Observable<ExpResult<List<HistoryTransaction>>> getTransactions(List<MinterAddress> addresses, int page, int limit) {
         checkArgument(addresses != null, "Address list can't be null");
         checkArgument(addresses.size() > 0, "Address list can't be empty");
 
@@ -226,7 +228,7 @@ public class ExplorerTransactionRepository extends DataRepository<ExplorerTransa
         return getInstantService().getTransactions(out, page, limit);
     }
 
-    public Call<ExpResult<HistoryTransaction>> getTransaction(@Nonnull String txHash) {
+    public Observable<ExpResult<HistoryTransaction>> getTransaction(@Nonnull String txHash) {
         checkArgument(txHash != null, "Tx hash can't be null");
         return getInstantService().findTransactionByHash(txHash);
     }

@@ -67,6 +67,12 @@ public class ExpResult<Result> {
         return error.message;
     }
 
+    public int getCode() {
+        if (error == null) return 0;
+
+        return error.code;
+    }
+
     public boolean isOk() {
         return error == null;
     }

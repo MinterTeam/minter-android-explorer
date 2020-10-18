@@ -41,16 +41,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import network.minter.core.MinterSDK;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.crypto.MinterHash;
 import network.minter.core.crypto.MinterPublicKey;
+import network.minter.core.internal.exceptions.NativeLoadException;
 import network.minter.core.internal.log.StdLogger;
 import network.minter.explorer.MinterExplorerSDK;
 import network.minter.explorer.models.ExpResult;
 import network.minter.explorer.models.HistoryTransaction;
 import network.minter.explorer.repo.ExplorerTransactionRepository;
 import network.minter.explorer.repo.TxSearchQuery;
-import retrofit2.Response;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -60,12 +61,21 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * minter-android-explorer. 2019
+ *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
 public class TransactionRepositoryTest extends BaseRepoTest {
 
     static {
-        MinterExplorerSDK.initialize(true, new StdLogger());
+        try {
+            MinterSDK.initialize();
+        } catch (NativeLoadException e) {
+            e.printStackTrace();
+        }
+        new MinterExplorerSDK.Setup()
+                .setEnableDebug(true)
+                .setLogger(new StdLogger())
+                .init();
         MinterExplorerSDK.getInstance().getApiService().addHttpInterceptor(new ApiMockInterceptor());
     }
 
@@ -73,7 +83,7 @@ public class TransactionRepositoryTest extends BaseRepoTest {
     public void transactionsData() throws IOException {
         ExplorerTransactionRepository repo = MinterExplorerSDK.getInstance().transactions();
         MinterAddress address = new MinterAddress("Mx06431236daf96979aa6cdf470a7df26430ad8efb");
-        Response<ExpResult<List<HistoryTransaction>>> response = repo.getTransactions(address).execute();
+        ExpResult<List<HistoryTransaction>> response = repo.getTransactions(address).blockingFirst();
 
         checkResponseSuccess(response);
 
@@ -84,7 +94,7 @@ public class TransactionRepositoryTest extends BaseRepoTest {
          1 SellCoin(TxConvertCoinResult.class),
          2 SellAllCoins(TxConvertCoinResult.class),
          3 BuyCoin(TxConvertCoinResult.class),
-         4 CreateCoin(TxCreateResult.class),
+         4 CreateCoin(TxCreateCoinResult.class),
          5 DeclareCandidacy(TxDeclareCandidacyResult.class),
          6 Delegate(TxDelegateUnbondResult.class),
          7 Unbond(TxDelegateUnbondResult.class),
@@ -95,8 +105,8 @@ public class TransactionRepositoryTest extends BaseRepoTest {
         11 EditCandidate(TxEditCandidateResult.class),
         -- MultiSend(TxMultisendResult.class), no example
          */
-        ExpResult.Meta meta = response.body().getMeta();
-        List<HistoryTransaction> transactions = response.body().result;
+        ExpResult.Meta meta = response.getMeta();
+        List<HistoryTransaction> transactions = response.result;
 
         assertNotNull(meta);
         assertNotNull(transactions);
@@ -187,7 +197,7 @@ public class TransactionRepositoryTest extends BaseRepoTest {
          1  SellCoin(TxConvertCoinResult.class),
          2 SellAllCoins(TxConvertCoinResult.class),
          3 BuyCoin(TxConvertCoinResult.class),
-         4 CreateCoin(TxCreateResult.class),
+         4 CreateCoin(TxCreateCoinResult.class),
          5 DeclareCandidacy(TxDeclareCandidacyResult.class),
          6 Delegate(TxDelegateUnbondResult.class),
          7 Unbond(TxDelegateUnbondResult.class),
@@ -223,9 +233,9 @@ public class TransactionRepositoryTest extends BaseRepoTest {
             System.err.println("Search in page: " + page);
             System.err.println("Left to find types: " + (required.size() - typeMap.size()));
             query.setPage(page);
-            Response<ExpResult<List<HistoryTransaction>>> txResp = repo.getTransactions(query).execute();
+            ExpResult<List<HistoryTransaction>> txResp = repo.getTransactions(query).blockingFirst();
 
-            for (HistoryTransaction tx : txResp.body().result) {
+            for (HistoryTransaction tx : txResp.result) {
                 for (Map.Entry<String, HistoryTransaction.Type> entry : required.entrySet()) {
                     if (tx.getType() == entry.getValue() && !typeMap.containsKey(entry.getKey())) {
                         typeMap.put(entry.getKey(), tx.getHash().toString());
@@ -239,7 +249,7 @@ public class TransactionRepositoryTest extends BaseRepoTest {
             }
 
             if (lastPage == 0) {
-                lastPage = txResp.body().getMeta().lastPage;
+                lastPage = txResp.getMeta().lastPage;
             }
             page++;
         }
@@ -452,8 +462,8 @@ public class TransactionRepositoryTest extends BaseRepoTest {
         assertEquals(new BigDecimal("1.000000000000000000"), tx.getFee());
         assertNotNull(tx);
         assertEquals(new MinterAddress("Mx3c57a889ec01714f26477f3758ee3b5c08bcabd3"), tx.getFrom());
-        assertTrue(tx.getData() instanceof HistoryTransaction.TxCreateResult);
-        HistoryTransaction.TxCreateResult data = tx.getData();
+        assertTrue(tx.getData() instanceof HistoryTransaction.TxCreateCoinResult);
+        HistoryTransaction.TxCreateCoinResult data = tx.getData();
 
         assertEquals("CINEMACOIN", data.getName());
         assertEquals("CINEMACOIN", data.getSymbol());
@@ -530,7 +540,7 @@ public class TransactionRepositoryTest extends BaseRepoTest {
                 data.getPublicKey()
         );
         assertEquals("MNT", data.getCoin());
-        assertEquals(new BigDecimal("14.753081260787814000"), data.getStake());
+        assertEquals(new BigDecimal("14.753081260787814000"), data.getValue());
     }
 
     /*
@@ -561,7 +571,7 @@ public class TransactionRepositoryTest extends BaseRepoTest {
 
         assertEquals(new MinterPublicKey("Mp2f4d5478540c2ecd03d8c584f59f1e552353af043d981f27f39ac9de6b0f2c78"), data.getPublicKey());
         assertEquals("BTCSECURE", data.getCoin());
-        assertEquals(new BigDecimal("0"), data.getStake());
+        assertEquals(new BigDecimal("0"), data.getValue());
         assertEquals(new BigDecimal("316347.504000000000000000"), data.getValue());
     }
 

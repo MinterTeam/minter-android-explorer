@@ -26,9 +26,9 @@
 package network.minter.explorer.api.converters
 
 import com.google.gson.*
-import network.minter.core.MinterSDK
 import network.minter.core.crypto.MinterPublicKey
 import network.minter.explorer.models.CoinDelegation
+import network.minter.explorer.models.CoinItemBase
 import network.minter.explorer.models.ValidatorMeta
 import java.lang.reflect.Type
 import java.math.BigDecimal
@@ -54,9 +54,20 @@ class ExplorerCoinDelegationJsonConverter : JsonDeserializer<CoinDelegation?> {
         }
         val data = CoinDelegation()
         val root = json.asJsonObject
-        data.coin = root["coin"]?.asString ?: MinterSDK.DEFAULT_COIN
+
+        val coinRoot = root["coin"]?.asJsonObject
+        data.coin = CoinItemBase()
+        data.coin.id = coinRoot?.get("id")?.asBigInteger
+        data.coin.symbol = coinRoot?.get("symbol")?.asString
         data.amount = root["value"]?.asBigDecimal ?: BigDecimal.ZERO
         data.bipValue = root["bip_value"]?.asBigDecimal ?: BigDecimal.ZERO
+        if (root.has("is_waitlisted") && root.get("is_waitlisted").isJsonPrimitive) {
+            try {
+                data.isInWaitlist = root["is_waitlisted"].asBoolean
+            } catch (e: Throwable) {
+                data.isInWaitlist = false
+            }
+        }
 
         data.meta = ValidatorMeta()
         if (root.has("validator")) {

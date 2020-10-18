@@ -32,13 +32,15 @@ import org.parceler.Parcel;
 
 import java.math.BigDecimal;
 
+import network.minter.core.crypto.MinterAddress;
+
 /**
- * minter-android-explorer. 2018
+ * minter-android-explorer. 2020
+ *
  * @author Eduard Maximovich [edward.vstock[at]gmail.com]
  */
 @Parcel
-public class CoinItem {
-    public String symbol;
+public class CoinItem extends CoinItemBase {
     public String name;
     public BigDecimal volume;
     public int crr;
@@ -46,4 +48,11 @@ public class CoinItem {
     public BigDecimal reserveBalance;
     @SerializedName("max_supply")
     public BigDecimal maxSupply;
+    @SerializedName("owner_address")
+    public MinterAddress owner;
+
+    @Override
+    public String toString() {
+        return symbol;
+    }
 }

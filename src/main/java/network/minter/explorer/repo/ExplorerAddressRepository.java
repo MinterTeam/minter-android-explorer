@@ -31,6 +31,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import io.reactivex.Observable;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.data.DataRepository;
@@ -45,7 +46,6 @@ import network.minter.explorer.models.CoinDelegation;
 import network.minter.explorer.models.DelegationList;
 import network.minter.explorer.models.ExpResult;
 import network.minter.explorer.models.RewardStatistics;
-import retrofit2.Call;
 
 import static network.minter.core.internal.common.Preconditions.checkArgument;
 import static network.minter.core.internal.common.Preconditions.checkNotNull;
@@ -68,7 +68,7 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @param addresses list of minter addresses
      * @return Retrofit call
      */
-    public Call<ExpResult<AddressListBalances>> getAddressesData(List<MinterAddress> addresses) {
+    public Observable<ExpResult<AddressListBalances>> getAddressesData(List<MinterAddress> addresses) {
         checkNotNull(addresses, "List can't be null");
         checkArgument(addresses.size() > 0, "List can't be empty");
 
@@ -91,7 +91,7 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @param address minter address
      * @return Retrofit call
      */
-    public Call<ExpResult<AddressBalance>> getAddressData(MinterAddress address) {
+    public Observable<ExpResult<AddressBalance>> getAddressData(MinterAddress address) {
         return getAddressData(address.toString());
     }
 
@@ -101,7 +101,7 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @param address minter address
      * @return Retrofit call
      */
-    public Call<ExpResult<AddressBalance>> getAddressData(MinterAddress address, boolean withSum) {
+    public Observable<ExpResult<AddressBalance>> getAddressData(MinterAddress address, boolean withSum) {
         return getAddressData(address.toString(), withSum);
     }
 
@@ -111,7 +111,8 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @param address string minter address WITH prefix "Mx"
      * @return Retrofit call
      */
-    public Call<ExpResult<AddressBalance>> getAddressData(String address) {
+    public Observable<ExpResult<AddressBalance>> getAddressData(String address) {
+        checkArgument(MinterAddress.testString(address), "Invalid address");
         return getInstantService().balance(address);
     }
 
@@ -122,7 +123,7 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @param withSum Show total balance
      * @return Retrofit call
      */
-    public Call<ExpResult<AddressBalance>> getAddressData(String address, boolean withSum) {
+    public Observable<ExpResult<AddressBalance>> getAddressData(String address, boolean withSum) {
         return getInstantService().balance(address, withSum ? 1 : 0);
     }
 
@@ -132,7 +133,7 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @param address
      * @return
      */
-    public Call<ExpResult<DelegationList>> getDelegations(MinterAddress address) {
+    public Observable<ExpResult<DelegationList>> getDelegations(MinterAddress address) {
         checkNotNull(address, "Address can't be null");
 
         return getInstantService().getDelegationsForAddress(address.toString(), 1);
@@ -144,7 +145,7 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @param address
      * @return
      */
-    public Call<ExpResult<DelegationList>> getDelegations(MinterAddress address, Integer page) {
+    public Observable<ExpResult<DelegationList>> getDelegations(MinterAddress address, Integer page) {
         checkNotNull(address, "Address can't be null");
 
         return getInstantService().getDelegationsForAddress(address.toString(), page);
@@ -156,7 +157,7 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @param address
      * @return
      */
-    public Call<ExpResult<List<RewardStatistics>>> getRewardStatistics(String address) {
+    public Observable<ExpResult<List<RewardStatistics>>> getRewardStatistics(String address) {
         checkNotNull(address, "Address can't be null");
         return getInstantService().getRewardStatistics(address);
     }
@@ -167,7 +168,7 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @param address
      * @return
      */
-    public Call<ExpResult<List<RewardStatistics>>> getRewardStatistics(MinterAddress address) {
+    public Observable<ExpResult<List<RewardStatistics>>> getRewardStatistics(MinterAddress address) {
         checkNotNull(address, "Address can't be null");
         return getInstantService().getRewardStatistics(address.toString());
     }
@@ -180,7 +181,7 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @param endTime   Formats: YYYY-MM-DD | YYYY-MM-DD HH:MM:SS
      * @return
      */
-    public Call<ExpResult<List<RewardStatistics>>> getRewardStatistics(String address, String startTime, String endTime) {
+    public Observable<ExpResult<List<RewardStatistics>>> getRewardStatistics(String address, String startTime, String endTime) {
         checkNotNull(address, "Address can't be null");
         return getInstantService().getRewardStatistics(address, startTime, endTime);
     }
@@ -193,7 +194,7 @@ public class ExplorerAddressRepository extends DataRepository<ExplorerAddressEnd
      * @param endTime   Formats: YYYY-MM-DD | YYYY-MM-DD HH:MM:SS
      * @return
      */
-    public Call<ExpResult<List<RewardStatistics>>> getRewardStatistics(MinterAddress address, String startTime, String endTime) {
+    public Observable<ExpResult<List<RewardStatistics>>> getRewardStatistics(MinterAddress address, String startTime, String endTime) {
         checkNotNull(address, "Address can't be null");
         return getInstantService().getRewardStatistics(address.toString(), startTime, endTime);
     }

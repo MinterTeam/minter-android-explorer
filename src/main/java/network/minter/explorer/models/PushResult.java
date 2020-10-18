@@ -28,7 +28,14 @@ package network.minter.explorer.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import network.minter.blockchain.models.HistoryTransaction;
+import org.parceler.Parcel;
+
+import java.math.BigInteger;
+import java.util.Map;
+
+import network.minter.blockchain.models.NodeResult;
+import network.minter.blockchain.models.operational.Transaction;
+import network.minter.core.crypto.MinterAddress;
 import network.minter.core.crypto.MinterHash;
 
 /**
@@ -36,9 +43,27 @@ import network.minter.core.crypto.MinterHash;
  *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-public class PushResult {
-    @SerializedName("hash")
-    public MinterHash txHash;
-    @SerializedName("transaction")
-    public HistoryTransaction txData;
+@Parcel
+public class PushResult extends NodeResult {
+
+    public TxData transaction;
+    public MinterHash hash;
+
+    @Parcel
+    public static class TxData {
+        public BigInteger nonce;
+        public MinterHash hash;
+        @SerializedName("raw_tx")
+        public String rawTx;
+        public BigInteger height;
+        public MinterAddress from;
+        @SerializedName("gas_coin")
+        public BigInteger gasCoinId;
+        public Map<String, String> tags;
+
+        public Transaction decodeRawTx() {
+            return Transaction.fromEncoded(rawTx);
+        }
+    }
+
 }

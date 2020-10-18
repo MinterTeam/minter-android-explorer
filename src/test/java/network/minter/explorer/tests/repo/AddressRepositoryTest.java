@@ -37,19 +37,25 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import network.minter.core.MinterSDK;
 import network.minter.core.crypto.MinterAddress;
+import network.minter.core.internal.exceptions.NativeLoadException;
+import network.minter.core.internal.log.StdLogger;
 import network.minter.explorer.MinterExplorerSDK;
 import network.minter.explorer.models.AddressBalance;
 import network.minter.explorer.models.AddressListBalances;
 import network.minter.explorer.models.CoinBalance;
 import network.minter.explorer.models.DelegationList;
 import network.minter.explorer.models.ExpResult;
+import network.minter.explorer.models.GasValue;
+import network.minter.explorer.models.GateResult;
 import network.minter.explorer.models.HistoryTransaction;
 import network.minter.explorer.repo.ExplorerAddressRepository;
 import network.minter.explorer.repo.ExplorerTransactionRepository;
-import retrofit2.Response;
+import network.minter.explorer.repo.GateGasRepository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -59,12 +65,18 @@ import static org.junit.Assert.assertNull;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @SuppressWarnings("ConstantConditions")
-
 public class AddressRepositoryTest extends BaseRepoTest {
 
     static {
-        MinterExplorerSDK.initialize(true);
-//        MinterExplorerSDK.getInstance().getApiService().addHttpInterceptor(new ApiMockInterceptor());
+        try {
+            MinterSDK.initialize();
+        } catch (NativeLoadException e) {
+            e.printStackTrace();
+        }
+        new MinterExplorerSDK.Setup()
+                .setEnableDebug(true)
+                .setLogger(new StdLogger())
+                .init();
     }
 
     @Before
@@ -76,36 +88,46 @@ public class AddressRepositoryTest extends BaseRepoTest {
     }
 
     @Test
+    public void testMinGas() {
+        GateGasRepository repo = MinterExplorerSDK.getInstance().gas();
+        GateResult<GasValue> gasResult = repo.getMinGas().blockingFirst();
+        assertNotNull(gasResult.result);
+        assertNull(gasResult.error);
+    }
+
+    @Test
     public void getBalanceForSingleAddress() throws IOException {
         ExplorerAddressRepository addressRepository = MinterExplorerSDK.getInstance().address();
 
-        Response<ExpResult<AddressBalance>> result = addressRepository.getAddressData("Mx601609b85ee21b9493dffbca1079c74d47b75f2a").execute();
+        ExpResult<AddressBalance> body = addressRepository.getAddressData(new MinterAddress("Mxeeda61bbe9929bf883af6b22f5796e4b92563ba4"), true).blockingFirst();
 
-        checkResponseSuccess(result);
 
-        AddressBalance data = result.body().result;
+        AddressBalance data = body.result;
         assertEquals(2, data.coins.size());
         assertNotNull(data.address);
-
-        assertNotNull(data.coins.get("PROBLKCH02"));
-        CoinBalance b1 = data.coins.get("PROBLKCH02");
-        assertEquals("PROBLKCH02", b1.coin);
-        assertEquals(new BigDecimal("165695681186885.069475041566967905"), b1.amount);
 
         assertNotNull(data.coins.get("MNT"));
         CoinBalance b2 = data.coins.get("MNT");
         assertEquals("MNT", b2.coin);
-        assertEquals(new BigDecimal("0e-18"), b2.amount);
+    }
 
+    //
+    @Test
+    public void testFindCoin() throws IOException {
+        ExplorerAddressRepository addressRepository = MinterExplorerSDK.getInstance().address();
 
-        assertEquals(new BigDecimal("165695681186885.069475041566967905"), data.totalBalance);
+        List<MinterAddress> addresses = new ArrayList<>();
+        addresses.add(new MinterAddress("Mx8d008dffe2f9144a39a2094ebdedadad335e814f"));
+        ExpResult<AddressListBalances> body = addressRepository.getAddressesData(addresses).blockingFirst();
+
+        AddressListBalances data = body.result;
     }
 
     @Test
     public void getBalanceForSingleObjectAddress() throws IOException {
         ExplorerAddressRepository addressRepository = MinterExplorerSDK.getInstance().address();
 
-        Response<ExpResult<AddressBalance>> result = addressRepository.getAddressData(new MinterAddress("Mx601609b85ee21b9493dffbca1079c74d47b75f2a")).execute();
+        ExpResult<AddressBalance> result = addressRepository.getAddressData(new MinterAddress("Mxeeda61bbe9929bf883af6b22f5796e4b92563ba4")).blockingFirst();
 
         checkResponseSuccess(result);
     }
@@ -117,7 +139,7 @@ public class AddressRepositoryTest extends BaseRepoTest {
         IllegalArgumentException ex = null;
         try {
             String address = null;
-            Response<ExpResult<AddressBalance>> result = addressRepository.getAddressData(address).execute();
+            ExpResult<AddressBalance> result = addressRepository.getAddressData(address).blockingFirst();
             checkResponseSuccess(result);
         } catch (IllegalArgumentException e) {
             ex = e;
@@ -126,17 +148,37 @@ public class AddressRepositoryTest extends BaseRepoTest {
         assertNotNull(ex);
     }
 
+
+    @Test
+    public void getBalanceForInvalidAddress() throws IOException {
+        ExplorerAddressRepository addressRepository = MinterExplorerSDK.getInstance().address();
+
+        Throwable ex = null;
+
+        try {
+            ExpResult<AddressBalance> result = addressRepository.getAddressData("MxZZ1609b85ee21b9493dffbca1079c74d47b75f2a").blockingFirst();
+            assertFalse(result.isOk());
+            assertNotNull(result.error);
+            assertNotNull(result.error.message);
+        } catch (Throwable e) {
+            ex = e;
+        }
+
+        assertNotNull(ex);
+
+    }
+
     @Test
     public void getBalanceForMultipleAddresses() throws IOException {
         ExplorerAddressRepository addressRepository = MinterExplorerSDK.getInstance().address();
         final List<MinterAddress> addressList = new ArrayList<>(2);
-        addressList.add(new MinterAddress("Mx06431236daf96979aa6cdf470a7df26430ad8efb"));
+        addressList.add(new MinterAddress("Mxeeda61bbe9929bf883af6b22f5796e4b92563ba4"));
         addressList.add(new MinterAddress("Mx0000000000000000000000000000000000000000"));
-        Response<ExpResult<AddressListBalances>> result = addressRepository.getAddressesData(addressList).execute();
+        ExpResult<AddressListBalances> result = addressRepository.getAddressesData(addressList).blockingFirst();
 
         checkResponseSuccess(result);
-        ExpResult<AddressListBalances> data = result.body();
-        assertEquals(2, data.result.size());
+        AddressListBalances data = result.result;
+        assertEquals(2, data.size());
     }
 
     @Test
@@ -148,7 +190,7 @@ public class AddressRepositoryTest extends BaseRepoTest {
 
         IllegalArgumentException ex = null;
         try {
-            Response<ExpResult<AddressListBalances>> result = addressRepository.getAddressesData(addressList).execute();
+            ExpResult<AddressListBalances> result = addressRepository.getAddressesData(addressList).blockingFirst();
             checkResponseSuccess(result);
         } catch (IllegalArgumentException e) {
             ex = e;
@@ -164,10 +206,10 @@ public class AddressRepositoryTest extends BaseRepoTest {
         addressList.add(new MinterAddress("Mx06431236daf96979aa6cdf470a7df26430ad8efb"));
         addressList.add(null);
 
-        Response<ExpResult<AddressListBalances>> result = addressRepository.getAddressesData(addressList).execute();
+        ExpResult<AddressListBalances> result = addressRepository.getAddressesData(addressList).blockingFirst();
         checkResponseSuccess(result);
 
-        AddressListBalances dataList = result.body().result;
+        AddressListBalances dataList = result.result;
         assertEquals(1, dataList.size());
 
         AddressBalance data = dataList.get(0);
@@ -175,19 +217,13 @@ public class AddressRepositoryTest extends BaseRepoTest {
 
         assertNotNull(data.address);
 
-
-        assertNotNull(data.coins.get("BTCSECURE"));
-        CoinBalance b1 = data.coins.get("BTCSECURE");
-        assertEquals("BTCSECURE", b1.coin);
-        assertEquals(new BigDecimal("1.970000000000000000"), b1.amount);
-
         assertNotNull(data.coins.get("MNT"));
         CoinBalance b2 = data.coins.get("MNT");
         assertEquals("MNT", b2.coin);
-        assertEquals(new BigDecimal("899.590579976503661317"), b2.amount);
+        assertEquals(new BigDecimal("0").stripTrailingZeros(), b2.amount.stripTrailingZeros());
 
 
-        assertEquals(new BigDecimal("901.560579976503661317"), data.totalBalance);
+        assertEquals(new BigDecimal("0"), data.totalBalance);
     }
 
     @Test
@@ -197,7 +233,7 @@ public class AddressRepositoryTest extends BaseRepoTest {
 
         NullPointerException ex = null;
         try {
-            Response<ExpResult<AddressListBalances>> result = addressRepository.getAddressesData(addressList).execute();
+            ExpResult<AddressListBalances> result = addressRepository.getAddressesData(addressList).blockingFirst();
             checkResponseSuccess(result);
         } catch (NullPointerException e) {
             ex = e;
@@ -213,7 +249,7 @@ public class AddressRepositoryTest extends BaseRepoTest {
 
         Throwable ex = null;
         try {
-            Response<ExpResult<AddressListBalances>> result = addressRepository.getAddressesData(addressList).execute();
+            ExpResult<AddressListBalances> result = addressRepository.getAddressesData(addressList).blockingFirst();
             checkResponseSuccess(result);
         } catch (IllegalArgumentException e) {
             ex = e;
@@ -226,10 +262,10 @@ public class AddressRepositoryTest extends BaseRepoTest {
     public void getEmptyDelegations() throws IOException {
         ExplorerAddressRepository addressRepository = MinterExplorerSDK.getInstance().address();
         MinterAddress address = new MinterAddress("Mx0000000000000000000000000000000000000000");
-        Response<ExpResult<DelegationList>> result = addressRepository.getDelegations(address).execute();
+        ExpResult<DelegationList> result = addressRepository.getDelegations(address).blockingFirst();
 
         checkResponseSuccess(result);
-        ExpResult<DelegationList> data = result.body();
+        ExpResult<DelegationList> data = result;
         assertEquals(0, data.result.size());
 
     }
@@ -241,10 +277,10 @@ public class AddressRepositoryTest extends BaseRepoTest {
         Throwable ex = null;
 
         try {
-            Response<ExpResult<DelegationList>> result = addressRepository.getDelegations(address).execute();
+            ExpResult<DelegationList> result = addressRepository.getDelegations(address).blockingFirst();
 
             checkResponseSuccess(result);
-            ExpResult<DelegationList> data = result.body();
+            ExpResult<DelegationList> data = result;
             assertEquals(0, data.result.size());
         } catch (Throwable e) {
             ex = e;
@@ -258,13 +294,13 @@ public class AddressRepositoryTest extends BaseRepoTest {
     public void getNonEmptyDelegations() throws IOException {
         ExplorerAddressRepository addressRepository = MinterExplorerSDK.getInstance().address();
         MinterAddress address = new MinterAddress("Mx8d008dffe2f9144a39a2094ebdedadad335e814f");
-        Response<ExpResult<DelegationList>> result = addressRepository.getDelegations(address).execute();
+        ExpResult<DelegationList> result = addressRepository.getDelegations(address).blockingFirst();
         Gson gson = MinterExplorerSDK.getInstance().getGsonBuilder().create();
 
         Throwable t = null;
         try {
             // check for gson encode/decode
-            DelegationList in = result.body().result;
+            DelegationList in = result.result;
             String res = gson.toJson(in);
             DelegationList out = gson.fromJson(res, DelegationList.class);
         } catch (Throwable e) {
@@ -294,7 +330,7 @@ public class AddressRepositoryTest extends BaseRepoTest {
     public void getBalanceForUnknownAddress() throws IOException {
         ExplorerAddressRepository addressRepository = MinterExplorerSDK.getInstance().address();
 
-        Response<ExpResult<AddressBalance>> result = addressRepository.getAddressData("Mx0000000000000000000000000000000000000000").execute();
+        ExpResult<AddressBalance> result = addressRepository.getAddressData("Mx0000000000000000000000000000000000000000").blockingFirst();
 
         checkResponseSuccess(result);
     }
@@ -302,8 +338,9 @@ public class AddressRepositoryTest extends BaseRepoTest {
     @Test
     public void getTransactions() throws IOException {
         ExplorerTransactionRepository txRepo = MinterExplorerSDK.getInstance().transactions();
-        Response<ExpResult<List<HistoryTransaction>>> result = txRepo.getTransactions(new MinterAddress("Mx8d008dffe2f9144a39a2094ebdedadad335e814f")).execute();
+        ExpResult<List<HistoryTransaction>> result = txRepo.getTransactions(new MinterAddress("Mxeeda61bbe9929bf883af6b22f5796e4b92563ba4")).blockingFirst();
 
+        checkResponseSuccess(result);
         System.out.println();
 
     }

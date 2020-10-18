@@ -41,6 +41,8 @@ import java.math.BigInteger;
 
 import javax.annotation.Nonnull;
 
+import io.reactivex.schedulers.Schedulers;
+import network.minter.blockchain.MinterBlockChainSDK;
 import network.minter.blockchain.models.operational.Transaction;
 import network.minter.core.crypto.BytesData;
 import network.minter.core.crypto.MinterAddress;
@@ -54,6 +56,7 @@ import network.minter.core.internal.api.converters.MinterAddressJsonConverter;
 import network.minter.core.internal.api.converters.MinterCheckJsonConverter;
 import network.minter.core.internal.api.converters.MinterHashJsonConverter;
 import network.minter.core.internal.api.converters.MinterPublicKeyJsonConverter;
+import network.minter.core.internal.common.Acceptor;
 import network.minter.core.internal.log.Mint;
 import network.minter.core.internal.log.StdLogger;
 import network.minter.core.internal.log.TimberLogger;
@@ -61,11 +64,14 @@ import network.minter.explorer.repo.ExplorerAddressRepository;
 import network.minter.explorer.repo.ExplorerCoinsRepository;
 import network.minter.explorer.repo.ExplorerTransactionRepository;
 import network.minter.explorer.repo.ExplorerValidatorsRepository;
+import network.minter.explorer.repo.GateCoinRepository;
 import network.minter.explorer.repo.GateEstimateRepository;
 import network.minter.explorer.repo.GateGasRepository;
 import network.minter.explorer.repo.GateTransactionRepository;
 import okhttp3.HttpUrl;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 /**
  * minter-android-explorer. 2018
@@ -95,11 +101,6 @@ public class MinterExplorerSDK {
 
     private final ApiService.Builder mApiService;
     private final ApiService.Builder mGateApiService;
-
-    private MinterExplorerSDK() {
-        this(BASE_API_URL, BASE_GATE_URL);
-    }
-
     private ExplorerTransactionRepository mTransactionRepository;
     private ExplorerAddressRepository mAddressRepository;
     private ExplorerCoinsRepository mCoinsRepository;
@@ -107,6 +108,11 @@ public class MinterExplorerSDK {
     private GateGasRepository mGasRepository;
     private GateEstimateRepository mGateEstimateRepo;
     private GateTransactionRepository mGateTxRepo;
+    private GateCoinRepository mGateCoinRepo;
+
+    private MinterExplorerSDK() {
+        this(BASE_API_URL, BASE_GATE_URL);
+    }
 
     private MinterExplorerSDK(String baseApiUrl, String baseGateUrl) {
         mApiService = new ApiService.Builder(baseApiUrl, getGsonBuilder());
@@ -114,107 +120,26 @@ public class MinterExplorerSDK {
         mApiService.addHeader("X-Minter-Client-Name", "MinterAndroid (explorer)");
         mApiService.addHeader("X-Minter-Client-Version", BuildConfig.VERSION_NAME);
         mApiService.setDateFormat(DATE_FORMAT);
+        mApiService.setRetrofitClientConfig(new Acceptor<Retrofit.Builder>() {
+            @Override
+            public void accept(Retrofit.Builder builder) {
+                builder.addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()));
+            }
+        });
+        mApiService.addHttpInterceptor(new MinterBlockChainSDK.ResponseErrorToResultInterceptor());
 
         mGateApiService = new ApiService.Builder(baseGateUrl, getGsonBuilder());
         mGateApiService.addHeader("Content-Type", "application/json");
         mGateApiService.addHeader("X-Minter-Client-Name", "MinterAndroid (gate)");
         mGateApiService.addHeader("X-Minter-Client-Version", BuildConfig.VERSION_NAME);
         mGateApiService.setDateFormat(DATE_FORMAT);
-    }
-
-    /**
-     * Init method
-     *
-     * @deprecated Use {@link Setup} instead
-     */
-    @Deprecated
-    public static void initialize() {
-        initialize(false);
-    }
-
-    /**
-     * Init method
-     * @deprecated Use {@link Setup} instead
-     */
-    @Deprecated
-    public static void initialize(String baseExplorerApiUrl, String baseGateUrl) {
-        initialize(baseExplorerApiUrl, baseGateUrl, false);
-    }
-
-    /**
-     * Init method with debug logs flag
-     *
-     * @param debug enable debug logs
-     * @deprecated Use {@link Setup} instead
-     */
-    @Deprecated
-    public static void initialize(String baseExplorerApiUrl, String baseGateUrl, boolean debug, Mint.Leaf logger) {
-        if (INSTANCE != null) {
-            return;
-        }
-
-        INSTANCE = new MinterExplorerSDK(baseExplorerApiUrl, baseGateUrl);
-        INSTANCE.mApiService.setDebug(debug);
-        INSTANCE.mGateApiService.setDebug(debug);
-
-        // we should run this at any teapot
-        if (debug) {
-            boolean isAndroid = true;
-            try {
-                Class.forName("android.util.Log");
-
-                try {
-                    // in case mockable android classes
-                    android.util.Log.d("test", "test");
-                } catch (RuntimeException e) {
-                    isAndroid = false;
-                }
-            } catch (ClassNotFoundException e) {
-                isAndroid = false;
+        mGateApiService.setRetrofitClientConfig(new Acceptor<Retrofit.Builder>() {
+            @Override
+            public void accept(Retrofit.Builder builder) {
+                builder.addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()));
             }
-
-            if (!isAndroid && logger instanceof TimberLogger) {
-                Mint.brew(new StdLogger());
-            } else {
-                Mint.brew(logger);
-            }
-
-            INSTANCE.mApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
-            INSTANCE.mGateApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
-        }
-    }
-
-    /**
-     * Init method with debug logs flag
-     *
-     * @param debug enable debug logs
-     * @deprecated Use {@link Setup} instead
-     */
-    @Deprecated
-    public static void initialize(String baseExplorerApiUrl, String baseGateUrl, boolean debug) {
-        initialize(baseExplorerApiUrl, baseGateUrl, debug, new TimberLogger());
-    }
-
-    /**
-     * Init method with debug logs flag
-     *
-     * @param debug enable debug logs
-     * @deprecated Use {@link Setup} instead
-     */
-    @Deprecated
-    public static void initialize(boolean debug) {
-        initialize(BASE_API_URL, BASE_GATE_URL, debug, new TimberLogger());
-    }
-
-    /**
-     * Init method with debug logs flag
-     *
-     * @param debug enable debug logs
-     * @deprecated Use {@link Setup} instead
-     */
-    @Deprecated
-    public static void initialize(boolean debug, Mint.Leaf logger) {
-        initialize(BASE_API_URL, BASE_GATE_URL, debug, logger);
+        });
+        mGateApiService.addHttpInterceptor(new MinterBlockChainSDK.ResponseErrorToResultInterceptor());
     }
 
     /**
@@ -247,41 +172,15 @@ public class MinterExplorerSDK {
         return mGasRepository;
     }
 
-    public void setNetworkId(String id) {
-        mApiService.addHeader("X-Minter-Chain-Id", id);
+    public GateCoinRepository coinsGate() {
+        if (mGateCoinRepo == null) {
+            mGateCoinRepo = new GateCoinRepository(mGateApiService);
+        }
+        return mGateCoinRepo;
     }
 
-    public static class Setup {
-        private String mExplorerApiUrl = BuildConfig.BASE_API_URL + BuildConfig.BASE_API_VERSION + "/";
-        private String mGateApiUrl = BuildConfig.GATE_API_URL + BuildConfig.GATE_API_VERSION + "/";
-        private boolean mDebug = false;
-        private Mint.Leaf mLogger = null;
-
-        public Setup setLogger(Mint.Leaf loggerIml) {
-            mLogger = loggerIml;
-            return this;
-        }
-
-        public Setup setEnableDebug(boolean enable) {
-            mDebug = enable;
-            return this;
-        }
-
-        public Setup setExplorerApiUrl(@Nonnull String url) {
-            mExplorerApiUrl = url;
-            return this;
-        }
-
-        public Setup setGateApiUrl(@Nonnull String url) {
-            mGateApiUrl = url;
-            return this;
-        }
-
-        public MinterExplorerSDK init() {
-            MinterExplorerSDK.initialize(mExplorerApiUrl, mGateApiUrl, mDebug, mLogger);
-            return MinterExplorerSDK.getInstance();
-        }
-
+    public void setNetworkId(String id) {
+        mApiService.addHeader("X-Minter-Chain-Id", id);
     }
 
     public GateTransactionRepository transactionsGate() {
@@ -364,6 +263,78 @@ public class MinterExplorerSDK {
         out.registerTypeAdapter(BytesData.class, new BytesDataJsonConverter());
 
         return out;
+    }
+
+    public static class Setup {
+        private String mExplorerApiUrl = BuildConfig.BASE_API_URL + BuildConfig.BASE_API_VERSION + "/";
+        private String mGateApiUrl = BuildConfig.GATE_API_URL + BuildConfig.GATE_API_VERSION + "/";
+        private boolean mDebug = false;
+        private Mint.Leaf mLogger = null;
+        private String mNetId = null;
+
+        public Setup setLogger(Mint.Leaf loggerIml) {
+            mLogger = loggerIml;
+            return this;
+        }
+
+        public Setup setEnableDebug(boolean enable) {
+            mDebug = enable;
+            return this;
+        }
+
+        public Setup setExplorerApiUrl(@Nonnull String url) {
+            mExplorerApiUrl = url;
+            return this;
+        }
+
+        public Setup setGateApiUrl(@Nonnull String url) {
+            mGateApiUrl = url;
+            return this;
+        }
+
+        public Setup setNetId(String id) {
+            mNetId = id;
+            return this;
+        }
+
+        public MinterExplorerSDK init() {
+            INSTANCE = new MinterExplorerSDK(mExplorerApiUrl, mGateApiUrl);
+            INSTANCE.mApiService.setDebug(mDebug);
+            INSTANCE.mGateApiService.setDebug(mDebug);
+
+            if (mNetId != null) {
+                INSTANCE.mApiService.addHeader("X-Minter-Chain-Id", mNetId);
+                INSTANCE.mGateApiService.addHeader("X-Minter-Chain-Id", mNetId);
+            }
+
+            // we should run this at any teapot
+            if (mDebug) {
+                boolean isAndroid = true;
+                try {
+                    Class.forName("android.util.Log");
+
+                    try {
+                        // in case mockable android classes
+                        android.util.Log.d("test", "test");
+                    } catch (RuntimeException e) {
+                        isAndroid = false;
+                    }
+                } catch (ClassNotFoundException e) {
+                    isAndroid = false;
+                }
+
+                if (!isAndroid && mLogger instanceof TimberLogger) {
+                    Mint.brew(new StdLogger());
+                } else {
+                    Mint.brew(mLogger);
+                }
+
+                INSTANCE.mApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
+                INSTANCE.mGateApiService.setDebugRequestLevel(HttpLoggingInterceptor.Level.BODY);
+            }
+            return MinterExplorerSDK.getInstance();
+        }
+
     }
 
     private final static class BigDecimalJsonConverter implements JsonDeserializer<BigDecimal>, JsonSerializer<BigDecimal> {

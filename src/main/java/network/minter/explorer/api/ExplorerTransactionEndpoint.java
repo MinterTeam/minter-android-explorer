@@ -29,9 +29,9 @@ package network.minter.explorer.api;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Observable;
 import network.minter.explorer.models.ExpResult;
 import network.minter.explorer.models.HistoryTransaction;
-import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -44,30 +44,30 @@ import retrofit2.http.QueryMap;
  */
 public interface ExplorerTransactionEndpoint {
     @GET("addresses/{address}/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(@Path("address") String address);
+    Observable<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(@Path("address") String address);
 
     @GET("addresses/{address}/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(
+    Observable<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(
             @Path("address") String address,
             @Query("page") Integer page
     );
 
     @GET("addresses/{address}/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(
+    Observable<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(
             @Path("address") String address,
             @Query("page") Integer page,
             @Query("send_type") String filter
     );
 
     @GET("addresses/{address}/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(
+    Observable<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(
             @Path("address") String address,
             @Query("startblock") Long fromBlock,
             @Query("endblock") Long toBlock
     );
 
     @GET("addresses/{address}/transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(
+    Observable<ExpResult<List<HistoryTransaction>>> getTransactionsByAddress(
             @Path("address") String address,
             @Query("startblock") Long fromBlock,
             @Query("endblock") Long toBlock,
@@ -75,33 +75,33 @@ public interface ExplorerTransactionEndpoint {
     );
 
     @GET("transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(@QueryMap Map<String, Object> query);
+    Observable<ExpResult<List<HistoryTransaction>>> getTransactions(@QueryMap Map<String, Object> query);
 
     @GET("transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(
+    Observable<ExpResult<List<HistoryTransaction>>> getTransactions(
             @Query(value = "addresses[]", encoded = true) List<String> addresses
     );
 
     @GET("transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(
+    Observable<ExpResult<List<HistoryTransaction>>> getTransactions(
             @Query(value = "addresses[]", encoded = true) List<String> addresses,
             @Query("page") Integer page
     );
 
     @GET("transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(
+    Observable<ExpResult<List<HistoryTransaction>>> getTransactions(
             @Query(value = "addresses[]", encoded = true) List<String> addresses,
             @Query("page") Integer page,
             @Query("limit") Integer limit
     );
 
     @GET("transactions")
-    Call<ExpResult<List<HistoryTransaction>>> getTransactions(
+    Observable<ExpResult<List<HistoryTransaction>>> getTransactions(
             @Query(value = "addresses[]", encoded = true) List<String> addresses,
             @Query("page") Integer page,
             @Query("send_type") String sendType
     );
 
     @GET("transactions/{hash}")
-    Call<ExpResult<HistoryTransaction>> findTransactionByHash(@Path("hash") String hash);
+    Observable<ExpResult<HistoryTransaction>> findTransactionByHash(@Path("hash") String hash);
 }

@@ -26,55 +26,59 @@
 
 package network.minter.explorer.models;
 
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
-import network.minter.blockchain.models.BCResult;
+import java.lang.reflect.Type;
+
+import network.minter.blockchain.models.NodeResult;
+import network.minter.explorer.MinterExplorerSDK;
 
 /**
- * minter-android-explorer. 2019
+ * minter-android-explorer. 2020
  *
- * @author Eduard Maximovich [edward.vstock@gmail.com]
+ * @author Eduard Maximovich (edward.vstock@gmail.com)
  */
-public class GateResult<Result> {
-    @SerializedName("data")
-    public Result result;
-    public ErrorResult error;
-    public int statusCode;
+public class GateResult<T> extends NodeResult {
+    public T result;
 
-    public static <T> GateResult<T> copyError(GateResult<?> another) {
-        GateResult<T> out = new GateResult<>();
-        out.statusCode = another.statusCode;
-        out.error = another.error;
+    public static class Deserializer<T> implements JsonDeserializer<GateResult<T>> {
+        private final Class<T> clazz;
+        private final GsonBuilder gson;
 
-        return out;
-    }
-
-    public boolean isOk() {
-        return error == null;
-    }
-
-    public String getMessage() {
-        if (error == null) {
-            return null;
+        public Deserializer(Class<T> clazz) {
+            this.clazz = clazz;
+            gson = MinterExplorerSDK.getInstance().getGsonBuilder();
         }
 
-        return error.message;
-    }
-
-    public static class ErrorResult {
-        public int code;
-
-        @SerializedName("log")
-        public String message;
-        public String value;
-        public String coin;
-
-        public String getMessage() {
-            return message;
+        public Deserializer<T> registerTypeAdapter(Type type, Object typeAdapter) {
+            gson.registerTypeAdapter(type, typeAdapter);
+            return this;
         }
 
-        public BCResult.ResultCode getResultCode() {
-            return BCResult.ResultCode.findByCode(code);
+        @Override
+        public GateResult<T> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            GateResult<T> out = new GateResult<>();
+            if (json.isJsonNull()) {
+                out.error = new NodeResult.Error();
+                out.error.code = -1;
+                out.error.message = "Empty response";
+                return out;
+            }
+
+            JsonObject root = json.getAsJsonObject();
+            if (root.has("error")) {
+                out.error = gson.create().fromJson(root.get("error"), NodeResult.Error.class);
+                return out;
+            }
+
+            out.result = gson.create().fromJson(root, clazz);
+
+            return out;
         }
     }
 }

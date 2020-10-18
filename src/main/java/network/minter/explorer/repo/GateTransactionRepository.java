@@ -26,24 +26,24 @@
 
 package network.minter.explorer.repo;
 
+import com.google.gson.reflect.TypeToken;
+
 import javax.annotation.Nonnull;
 
-import network.minter.blockchain.models.HistoryTransaction;
+import io.reactivex.Observable;
 import network.minter.blockchain.models.TransactionSendResult;
 import network.minter.blockchain.models.operational.TransactionSign;
-import network.minter.blockchain.repo.BlockChainTransactionRepository;
 import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.data.DataRepository;
 import network.minter.explorer.api.GateTransactionEndpoint;
 import network.minter.explorer.models.GateResult;
 import network.minter.explorer.models.PushResult;
-import retrofit2.Call;
 
 import static network.minter.core.internal.common.Preconditions.checkArgument;
 import static network.minter.core.internal.helpers.CollectionsHelper.asMap;
 
 /**
- * minter-android-explorer. 2019
+ * minter-android-explorer. 2020
  *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
@@ -59,11 +59,11 @@ public class GateTransactionRepository extends DataRepository<GateTransactionEnd
      * @return Prepared request
      * @see TransactionSendResult
      */
-    public Call<GateResult<PushResult>> sendTransaction(@Nonnull TransactionSign transactionSign) {
+    public Observable<GateResult<PushResult>> sendTransaction(@Nonnull TransactionSign transactionSign) {
         checkArgument(transactionSign != null &&
                 transactionSign.getTxSign() != null, "Transaction signature required!");
         return getInstantService().sendTransaction(
-                asMap("transaction", transactionSign.getTxSign())
+                asMap("tx", transactionSign.getTxSign())
         );
     }
 
@@ -75,6 +75,7 @@ public class GateTransactionRepository extends DataRepository<GateTransactionEnd
 
     @Override
     public void configure(ApiService.Builder api) {
-        api.registerTypeAdapter(HistoryTransaction.class, new BlockChainTransactionRepository.HistoryTransactionDeserializer());
+        api.registerTypeAdapter(new TypeToken<GateResult<PushResult>>() {
+        }.getType(), new GateResult.Deserializer<>(PushResult.class));
     }
 }

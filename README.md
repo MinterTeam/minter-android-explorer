@@ -24,7 +24,7 @@ project build.gradle
 ```groovy
 
 ext {
-    minterExplorerSDK = "0.8.1"
+    minterExplorerSDK = "1.0.0"
 }
 
 dependencies {
@@ -60,36 +60,45 @@ class MyProject {
 ```
 
 ### Usage
-SDK uses retrofit http client [see](https://square.github.io/retrofit/)
+SDK uses retrofit http client with RxJava2
+
+
+Example: how to get transaction list by minter address
+
 ```java
-// get transactions (or other) repository
+import android.util.Log;
+import java.util.List;
+import io.reactivex.schedulers.Schedulers;
+import network.minter.explorer.models.ExpResult;
+import network.minter.explorer.models.HistoryTransaction;
+import network.minter.explorer.repo.ExplorerTransactionRepository;
+
 class MyProject {
     
-    public static void main(String[] args) {
-        ExplorerTransactionsRepository txRepo = MinterExplorerSDK.getInstance().transactions();
+    public void someFunc() {
+        ExplorerTransactionRepository txRepo = MinterExplorerSDK.getInstance().transactions();
 
         // get list of transactions by given address
         MinterAddress address = new MinterAddress("Mx01c8af77721c9666c672de62a4deadda0dafb03a");
-        txRepo.getTransactions(address).enqueue(new Callback<ExpResult<List<HistoryTransaction>>>() {
-            @Override
-            public void onResponse(@NonNull Call<ExpResult<List<HistoryTransaction>>> call, @NonNull Response<ExpResult<List<HistoryTransaction>>> response) {
-                // handle response
-            }
-        
-            @Override
-            public void onFailure(@NonNull Call<ExpResult<List<HistoryTransaction>>> call, @NonNull Throwable t) {
-                // handle error
-            }
-        });
+        txRepo.getTransactions(address)
+            .subscribeOn(Schedulers.io())
+            .subscribe((ExpResult<List<HistoryTransaction>> response) -> {
+                if(response.isOk()) {
+                    List<HistoryTransaction> transactions = response.result;    
+                } else {
+                    // all errors with "content-type: application/json" will be put in the ExpResult, so you can handle it without exceptions
+                    Log.d("Explorer", String.format("Error: [%d] %s", response.getCode(), response.getMessage()));
+                }
+            }, throwable -> {
+                // there is some unknown error
+            });
     }
-    
-    
 }
 ```
 For more examples, see our [wallet app](https://github.com/MinterTeam/minter-android-wallet)
 
 ## Docs
-TODO (javadocs available for now)
+Javadocs available with package on bintray. Usage guide: soon
 
 ## Build
 TODO
@@ -98,7 +107,6 @@ TODO
 TODO
 
 ## Changelog
-
 See [Release notes](RELEASE.md)
 
 

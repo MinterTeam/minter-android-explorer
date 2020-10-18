@@ -26,10 +26,7 @@
 
 package network.minter.explorer.tests.repo;
 
-import android.os.Parcelable;
-
 import org.junit.Test;
-import org.parceler.Parcels;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -38,7 +35,6 @@ import java.util.List;
 
 import network.minter.blockchain.models.ExchangeBuyValue;
 import network.minter.blockchain.models.ExchangeSellValue;
-import network.minter.blockchain.models.operational.Transaction;
 import network.minter.core.internal.log.StdLogger;
 import network.minter.explorer.MinterExplorerSDK;
 import network.minter.explorer.models.CoinItem;
@@ -46,13 +42,10 @@ import network.minter.explorer.models.ExpResult;
 import network.minter.explorer.models.GateResult;
 import network.minter.explorer.repo.ExplorerCoinsRepository;
 import network.minter.explorer.repo.GateEstimateRepository;
-import retrofit2.Response;
 
-import static java.math.BigDecimal.ZERO;
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 /**
  * minter-android-explorer. 2019
@@ -62,7 +55,10 @@ import static org.junit.Assert.assertNull;
 public class CoinsRepositoryTest extends BaseRepoTest {
 
     static {
-        MinterExplorerSDK.initialize(true, new StdLogger());
+        new MinterExplorerSDK.Setup()
+                .setEnableDebug(true)
+                .setLogger(new StdLogger())
+                .init();
 //        MinterExplorerSDK.getInstance().getApiService().addHttpInterceptor(new ApiMockInterceptor());
     }
 
@@ -71,105 +67,76 @@ public class CoinsRepositoryTest extends BaseRepoTest {
     public void getAll() throws IOException {
         ExplorerCoinsRepository repo = MinterExplorerSDK.getInstance().coins();
 
-        Response<ExpResult<List<CoinItem>>> result = repo.getAll().execute();
+        ExpResult<List<CoinItem>> result = repo.getAll().blockingFirst();
         checkResponseSuccess(result);
-
-        assertNotNull(result.body());
-        List<CoinItem> items = result.body().result;
-        assertNotNull(items);
-        assertEquals(44, items.size());
-
-        CoinItem item0 = items.get(0);
-        assertNotNull(item0);
-
-        assertEquals("MNT", item0.symbol);
-        assertEquals("", item0.name);
-        assertEquals(0, item0.crr);
-        assertTrue(ZERO.compareTo(item0.reserveBalance) == 0);
-        assertTrue(ZERO.compareTo(item0.volume) == 0);
-
-        CoinItem item1 = items.get(items.size() - 1);
-        assertNotNull(item1);
-
-        assertEquals("CINEMACOIN", item1.symbol);
-        assertEquals("CINEMACOIN", item1.name);
-        assertEquals(10, item1.crr);
-        assertEquals(new BigDecimal("100000.000000000000000000"), item1.volume);
-        assertEquals(new BigDecimal("100.000000000000000000"), item1.reserveBalance);
-
-        Parcelable s = Parcels.wrap(item1);
-        CoinItem us = Parcels.unwrap(s);
     }
 
-    @Test
-    public void getCinemacoin() throws IOException {
-        ExplorerCoinsRepository repo = MinterExplorerSDK.getInstance().coins();
-
-        Response<ExpResult<List<CoinItem>>> result = repo.search("cinemacoin").execute();
-        checkResponseSuccess(result);
-
-        assertNotNull(result.body());
-        List<CoinItem> items = result.body().result;
-        assertNotNull(items);
-        assertEquals(1, items.size());
-
-
-        CoinItem item0 = items.get(0);
-        assertNotNull(item0);
-
-        assertEquals("CINEMACOIN", item0.symbol);
-        assertEquals("CINEMACOIN", item0.name);
-        assertEquals(10, item0.crr);
-        assertEquals(new BigDecimal("100.000000000000000000"), item0.reserveBalance);
-        assertEquals(new BigDecimal("100000.000000000000000000"), item0.volume);
-    }
+//    @Test
+//    public void getCinemacoin() throws IOException {
+//        ExplorerCoinsRepository repo = MinterExplorerSDK.getInstance().coins();
+//
+//        ExpResult<List<CoinItem>> result = repo.search("cinemacoin").blockingFirst();
+//        checkResponseSuccess(result);
+//
+//        assertNotNull(result.result);
+//        List<CoinItem> items = result.result;
+//        assertNotNull(items);
+//        assertEquals(1, items.size());
+//
+//
+//        CoinItem item0 = items.get(0);
+//        assertNotNull(item0);
+//
+//        assertEquals("CINEMACOIN", item0.symbol);
+//        assertEquals("CINEMACOIN", item0.name);
+//        assertEquals(10, item0.crr);
+//        assertEquals(new BigDecimal("100.000000000000000000"), item0.reserveBalance);
+//        assertEquals(new BigDecimal("100000.000000000000000000"), item0.volume);
+//    }
 
     @Test
     public void getUnknownCoin() throws IOException {
         ExplorerCoinsRepository repo = MinterExplorerSDK.getInstance().coins();
 
-        Response<ExpResult<List<CoinItem>>> result = repo.search("unknown").execute();
+        ExpResult<List<CoinItem>> result = repo.search("unknown").blockingFirst();
         checkResponseSuccess(result);
 
-        assertNotNull(result.body());
-        List<CoinItem> items = result.body().result;
+        assertNotNull(result.result);
+        List<CoinItem> items = result.result;
         assertNotNull(items);
         assertEquals(0, items.size());
     }
 
-    @Test
-    public void buyCoinCurrency() throws IOException {
-        GateEstimateRepository repo = MinterExplorerSDK.getInstance().estimate();
-        Response<GateResult<ExchangeBuyValue>> result =
-                repo.getCoinExchangeCurrencyToBuy("MNT", new BigDecimal("1"), "CINEMACOIN").execute();
-
-        checkResponseSuccess(result);
-        assertNotNull(result.body());
-        ExchangeBuyValue data = result.body().result;
-        assertNotNull(data);
-
-        assertEquals(new BigInteger("25561747758752620"), data.willPay);
-        assertEquals(new BigInteger("100000000000000000"), data.commission);
-        assertEquals(new BigDecimal("100000000000000000").divide(Transaction.VALUE_MUL_DEC), data.getCommission());
-        assertEquals(new BigDecimal("25561747758752620").divide(Transaction.VALUE_MUL_DEC), data.getAmount());
-        assertEquals(
-                new BigDecimal("100000000000000000").divide(Transaction.VALUE_MUL_DEC)
-                        .add(new BigDecimal("25561747758752620").divide(Transaction.VALUE_MUL_DEC))
-                ,
-                data.getAmountWithCommission()
-        );
-    }
+//    @Test
+//    public void buyCoinCurrency() throws IOException {
+//        GateEstimateRepository repo = MinterExplorerSDK.getInstance().estimate();
+//        ExchangeBuyValue data =
+//                repo.getCoinExchangeCurrencyToBuy("MNT", new BigDecimal("1"), "CINEMACOIN").blockingFirst();
+//
+//        assertTrue(data.isOk());
+//
+//        assertEquals(new BigInteger("25561747758752620"), data.willPay);
+//        assertEquals(new BigInteger("100000000000000000"), data.commission);
+//        assertEquals(new BigDecimal("100000000000000000").divide(Transaction.VALUE_MUL_DEC), data.getCommission());
+//        assertEquals(new BigDecimal("25561747758752620").divide(Transaction.VALUE_MUL_DEC), data.getAmount());
+//        assertEquals(
+//                new BigDecimal("100000000000000000").divide(Transaction.VALUE_MUL_DEC)
+//                        .add(new BigDecimal("25561747758752620").divide(Transaction.VALUE_MUL_DEC))
+//                ,
+//                data.getAmountWithCommission()
+//        );
+//    }
 
     @Test
     public void buyCoinWrongName() throws IOException {
         GateEstimateRepository repo = MinterExplorerSDK.getInstance().estimate();
-        Response<GateResult<ExchangeBuyValue>> result =
-                repo.getCoinExchangeCurrencyToBuy("MNT", new BigDecimal("1"), "MNT").execute();
+        GateResult<ExchangeBuyValue> result =
+                repo.getCoinExchangeCurrencyToBuy("MNT", new BigDecimal("1"), "MNT").blockingFirst();
 
-        checkResponseError(result);
-        assertNotNull(result.body());
-        GateResult.ErrorResult error = result.body().error;
-        assertNull(error);
+        assertFalse(result.isOk());
+        assertEquals(400, result.getCode());
+        assertEquals("\"From\" coin equals to \"to\" coin", result.getMessage());
+
         // hmm...
 //        assertNotEquals("\"From\" coin equals to \"to\" coin", error.getMessage());
 //        assertEquals(BCResult.ResultCode.UnknownError, error.getResultCode());
@@ -178,37 +145,28 @@ public class CoinsRepositoryTest extends BaseRepoTest {
     @Test
     public void sellCoinCurrency() throws IOException {
         GateEstimateRepository repo = MinterExplorerSDK.getInstance().estimate();
-        Response<GateResult<ExchangeSellValue>> result =
-                repo.getCoinExchangeCurrencyToSell("MNT", new BigDecimal("1"), "CINEMACOIN").execute();
+        GateResult<ExchangeSellValue> data =
+                repo.getCoinExchangeCurrencyToSell("MNT", new BigDecimal("1"), "BANANATEST").blockingFirst();
 
-        checkResponseSuccess(result);
-        assertNotNull(result.body());
-        ExchangeSellValue data = result.body().result;
-        assertNotNull(data);
 
-        assertEquals(new BigInteger("39060624404202783670"), data.willGet);
-        assertEquals(new BigInteger("100000000000000000"), data.commission);
-        assertEquals(new BigDecimal("100000000000000000").divide(Transaction.VALUE_MUL_DEC), data.getCommission());
-        assertEquals(new BigDecimal("39060624404202783670").divide(Transaction.VALUE_MUL_DEC), data.getAmount());
-        assertEquals(
-                new BigDecimal("100000000000000000").divide(Transaction.VALUE_MUL_DEC)
-                        .add(new BigDecimal("39060624404202783670").divide(Transaction.VALUE_MUL_DEC))
-                ,
-                data.getAmountWithCommission()
-        );
+        assertEquals(new BigInteger("15000000000000000"), data.result.willGet);
+        assertEquals(new BigInteger("100000000000000000"), data.result.commission);
+        assertEquals(new BigDecimal("0.1"), data.result.getCommission());
+        assertEquals(new BigDecimal("0.015"), data.result.getAmount());
+        assertEquals(new BigDecimal("0.015").add(new BigDecimal("0.1")), data.result.getAmountWithCommission());
     }
 
+    //    curl "http://node.chilinet.minter.network:28843/estimate_coin_sell?coin_id_to_sell=0&coin_id_to_buy=3&value_to_sell=1000000000000000000"
+//    curl http://node.chilinet.minter.network:28843/estimate_coin_buy?coin_id_to_sell=0&coin_id_to_buy=3&value_to_buy=1000000000000000000
     @Test
     public void sellCoinWrongName() throws IOException {
         GateEstimateRepository repo = MinterExplorerSDK.getInstance().estimate();
-        Response<GateResult<ExchangeSellValue>> result =
-                repo.getCoinExchangeCurrencyToSell("MNT", new BigDecimal("1"), "MNT").execute();
+        GateResult<ExchangeSellValue> result =
+                repo.getCoinExchangeCurrencyToSell("MNT", new BigDecimal("1"), "MNT").blockingFirst();
 
-        checkResponseError(result);
-        assertNotNull(result.body());
-        GateResult.ErrorResult error = result.body().error;
-        assertNull(error);
-//        assertEquals("\"From\" coin equals to \"to\" coin", error.getMessage());
-//        assertEquals(BCResult.ResultCode.UnknownError, error.getResultCode());
+        assertFalse(result.isOk());
+        assertNotNull(result.error);
+        assertEquals(400, result.getCode());
+        assertEquals("\"From\" coin equals to \"to\" coin", result.getMessage());
     }
 }

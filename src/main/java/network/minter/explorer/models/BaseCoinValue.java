@@ -37,7 +37,7 @@ import java.math.BigDecimal;
  */
 @Parcel
 public class BaseCoinValue {
-    public String coin;
+    public CoinItemBase coin;
     public BigDecimal amount = BigDecimal.ZERO;
     public BigDecimal bipValue = BigDecimal.ZERO;
 

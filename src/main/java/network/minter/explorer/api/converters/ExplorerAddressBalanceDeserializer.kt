@@ -29,11 +29,15 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
+import network.minter.core.MinterSDK
 import network.minter.core.crypto.MinterAddress
 import network.minter.explorer.models.AddressBalance
 import network.minter.explorer.models.CoinBalance
 import java.lang.reflect.Type
+import java.math.BigDecimal
+import java.math.BigInteger
 import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * minter-android-explorer. 2020
@@ -60,23 +64,38 @@ class ExplorerAddressBalanceDeserializer : JsonDeserializer<AddressBalance?> {
         if (root.has("total_balance_sum_usd") && !root["total_balance_sum_usd"].isJsonNull) {
             data.totalBalanceUSD = root["total_balance_sum_usd"].asBigDecimal
         }
-        if (root.has("available_balance_sum") && !root["available_balance_sum"].isJsonNull) {
-            data.availableBalanceBIP = root["available_balance_sum"].asBigDecimal
+        if (root.has("stake_balance_sum") && !root["stake_balance_sum"].isJsonNull) {
+            data.stakeBalanceBIP = root["stake_balance_sum"].asBigDecimal
         }
-        if (root.has("available_balance_sum_usd") && !root["available_balance_sum_usd"].isJsonNull) {
-            data.availableBalanceUSD = root["available_balance_sum_usd"].asBigDecimal
+        if (root.has("stake_balance_sum_usd") && !root["stake_balance_sum_usd"].isJsonNull) {
+            data.stakeBalanceUSD = root["stake_balance_sum_usd"].asBigDecimal
         }
         if (root.has(COINS_BALANCE)) {
             val coins = root.getAsJsonArray(COINS_BALANCE)
             val out: MutableMap<String, CoinBalance> = HashMap()
+            val outById: MutableMap<BigInteger, CoinBalance> = HashMap()
+
             for (i in 0 until coins.size()) {
                 val coinData = coins[i].asJsonObject
                 val amount = coinData["amount"].asBigDecimal
                 val bipAmount = coinData["bip_amount"].asBigDecimal
-                val name = coinData["coin"].asString.toUpperCase(Locale.getDefault())
-                out[name] = CoinBalance(name, amount, bipAmount, data.address)
+                val coinDataObj = coinData["coin"].asJsonObject
+                val coinId = coinDataObj["id"].asBigInteger
+                var coinName = coinDataObj["symbol"].asString.toUpperCase(Locale.getDefault())
+                if (coinId != MinterSDK.DEFAULT_COIN_ID && out.containsKey(coinName)) {
+                    coinName += "-${i + 1}"
+                }
+                out[coinName] = CoinBalance(coinId, coinName, amount, bipAmount, data.address)
+                outById[coinId] = out[coinName]!!
             }
+
+            if (!outById.containsKey(MinterSDK.DEFAULT_COIN_ID)) {
+                outById[MinterSDK.DEFAULT_COIN_ID] = CoinBalance(MinterSDK.DEFAULT_COIN_ID, MinterSDK.DEFAULT_COIN, BigDecimal.ZERO, BigDecimal.ZERO, data.address)
+                out[MinterSDK.DEFAULT_COIN] = outById[MinterSDK.DEFAULT_COIN_ID]!!
+            }
+
             data.coins = out
+            data.coinsById = outById
         }
         return data
     }

@@ -42,9 +42,13 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import network.minter.blockchain.models.operational.CheckTransaction;
+import network.minter.blockchain.utils.Base64UrlSafe;
+import network.minter.core.crypto.BytesData;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.crypto.MinterHash;
 import network.minter.core.crypto.MinterPublicKey;
+import network.minter.core.internal.log.Mint;
 
 /**
  * minter-android-explorer. 2018
@@ -64,7 +68,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
     public Date timestamp;
     public BigDecimal fee;
     @SerializedName("gas_coin")
-    public String gasCoin;
+    public CoinItemBase gasCoin;
     public Type type;
     public MinterAddress from;
     @Transient
@@ -172,7 +176,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         @SerializedName("4")
         BuyCoin(TxConvertCoinResult.class),
         @SerializedName("5")
-        CreateCoin(TxCreateResult.class),
+        CreateCoin(TxCreateCoinResult.class),
         @SerializedName("6")
         DeclareCandidacy(TxDeclareCandidacyResult.class),
         @SerializedName("7")
@@ -191,8 +195,21 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         MultiSend(TxMultisendResult.class),
         @SerializedName("14")
         EditCandidate(TxEditCandidateResult.class),
-
-        ;
+        /**
+         * @since minter 1.2
+         **/
+        @SerializedName("15")
+        SetHaltBlock(TxSetHaltBlockResult.class),
+        @SerializedName("16")
+        RecreateCoin(TxRecreateCoinResult.class),
+        @SerializedName("17")
+        EditCoinOwner(TxChangeCoinOwnerResult.class),
+        @SerializedName("18")
+        EditMultisig(TxEditMultisigResult.class),
+        @SerializedName("19")
+        PriceVote(TxPriceVoteResult.class),
+        @SerializedName("20")
+        EditCandidatePublicKey(TxEditCandidatePublicKeyResult.class);
 
         Class<?> mCls;
 
@@ -211,13 +228,37 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
     public static class TxDefaultResult {
     }
 
+    public static class TxEditCandidatePublicKeyResult {
+        @SerializedName("pub_key")
+        public MinterPublicKey publicKey;
+        @SerializedName("new_pub_key")
+        public MinterPublicKey newPublicKey;
+    }
+
+    @Parcel
+    public static class TxSetHaltBlockResult {
+        public BigInteger height;
+        @SerializedName("pub_key")
+        public MinterPublicKey publicKey;
+    }
+
+    @Parcel
+    public static class TxEditMultisigResult extends TxCreateMultisigResult {
+
+    }
+
+    @Parcel
+    public static class TxPriceVoteResult {
+        public BigInteger price;
+    }
+
     /**
      * Data model for sending transaction
      */
     @Parcel
     public static class TxSendCoinResult {
         public MinterAddress to;
-        public String coin;
+        public CoinItemBase coin;
         @SerializedName("value")
         public BigDecimal amount;
 
@@ -229,7 +270,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
             if (coin == null) {
                 return null;
             }
-            return coin.toUpperCase();
+            return coin.symbol;
         }
 
         public BigDecimal getAmount() {
@@ -237,11 +278,12 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         }
     }
 
+
     /**
      * Data model for creating coin transaction
      */
     @Parcel
-    public static class TxCreateResult {
+    public static class TxCreateCoinResult {
         public String name;
         public String symbol;
         @SerializedName("initial_amount")
@@ -281,15 +323,26 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         }
     }
 
+    @Parcel
+    public static class TxRecreateCoinResult extends TxCreateCoinResult {
+    }
+
+    @Parcel
+    public static class TxChangeCoinOwnerResult {
+        public String symbol;
+        @SerializedName("new_owner")
+        public MinterAddress newOwner;
+    }
+
     /**
      * Data model for exchanging coins transaction
      */
     @Parcel
     public static class TxConvertCoinResult {
         @SerializedName("coin_to_sell")
-        public String coinToSell;
+        public CoinItemBase coinToSell;
         @SerializedName("coin_to_buy")
-        public String coinToBuy;
+        public CoinItemBase coinToBuy;
         @SerializedName("value_to_buy")
         public BigDecimal valueToBuy;
         @SerializedName("value_to_sell")
@@ -311,14 +364,14 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
             if (coinToSell == null) {
                 return null;
             }
-            return coinToSell.toUpperCase();
+            return coinToSell.symbol;
         }
 
         public String getCoinToBuy() {
             if (coinToBuy == null) {
                 return null;
             }
-            return coinToBuy.toUpperCase();
+            return coinToBuy.symbol;
         }
 
         public BigDecimal getValueToBuy() {
@@ -345,7 +398,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         @SerializedName("pub_key")
         public MinterPublicKey publicKey;
         public int commission;
-        public String coin;
+        public CoinItemBase coin;
         public BigDecimal stake;
 
         public MinterAddress getAddress() {
@@ -364,7 +417,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
             if (coin == null) {
                 return null;
             }
-            return coin.toUpperCase();
+            return coin.symbol;
         }
 
         public BigDecimal getStake() {
@@ -395,7 +448,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
     public static class TxDelegateUnbondResult {
         @SerializedName("pub_key")
         public MinterPublicKey publicKey;
-        public String coin;
+        public CoinItemBase coin;
         public BigDecimal value = BigDecimal.ZERO;
 
         public MinterPublicKey getPublicKey() {
@@ -406,13 +459,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
          * Return delegated/unbonded stake
          *
          * @return human decimal value
-         * @deprecated use {@link #getValue()}
          */
-        @Deprecated
-        public BigDecimal getStake() {
-            return getValue();
-        }
-
         public BigDecimal getValue() {
             return value;
         }
@@ -422,7 +469,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
                 return null;
             }
 
-            return coin.toUpperCase();
+            return coin.symbol;
         }
     }
 
@@ -441,17 +488,21 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
      */
     @Parcel
     public static class TxRedeemCheckResult {
+        /**
+         * Base64-encoded check data
+         */
         @SerializedName("raw_check")
         public String rawCheck;
+        /**
+         * Base64-encoded check proof
+         */
         public String proof;
-        @Deprecated
         public CheckData check;
 
         public String getRawProof() {
             return proof;
         }
 
-        @Deprecated
         public CheckData getCheck() {
             return check;
         }
@@ -459,11 +510,33 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         public String getRawCheck() {
             return rawCheck;
         }
+
+        public CheckTransaction getCheckTransaction() {
+            if (rawCheck.isEmpty()) {
+                return null;
+            }
+
+            CheckTransaction check;
+            try {
+                final BytesData checkData = Base64UrlSafe.decode(rawCheck);
+                check = CheckTransaction.fromEncoded(checkData.toHexString());
+            } catch (Throwable t) {
+                Mint.d("Unable to decode raw check: %s", rawCheck);
+                check = null;
+            }
+
+            return check;
+        }
     }
 
     @Parcel
     public static class CheckData {
-        public String coin;
+        public CoinItemBase coin;
+        @SerializedName("gas_coin")
+        public CoinItemBase gasCoin;
+        /**
+         * Base64-encoded nonce string
+         */
         public String nonce;
         public BigDecimal value;
         public MinterAddress sender;
@@ -471,7 +544,7 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         public BigInteger dueBlock;
 
         public String getCoin() {
-            return coin;
+            return coin.toString();
         }
 
         public String getNonce() {
@@ -527,6 +600,8 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
         public MinterAddress rewardAddress;
         @SerializedName("owner_address")
         public MinterAddress ownerAddress;
+        @SerializedName("control_address")
+        public MinterAddress controlAddress;
         @SerializedName("pub_key")
         public MinterPublicKey publicKey;
 
@@ -540,6 +615,10 @@ public class HistoryTransaction implements Serializable, Comparable<HistoryTrans
 
         public MinterAddress getOwnerAddress() {
             return ownerAddress;
+        }
+
+        public MinterAddress getControlAddress() {
+            return controlAddress;
         }
     }
 }

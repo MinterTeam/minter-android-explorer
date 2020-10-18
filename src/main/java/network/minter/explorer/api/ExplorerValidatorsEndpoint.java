@@ -28,17 +28,18 @@ package network.minter.explorer.api;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import network.minter.explorer.models.ExpResult;
 import network.minter.explorer.models.ValidatorItem;
-import retrofit2.Call;
 import retrofit2.http.GET;
 
 /**
  * minter-android-explorer. 2019
+ *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
 public interface ExplorerValidatorsEndpoint {
 
     @GET("validators")
-    Call<ExpResult<List<ValidatorItem>>> getValidators();
+    Observable<ExpResult<List<ValidatorItem>>> getValidators();
 }

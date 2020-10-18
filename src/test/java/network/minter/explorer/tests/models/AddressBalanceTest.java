@@ -34,6 +34,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +42,7 @@ import java.util.Map;
 
 import network.minter.core.MinterSDK;
 import network.minter.core.crypto.MinterPublicKey;
+import network.minter.core.internal.log.StdLogger;
 import network.minter.explorer.MinterExplorerSDK;
 import network.minter.explorer.models.AddressBalance;
 import network.minter.explorer.models.CoinBalance;
@@ -62,7 +64,12 @@ public class AddressBalanceTest {
 
     @Test
     public void encodeGsonCoinDelegation() {
-        MinterExplorerSDK.initialize(true);
+        new MinterExplorerSDK.Setup()
+                .setExplorerApiUrl("https://explorer-api.chilinet.minter.network/api/")
+                .setGateApiUrl("https://gate-api.chilinet.minter.network/api/")
+                .setEnableDebug(true)
+                .setLogger(new StdLogger())
+                .init();
 
         Map<MinterPublicKey, List<CoinDelegation>> delegations = new HashMap<>();
         MinterPublicKey pk1 = new MinterPublicKey("Mp47f5c19c3ac5d66c960f36aa1a2d74ec8127f96308b67054332c988ee9eafaf0");
@@ -70,9 +77,9 @@ public class AddressBalanceTest {
         delegations.put(pk1, new ArrayList<>());
         delegations.put(pk2, new ArrayList<>());
 
-        CoinDelegation v1 = new CoinDelegation("BIP", ZERO, ZERO);
-        CoinDelegation v2 = new CoinDelegation("MNT", new BigDecimal("1"), new BigDecimal("1"));
-        CoinDelegation v3 = new CoinDelegation("ZERO", new BigDecimal("2"), new BigDecimal("2"));
+        CoinDelegation v1 = new CoinDelegation(BigInteger.ZERO, "BIP", ZERO, ZERO);
+        CoinDelegation v2 = new CoinDelegation(BigInteger.ZERO, "MNT", new BigDecimal("1"), new BigDecimal("1"));
+        CoinDelegation v3 = new CoinDelegation(new BigInteger("1"), "ZERO", new BigDecimal("2"), new BigDecimal("2"));
         delegations.get(pk1).add(v1);
         delegations.get(pk2).add(v1);
         delegations.get(pk1).add(v2);
@@ -106,14 +113,14 @@ public class AddressBalanceTest {
 
         CoinBalance def = data.coins.get(MinterSDK.DEFAULT_COIN);
         assertNotNull(def);
-        Assert.assertEquals(MinterSDK.DEFAULT_COIN, def.coin);
+        Assert.assertEquals(MinterSDK.DEFAULT_COIN_ID, def.coin.id);
         Assert.assertEquals(def.coin, def.coin);
 
         def.coin = null;
         assertNull(def.coin);
 
-        def.coin = (MinterSDK.DEFAULT_COIN.toLowerCase());
-        Assert.assertEquals(MinterSDK.DEFAULT_COIN.toUpperCase(), def.coin);
+        def.coin.symbol = (MinterSDK.DEFAULT_COIN.toLowerCase());
+        Assert.assertEquals(MinterSDK.DEFAULT_COIN_ID, def.coin.id);
 
         assertEquals(ZERO, data.totalBalance);
         data.fillDefaultsOnEmpty();
@@ -131,7 +138,7 @@ public class AddressBalanceTest {
 
         assertNotNull(data.coins);
         data.fillDefaultsOnEmpty();
-        data.coins.put("a", new CoinBalance(null, ZERO, ZERO, null));
+        data.coins.put("a", new CoinBalance(null, null, ZERO, ZERO, null));
         data.fillDefaultsOnEmpty();
         assertEquals(2, data.coins.size());
     }

@@ -24,54 +24,25 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorer.models;
+package network.minter.explorer.api;
 
-import org.parceler.Parcel;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import network.minter.core.crypto.MinterPublicKey;
+import io.reactivex.Observable;
+import network.minter.explorer.models.CoinItem;
+import network.minter.explorer.models.GateResult;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 /**
  * minter-android-explorer. 2020
  *
  * @author Eduard Maximovich (edward.vstock@gmail.com)
  */
-@Parcel
-public class DelegationList {
-    public Map<MinterPublicKey, List<CoinDelegation>> delegations = new HashMap<>();
+public interface GateCoinEndpoint {
 
-    public int size() {
-        return delegations.size();
-    }
+    @GET("coin_info/{name}")
+    Observable<GateResult<CoinItem>> getCoinInfo(@Path("name") String coinName);
 
-    public boolean isEmpty() {
-        return delegations.isEmpty();
-    }
+    @GET("coin_info_by_id/{id}")
+    Observable<GateResult<CoinItem>> getCoinInfoById(@Path("id") String coinId);
 
-    public List<CoinDelegation> getDelegatedByPublicKey(MinterPublicKey publicKey) {
-        if (!hasDelegations(publicKey)) {
-            return Collections.emptyList();
-        }
-        return delegations.get(publicKey);
-    }
-
-    public boolean hasInWaitList() {
-        for (Map.Entry<MinterPublicKey, List<CoinDelegation>> entry : delegations.entrySet()) {
-            for (CoinDelegation item : entry.getValue()) {
-                if (item.isInWaitlist) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public boolean hasDelegations(MinterPublicKey publicKey) {
-        return publicKey != null && delegations.containsKey(publicKey) && delegations.get(publicKey) != null;
-    }
 }

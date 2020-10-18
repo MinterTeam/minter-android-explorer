@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -30,12 +30,12 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import io.reactivex.Observable;
 import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.data.DataRepository;
 import network.minter.explorer.api.ExplorerCoinsEndpoint;
 import network.minter.explorer.models.CoinItem;
 import network.minter.explorer.models.ExpResult;
-import retrofit2.Call;
 
 import static network.minter.core.internal.common.Preconditions.checkArgument;
 
@@ -54,7 +54,7 @@ public class ExplorerCoinsRepository extends DataRepository<ExplorerCoinsEndpoin
      *
      * @return Retrofit call
      */
-    public Call<ExpResult<List<CoinItem>>> getAll() {
+    public Observable<ExpResult<List<CoinItem>>> getAll() {
         return getInstantService().getAll();
     }
 
@@ -63,7 +63,7 @@ public class ExplorerCoinsRepository extends DataRepository<ExplorerCoinsEndpoin
      *
      * @return Retrofit call
      */
-    public Call<ExpResult<List<CoinItem>>> search(String symbol) {
+    public Observable<ExpResult<List<CoinItem>>> search(String symbol) {
         checkArgument(symbol != null, "Symbol must be not null");
         return getInstantService().search(symbol.toUpperCase());
     }

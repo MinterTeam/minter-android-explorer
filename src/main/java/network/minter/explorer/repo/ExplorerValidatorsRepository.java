@@ -30,13 +30,13 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import io.reactivex.Observable;
 import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.data.DataRepository;
 import network.minter.explorer.api.ExplorerValidatorsEndpoint;
 import network.minter.explorer.api.converters.ExplorerValidatorsDeserializer;
 import network.minter.explorer.models.ExpResult;
 import network.minter.explorer.models.ValidatorItem;
-import retrofit2.Call;
 
 /**
  * minter-android-explorer. 2019
@@ -53,7 +53,7 @@ public class ExplorerValidatorsRepository extends DataRepository<ExplorerValidat
      *
      * @return Retrofit call
      */
-    public Call<ExpResult<List<ValidatorItem>>> getValidators() {
+    public Observable<ExpResult<List<ValidatorItem>>> getValidators() {
         return getInstantService().getValidators();
     }
 

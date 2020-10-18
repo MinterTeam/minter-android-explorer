@@ -32,9 +32,12 @@ import com.annimon.stream.Stream;
 import org.parceler.Parcel;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 import network.minter.core.MinterSDK;
 import network.minter.core.crypto.MinterAddress;
@@ -47,12 +50,16 @@ import network.minter.core.crypto.MinterAddress;
 @Parcel
 public class AddressBalance {
     public Map<String, CoinBalance> coins = new HashMap<>();
+    /**
+     * Used more memory, but find method has big O(1)
+     */
+    public Map<BigInteger, CoinBalance> coinsById = new HashMap<>();
     // not null only if get list of balances by addresses
     public MinterAddress address = null;
     public BigDecimal totalBalance = BigDecimal.ZERO;
     public BigDecimal totalBalanceUSD = BigDecimal.ZERO;
-    public BigDecimal availableBalanceBIP = BigDecimal.ZERO;
-    public BigDecimal availableBalanceUSD = BigDecimal.ZERO;
+    public BigDecimal stakeBalanceBIP = BigDecimal.ZERO;
+    public BigDecimal stakeBalanceUSD = BigDecimal.ZERO;
 
     public AddressBalance() {
         fillDefaultsOnEmpty();
@@ -65,7 +72,20 @@ public class AddressBalance {
 
     public void fillDefaultsOnEmpty() {
         if (coins.isEmpty()) {
-            coins.put(MinterSDK.DEFAULT_COIN, new CoinBalance(MinterSDK.DEFAULT_COIN, BigDecimal.ZERO, BigDecimal.ZERO, address));
+            coins.put(MinterSDK.DEFAULT_COIN, new CoinBalance(
+                    MinterSDK.DEFAULT_COIN_ID,
+                    MinterSDK.DEFAULT_COIN,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    address
+            ));
+            coinsById.put(MinterSDK.DEFAULT_COIN_ID, new CoinBalance(
+                    MinterSDK.DEFAULT_COIN_ID,
+                    MinterSDK.DEFAULT_COIN,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    address
+            ));
         }
     }
 
@@ -81,14 +101,62 @@ public class AddressBalance {
         return Stream.of(coins.values()).toList();
     }
 
+    /**
+     * Find coin balance by coin name
+     *
+     * @param name coin name
+     * @return optional value, empty if not found
+     * @deprecated Use {@link #findCoin(String name)}
+     */
+    @Deprecated
     public Optional<CoinBalance> findCoinByName(String name) {
+        return findCoin(name);
+    }
+
+    /**
+     * Find coin balance by coin id
+     *
+     * @param id coin id
+     * @return optional value, empty if not found
+     * @deprecated Use {@link #findCoin(BigInteger id)}
+     */
+    @Deprecated
+    public Optional<CoinBalance> findCoinById(BigInteger id) {
+        return findCoin(id);
+    }
+
+    /**
+     * Find coin balance by coin name
+     *
+     * @param name coin name
+     * @return optional value, empty if not found
+     */
+    public Optional<CoinBalance> findCoin(String name) {
         if (name == null) {
             return Optional.empty();
         }
 
         return Stream.of(getCoinsList())
-                .filter(v -> name.toUpperCase().equals(v.coin.toUpperCase()))
+                .filter(v -> name.toUpperCase().equals(v.coin.symbol.toUpperCase()))
                 .findFirst();
+    }
+
+    /**
+     * Find coin balance by coin id
+     *
+     * @param id coin id
+     * @return optional value, empty if not found
+     */
+    public Optional<CoinBalance> findCoin(BigInteger id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+
+        if (coinsById.containsKey(id)) {
+            return Optional.of(coinsById.get(id));
+        }
+
+        return Optional.empty();
     }
 
     public boolean hasCoin(String name) {
@@ -97,11 +165,36 @@ public class AddressBalance {
         return coins.containsKey(name) && coins.get(name) != null;
     }
 
+    public boolean hasCoin(BigInteger id) {
+        return coinsById.containsKey(id);
+    }
+
+    /**
+     * Return coin in non-null format. If coin not found, returns coin with name specified in argument and null coin id)
+     *
+     * @param name coin name
+     * @return
+     */
     public CoinBalance getCoin(String name) {
         if (!hasCoin(name)) {
-            return new CoinBalance(name, BigDecimal.ZERO, BigDecimal.ZERO, address);
+            return new CoinBalance(null, name, BigDecimal.ZERO, BigDecimal.ZERO, address);
         }
         return coins.get(name);
+    }
+
+    /**
+     * Return coin in non-null format. If coin not found, returns coin with name <UNKNOWN> and id specified in argument
+     *
+     * @param id coin id
+     * @return
+     */
+    @Nonnull
+    public CoinBalance getCoin(BigInteger id) {
+        if (!hasCoin(id)) {
+            return new CoinBalance(id, "<UNKNOWN>", BigDecimal.ZERO, BigDecimal.ZERO, address);
+        }
+
+        return findCoin(id).get();
     }
 
 
@@ -114,11 +207,12 @@ public class AddressBalance {
         AddressBalance that = (AddressBalance) o;
 
         if (!coins.equals(that.coins)) return false;
+        if (!coinsById.equals(that.coinsById)) return false;
         if (address != null ? !address.equals(that.address) : that.address != null) return false;
         if (!totalBalance.equals(that.totalBalance)) return false;
         if (!totalBalanceUSD.equals(that.totalBalanceUSD)) return false;
-        if (!availableBalanceBIP.equals(that.availableBalanceBIP)) return false;
-        return availableBalanceUSD.equals(that.availableBalanceUSD);
+        if (!stakeBalanceBIP.equals(that.stakeBalanceBIP)) return false;
+        return stakeBalanceUSD.equals(that.stakeBalanceUSD);
     }
 
     @Override
@@ -127,8 +221,8 @@ public class AddressBalance {
         result = 31 * result + (address != null ? address.hashCode() : 0);
         result = 31 * result + totalBalance.hashCode();
         result = 31 * result + totalBalanceUSD.hashCode();
-        result = 31 * result + availableBalanceBIP.hashCode();
-        result = 31 * result + availableBalanceUSD.hashCode();
+        result = 31 * result + stakeBalanceBIP.hashCode();
+        result = 31 * result + stakeBalanceUSD.hashCode();
         return result;
     }
 }

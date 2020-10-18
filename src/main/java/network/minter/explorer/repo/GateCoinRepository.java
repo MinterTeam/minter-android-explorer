@@ -28,41 +28,54 @@ package network.minter.explorer.repo;
 
 import com.google.gson.reflect.TypeToken;
 
+import java.math.BigInteger;
+
 import javax.annotation.Nonnull;
 
 import io.reactivex.Observable;
 import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.data.DataRepository;
-import network.minter.explorer.api.GateGasEndpoint;
-import network.minter.explorer.models.GasValue;
+import network.minter.explorer.api.GateCoinEndpoint;
+import network.minter.explorer.models.CoinItem;
 import network.minter.explorer.models.GateResult;
 
 /**
- * minter-android-explorer. 2019
+ * minter-android-explorer. 2020
  *
- * @author Eduard Maximovich [edward.vstock@gmail.com]
+ * @author Eduard Maximovich (edward.vstock@gmail.com)
  */
-public class GateGasRepository extends DataRepository<GateGasEndpoint> implements DataRepository.Configurator {
-    public GateGasRepository(@Nonnull ApiService.Builder apiBuilder) {
+public class GateCoinRepository extends DataRepository<GateCoinEndpoint> implements DataRepository.Configurator {
+    public GateCoinRepository(@Nonnull ApiService.Builder apiBuilder) {
         super(apiBuilder);
     }
 
-    /**
-     * @return Minimum required gas price for current block to send valid transaction
-     */
-    public Observable<GateResult<GasValue>> getMinGas() {
-        return getInstantService().getMinGas();
+    public Observable<GateResult<CoinItem>> getCoinInfo(String coinName) {
+        return getInstantService().getCoinInfo(coinName);
+    }
+
+    public Observable<GateResult<CoinItem>> getCoinInfo(BigInteger coinId) {
+        return getInstantService().getCoinInfoById(coinId.toString());
+    }
+
+    public Observable<Boolean> coinExists(BigInteger coinId) {
+        return getCoinInfo(coinId)
+                .switchMap(result -> Observable.just(result.isOk()));
+    }
+
+    public Observable<Boolean> coinExists(String coinName) {
+        return getCoinInfo(coinName)
+                .switchMap(result -> Observable.just(result.isOk()));
     }
 
     @Nonnull
     @Override
-    protected Class<GateGasEndpoint> getServiceClass() {
-        return GateGasEndpoint.class;
+    protected Class<GateCoinEndpoint> getServiceClass() {
+        return GateCoinEndpoint.class;
     }
 
     @Override
     public void configure(ApiService.Builder api) {
-        api.registerTypeAdapter(new TypeToken<GateResult<GasValue>>() {
-        }.getType(), new GateResult.Deserializer<>(GasValue.class));
+        api.registerTypeAdapter(new TypeToken<GateResult<CoinItem>>() {
+        }.getType(), new GateResult.Deserializer<>(CoinItem.class));
     }
 }

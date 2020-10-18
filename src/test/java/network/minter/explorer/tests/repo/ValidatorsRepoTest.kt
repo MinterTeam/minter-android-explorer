@@ -26,24 +26,28 @@
 
 package network.minter.explorer.tests.repo
 
+import network.minter.core.internal.log.StdLogger
 import network.minter.explorer.MinterExplorerSDK
+import network.minter.explorer.MinterExplorerSDK.Setup
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ValidatorsRepoTest {
 
     init {
-        MinterExplorerSDK.initialize(true)
+        Setup()
+                .setEnableDebug(true)
+                .setLogger(StdLogger())
+                .init()
     }
 
     @Test
     fun getValidators() {
         val repo = MinterExplorerSDK.getInstance().validators()
-        val result = repo.validators.execute()
+        val result = repo.validators.blockingFirst()
 
-        assertTrue(result.isSuccessful)
-        assertTrue(result.body()!!.isOk)
-        assertTrue(result.body()!!.result != null)
-        assertTrue(result.body()!!.result.size > 0)
+        assertTrue(result.isOk)
+        assertTrue(result.result != null)
+        assertTrue(result.result.size > 0)
     }
 }

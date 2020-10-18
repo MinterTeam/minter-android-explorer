@@ -1,5 +1,5 @@
 /*
- * Copyright (C) by MinterTeam. 2019
+ * Copyright (C) by MinterTeam. 2020
  * @link <a href="https://github.com/MinterTeam">Org Github</a>
  * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
@@ -26,6 +26,10 @@
 
 package network.minter.explorer.models;
 
+import com.google.gson.annotations.SerializedName;
+
+import org.parceler.Parcel;
+
 import java.math.BigInteger;
 
 /**
@@ -33,6 +37,8 @@ import java.math.BigInteger;
  *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
+@Parcel
 public class GasValue {
+    @SerializedName("min_gas_price")
     public BigInteger gas;
 }

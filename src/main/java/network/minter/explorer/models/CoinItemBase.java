@@ -26,14 +26,11 @@
 
 package network.minter.explorer.models;
 
+import com.google.common.base.Objects;
+
 import org.parceler.Parcel;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import network.minter.core.crypto.MinterPublicKey;
+import java.math.BigInteger;
 
 /**
  * minter-android-explorer. 2020
@@ -41,37 +38,47 @@ import network.minter.core.crypto.MinterPublicKey;
  * @author Eduard Maximovich (edward.vstock@gmail.com)
  */
 @Parcel
-public class DelegationList {
-    public Map<MinterPublicKey, List<CoinDelegation>> delegations = new HashMap<>();
+public class CoinItemBase implements Comparable<CoinItemBase> {
+    public BigInteger id;
+    public String symbol;
 
-    public int size() {
-        return delegations.size();
+    public CoinItemBase() {
     }
 
-    public boolean isEmpty() {
-        return delegations.isEmpty();
+    public CoinItemBase(BigInteger id, String symbol) {
+        this.id = id;
+        this.symbol = symbol;
     }
 
-    public List<CoinDelegation> getDelegatedByPublicKey(MinterPublicKey publicKey) {
-        if (!hasDelegations(publicKey)) {
-            return Collections.emptyList();
-        }
-        return delegations.get(publicKey);
+    @Override
+    public String toString() {
+        return symbol;
     }
 
-    public boolean hasInWaitList() {
-        for (Map.Entry<MinterPublicKey, List<CoinDelegation>> entry : delegations.entrySet()) {
-            for (CoinDelegation item : entry.getValue()) {
-                if (item.isInWaitlist) {
-                    return true;
-                }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CoinItemBase)) {
+            if (o instanceof String) {
+                return symbol.equals((String) o);
+            } else if (o instanceof BigInteger) {
+                return id.equals((BigInteger) o);
+            } else {
+                return false;
             }
         }
-
-        return false;
+        CoinItemBase that = (CoinItemBase) o;
+        return Objects.equal(id, that.id) &&
+                Objects.equal(symbol, that.symbol);
     }
 
-    public boolean hasDelegations(MinterPublicKey publicKey) {
-        return publicKey != null && delegations.containsKey(publicKey) && delegations.get(publicKey) != null;
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, symbol);
+    }
+
+    @Override
+    public int compareTo(CoinItemBase o) {
+        return id.compareTo(o.id);
     }
 }

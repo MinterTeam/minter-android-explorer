@@ -26,7 +26,9 @@
 
 package network.minter.explorer.tests.repo;
 
+import network.minter.blockchain.models.NodeResult;
 import network.minter.explorer.models.ExpResult;
+import network.minter.explorer.models.GateResult;
 import retrofit2.Response;
 
 import static org.junit.Assert.assertNotNull;
@@ -40,13 +42,22 @@ import static org.junit.Assert.assertTrue;
  */
 public abstract class BaseRepoTest {
 
-    protected void checkResponseSuccess(Response<?> result) {
-        assertTrue(result.isSuccessful());
-        if (result.body() instanceof ExpResult) {
-            final ExpResult<?> body = ((ExpResult) result.body());
-            assertNull(bodyError(body), body.error);
-            assertTrue(body.isOk());
-        }
+    protected void checkResponseSuccess(String message, ExpResult<?> result) {
+        assertTrue(message, result.isOk());
+    }
+
+    protected void checkResponseSuccess(GateResult<?> gateResult) {
+        assertTrue(gateResult.isOk());
+    }
+
+    protected void checkResponseSuccess(ExpResult<?> result) {
+        String msg = String.format("Bad request or response: [%d] %s", result.getCode(), result.getMessage());
+        assertTrue(msg, result.isOk());
+    }
+
+    protected <T extends NodeResult> void checkResponseSuccess(T result) {
+        assertTrue(result.isOk());
+        assertNull(result.error);
     }
 
     protected void checkResponseError(Response<?> result) {

@@ -28,12 +28,12 @@ package network.minter.explorer.api;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import network.minter.explorer.models.AddressBalance;
 import network.minter.explorer.models.AddressListBalances;
 import network.minter.explorer.models.DelegationList;
 import network.minter.explorer.models.ExpResult;
 import network.minter.explorer.models.RewardStatistics;
-import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -51,7 +51,7 @@ public interface ExplorerAddressEndpoint {
      * @return Retrofit call with [ExpResult]
      */
     @GET("addresses/{address}")
-    Call<ExpResult<AddressBalance>> balance(@Path("address") String address);
+    Observable<ExpResult<AddressBalance>> balance(@Path("address") String address);
 
     /**
      * Resolve balance by address
@@ -60,7 +60,7 @@ public interface ExplorerAddressEndpoint {
      * @return Retrofit call with [ExpResult]
      */
     @GET("addresses/{address}")
-    Call<ExpResult<AddressBalance>> balance(@Path("address") String address, @Query("with_sum") Integer withSum);
+    Observable<ExpResult<AddressBalance>> balance(@Path("address") String address, @Query("with_sum") Integer withSum);
 
     /**
      * Resolve balance by multiple addresses
@@ -69,7 +69,7 @@ public interface ExplorerAddressEndpoint {
      * @return Retrofit call with [ExpResult]
      */
     @GET("addresses")
-    Call<ExpResult<AddressListBalances>> balanceMultiple(@Query(value = "addresses[]", encoded = true) List<String> addresses);
+    Observable<ExpResult<AddressListBalances>> balanceMultiple(@Query(value = "addresses[]", encoded = true) List<String> addresses);
 
     /**
      * List of delegated validators
@@ -78,7 +78,7 @@ public interface ExplorerAddressEndpoint {
      * @return
      */
     @GET("addresses/{address}/delegations")
-    Call<ExpResult<DelegationList>> getDelegationsForAddress(
+    Observable<ExpResult<DelegationList>> getDelegationsForAddress(
             @Path("address") String address,
             @Query("page") Integer page
     );
@@ -90,10 +90,10 @@ public interface ExplorerAddressEndpoint {
      * @return
      */
     @GET("addresses/{address}/statistics/rewards")
-    Call<ExpResult<List<RewardStatistics>>> getRewardStatistics(@Path("address") String address);
+    Observable<ExpResult<List<RewardStatistics>>> getRewardStatistics(@Path("address") String address);
 
     @GET("addresses/{address}/statistics/rewards")
-    Call<ExpResult<List<RewardStatistics>>> getRewardStatistics(
+    Observable<ExpResult<List<RewardStatistics>>> getRewardStatistics(
             @Path("address") String address,
             @Query("start_time") String startTime,
             @Query("end_time") String endTime

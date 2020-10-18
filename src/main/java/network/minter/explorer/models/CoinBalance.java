@@ -29,6 +29,7 @@ package network.minter.explorer.models;
 import org.parceler.Parcel;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import network.minter.core.crypto.MinterAddress;
 
@@ -44,8 +45,8 @@ public class CoinBalance extends BaseCoinValue {
     public CoinBalance() {
     }
 
-    public CoinBalance(String coin, BigDecimal amount, BigDecimal bipValue, MinterAddress address) {
-        this.coin = coin;
+    public CoinBalance(BigInteger coinId, String coin, BigDecimal amount, BigDecimal bipValue, MinterAddress address) {
+        this.coin = new CoinItemBase(coinId, coin);
         this.amount = amount;
         this.bipValue = bipValue;
         this.address = address;

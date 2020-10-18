@@ -24,54 +24,35 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorer.models;
+package network.minter.explorer.tests.repo
 
-import org.parceler.Parcel;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import network.minter.core.crypto.MinterPublicKey;
+import network.minter.core.internal.log.StdLogger
+import network.minter.explorer.MinterExplorerSDK
+import org.junit.Assert.assertNotNull
+import org.junit.Test
 
 /**
  * minter-android-explorer. 2020
- *
  * @author Eduard Maximovich (edward.vstock@gmail.com)
  */
-@Parcel
-public class DelegationList {
-    public Map<MinterPublicKey, List<CoinDelegation>> delegations = new HashMap<>();
+class GateEstimateRepositoryTest {
 
-    public int size() {
-        return delegations.size();
-    }
-
-    public boolean isEmpty() {
-        return delegations.isEmpty();
-    }
-
-    public List<CoinDelegation> getDelegatedByPublicKey(MinterPublicKey publicKey) {
-        if (!hasDelegations(publicKey)) {
-            return Collections.emptyList();
+    companion object {
+        init {
+            MinterExplorerSDK.Setup()
+                    .setEnableDebug(true)
+                    .setLogger(StdLogger())
+                    .init()
         }
-        return delegations.get(publicKey);
     }
 
-    public boolean hasInWaitList() {
-        for (Map.Entry<MinterPublicKey, List<CoinDelegation>> entry : delegations.entrySet()) {
-            for (CoinDelegation item : entry.getValue()) {
-                if (item.isInWaitlist) {
-                    return true;
-                }
-            }
-        }
+    @Test
+    fun testGetTxCommission() {
+        val tx = "f8700102013301a0df33948d008dffe2f9144a39a2094ebdedadad335e814f880650db641e49eaf3808001b845f8431ca0719ee56aa18ad4ed495d1362264d4457fbc378064137ddbb68e6ed11996c2b6da009e2ec5b6b3eb21c7cec23d037a47aed2ae24402e305821c46aa41963679bb49"
+        val estimateRepo = MinterExplorerSDK.getInstance().estimate()
 
-        return false;
-    }
+        val gasResult = estimateRepo.getTransactionCommission(tx).blockingFirst()
 
-    public boolean hasDelegations(MinterPublicKey publicKey) {
-        return publicKey != null && delegations.containsKey(publicKey) && delegations.get(publicKey) != null;
+        assertNotNull(gasResult.result.value)
     }
 }

@@ -28,9 +28,9 @@ package network.minter.explorer.api;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import network.minter.explorer.models.CoinItem;
 import network.minter.explorer.models.ExpResult;
-import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
@@ -41,8 +41,8 @@ import retrofit2.http.Query;
 public interface ExplorerCoinsEndpoint {
 
     @GET("coins")
-    Call<ExpResult<List<CoinItem>>> getAll();
+    Observable<ExpResult<List<CoinItem>>> getAll();
 
     @GET("coins")
-    Call<ExpResult<List<CoinItem>>> search(@Query("symbol") String symbol);
+    Observable<ExpResult<List<CoinItem>>> search(@Query("symbol") String symbol);
 }

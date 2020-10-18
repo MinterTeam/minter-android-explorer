@@ -26,62 +26,94 @@
 
 package network.minter.explorer.api;
 
+
+import io.reactivex.Observable;
 import network.minter.blockchain.models.ExchangeBuyValue;
 import network.minter.blockchain.models.ExchangeSellValue;
 import network.minter.blockchain.models.TransactionCommissionValue;
 import network.minter.explorer.models.GateResult;
 import network.minter.explorer.models.TxCount;
-import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
  * minter-android-explorer. 2019
+ *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
 public interface GateEstimateEndpoint {
 
-    @GET("estimate/tx-commission")
-    Call<GateResult<TransactionCommissionValue>> getTxCommission();
+    /**
+     * Give an estimation about coin exchange (selling)
+     *
+     * @param coinToSell  coin to convert from
+     * @param valueToSell BigInteger string value
+     * @param coinToBuy   coin to convert to
+     * @return
+     */
+    @GET("estimate_coin_sell")
+    Observable<GateResult<ExchangeSellValue>> getCoinExchangeCurrencyToSell(
+            @Query("coin_to_sell") String coinToSell,
+            @Query("value_to_sell") String valueToSell,
+            @Query("coin_to_buy") String coinToBuy
+    );
 
     /**
      * Give an estimation about coin exchange (selling)
-     * @param coinToSell coin to convert from
-     * @param valueToSell BigInteger string value
-     * @param coinToBuy coin to convert to
+     *
+     * @param coinIdToSell coin ID to convert from
+     * @param valueToSell  BigInteger string value
+     * @param coinIdToBuy  coin ID to convert to
      * @return
      */
-    @GET("estimate/coin-sell")
-    Call<GateResult<ExchangeSellValue>> getCoinExchangeCurrencyToSell(
-            @Query("coinToSell") String coinToSell,
-            @Query("valueToSell") String valueToSell,
-            @Query("coinToBuy") String coinToBuy
+    @GET("estimate_coin_sell")
+    Observable<GateResult<ExchangeSellValue>> getCoinExchangeCurrencyToSellById(
+            @Query("coin_id_to_sell") String coinIdToSell,
+            @Query("value_to_sell") String valueToSell,
+            @Query("coin_id_to_buy") String coinIdToBuy
     );
 
     /**
      * Give an estimation about coin exchange (buying)
+     *
      * @param coinToSell coin to convert from
      * @param valueToBuy BigInteger string value
-     * @param coinToBuy coin to convert to
+     * @param coinToBuy  coin to convert to
      * @return
      */
-    @GET("estimate/coin-buy")
-    Call<GateResult<ExchangeBuyValue>> getCoinExchangeCurrencyToBuy(
-            @Query("coinToSell") String coinToSell,
-            @Query("valueToBuy") String valueToBuy,
-            @Query("coinToBuy") String coinToBuy
+    @GET("estimate_coin_buy")
+    Observable<GateResult<ExchangeBuyValue>> getCoinExchangeCurrencyToBuy(
+            @Query("coin_to_sell") String coinToSell,
+            @Query("value_to_buy") String valueToBuy,
+            @Query("coin_to_buy") String coinToBuy
+    );
+
+    /**
+     * Give an estimation about coin exchange (buying)
+     *
+     * @param coinToSell coin ID to convert from
+     * @param valueToBuy BigInteger string value
+     * @param coinToBuy  coin ID to convert to
+     * @return
+     */
+    @GET("estimate_coin_buy")
+    Observable<GateResult<ExchangeBuyValue>> getCoinExchangeCurrencyToBuyById(
+            @Query("coin_id_to_sell") String coinIdToSell,
+            @Query("value_to_buy") String valueToBuy,
+            @Query("coin_id_to_buy") String coinIdToBuy
     );
 
     /**
      * Calculates signed transaction commission
+     *
      * @param signedTx Valid transaction, signed with private key
      * @return
      */
-    @GET("estimate/tx-commission")
-    Call<GateResult<TransactionCommissionValue>> getTxCommission(@Query("transaction") String signedTx);
+    @GET("estimate_tx_commission/{tx}")
+    Observable<GateResult<TransactionCommissionValue>> getTxCommission(@Path("tx") String signedTx);
 
 
     @GET("nonce/{address}")
-    Call<GateResult<TxCount>> getTransactionsCount(@Path("address") String address);
+    Observable<GateResult<TxCount>> getTransactionsCount(@Path("address") String address);
 }

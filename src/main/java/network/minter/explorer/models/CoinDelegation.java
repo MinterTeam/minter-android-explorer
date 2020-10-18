@@ -29,6 +29,7 @@ package network.minter.explorer.models;
 import org.parceler.Parcel;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import network.minter.core.crypto.MinterPublicKey;
 
@@ -41,15 +42,16 @@ import network.minter.core.crypto.MinterPublicKey;
 public class CoinDelegation extends BaseCoinValue {
     public MinterPublicKey publicKey = null;
     public ValidatorMeta meta = null;
+    public boolean isInWaitlist = false;
 
-    public CoinDelegation(String coin, BigDecimal amount, BigDecimal bipValue) {
-        this.coin = coin;
+    public CoinDelegation(BigInteger coinId, String coin, BigDecimal amount, BigDecimal bipValue) {
+        this.coin = new CoinItemBase(coinId, coin);
         this.amount = amount;
         this.bipValue = bipValue;
     }
 
-    public CoinDelegation(String coin, BigDecimal amount, BigDecimal bipValue, MinterPublicKey publicKey, ValidatorMeta meta) {
-        this.coin = coin;
+    public CoinDelegation(BigInteger coinId, String coin, BigDecimal amount, BigDecimal bipValue, MinterPublicKey publicKey, ValidatorMeta meta) {
+        this.coin = new CoinItemBase(coinId, coin);
         this.amount = amount;
         this.bipValue = bipValue;
         this.publicKey = publicKey;

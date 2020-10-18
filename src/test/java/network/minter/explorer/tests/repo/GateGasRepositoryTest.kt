@@ -24,54 +24,36 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorer.models;
+package network.minter.explorer.tests.repo
 
-import org.parceler.Parcel;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import network.minter.core.crypto.MinterPublicKey;
+import network.minter.core.internal.log.StdLogger
+import network.minter.explorer.MinterExplorerSDK
+import network.minter.explorer.models.GasValue
+import network.minter.explorer.models.GateResult
+import org.junit.Assert.assertNotNull
+import org.junit.Test
 
 /**
  * minter-android-explorer. 2020
- *
  * @author Eduard Maximovich (edward.vstock@gmail.com)
  */
-@Parcel
-public class DelegationList {
-    public Map<MinterPublicKey, List<CoinDelegation>> delegations = new HashMap<>();
+class GateGasRepositoryTest {
 
-    public int size() {
-        return delegations.size();
-    }
-
-    public boolean isEmpty() {
-        return delegations.isEmpty();
-    }
-
-    public List<CoinDelegation> getDelegatedByPublicKey(MinterPublicKey publicKey) {
-        if (!hasDelegations(publicKey)) {
-            return Collections.emptyList();
+    companion object {
+        init {
+            MinterExplorerSDK.Setup()
+                    .setEnableDebug(true)
+                    .setLogger(StdLogger())
+                    .init()
         }
-        return delegations.get(publicKey);
     }
 
-    public boolean hasInWaitList() {
-        for (Map.Entry<MinterPublicKey, List<CoinDelegation>> entry : delegations.entrySet()) {
-            for (CoinDelegation item : entry.getValue()) {
-                if (item.isInWaitlist) {
-                    return true;
-                }
-            }
-        }
+    @Test
+    fun testGetMinGas() {
+        val gasRepo = MinterExplorerSDK.getInstance().gas()
 
-        return false;
-    }
+        val gasResult: GateResult<GasValue> = gasRepo.minGas.blockingFirst()
 
-    public boolean hasDelegations(MinterPublicKey publicKey) {
-        return publicKey != null && delegations.containsKey(publicKey) && delegations.get(publicKey) != null;
+        assertNotNull(gasResult.result.gas)
     }
 }

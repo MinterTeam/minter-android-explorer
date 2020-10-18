@@ -28,9 +28,9 @@ package network.minter.explorer.api;
 
 import java.util.Map;
 
+import io.reactivex.Observable;
 import network.minter.explorer.models.GateResult;
 import network.minter.explorer.models.PushResult;
-import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 
@@ -41,6 +41,6 @@ import retrofit2.http.POST;
  */
 public interface GateTransactionEndpoint {
 
-    @POST("transaction/push")
-    Call<GateResult<PushResult>> sendTransaction(@Body Map<String, String> data);
+    @POST("send_transaction")
+    Observable<GateResult<PushResult>> sendTransaction(@Body Map<String, String> data);
 }

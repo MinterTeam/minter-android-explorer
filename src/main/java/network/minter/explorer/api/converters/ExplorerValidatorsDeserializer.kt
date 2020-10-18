@@ -51,10 +51,10 @@ class ExplorerValidatorsDeserializer : JsonDeserializer<ValidatorItem?> {
         if (root.has("min_stake")) {
             validator.minStake = root["min_stake"].asBigDecimal
         }
-        if (root.has("commission")) {
-            validator.commission = root["commission"].asInt
-        }
-        validator.status = root["status"].asInt
+
+        validator.commission = root.asIntDef("commission")
+        validator.status = root.asIntDef("status")
+
         if (root.has("delegator_count") && !root["delegator_count"].isJsonNull) {
             validator.delegatorCount = root["delegator_count"].asBigInteger
         }
@@ -69,6 +69,27 @@ class ExplorerValidatorsDeserializer : JsonDeserializer<ValidatorItem?> {
         return validator
 
     }
+
+    fun JsonElement.asIntDef(defValue: Int = 0): Int {
+        if (isJsonNull) {
+            return defValue
+        }
+
+        return asInt
+    }
+
+    fun JsonObject.asIntDef(key: String, defValue: Int = 0): Int {
+        if (!has(key)) {
+            return defValue
+        }
+
+        if (get(key).isJsonNull) {
+            return defValue
+        }
+
+        return get(key).asInt
+    }
+
 
     fun JsonElement.asStringDef(defValue: String? = null): String? {
         if (isJsonNull) {

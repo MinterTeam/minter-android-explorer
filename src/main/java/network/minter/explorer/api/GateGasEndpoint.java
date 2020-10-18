@@ -26,9 +26,9 @@
 
 package network.minter.explorer.api;
 
+import io.reactivex.Observable;
 import network.minter.explorer.models.GasValue;
 import network.minter.explorer.models.GateResult;
-import retrofit2.Call;
 import retrofit2.http.GET;
 
 /**
@@ -38,6 +38,6 @@ import retrofit2.http.GET;
  */
 public interface GateGasEndpoint {
 
-    @GET("min-gas")
-    Call<GateResult<GasValue>> getMinGas();
+    @GET("min_gas_price")
+    Observable<GateResult<GasValue>> getMinGas();
 }

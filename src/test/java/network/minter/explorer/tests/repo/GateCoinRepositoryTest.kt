@@ -24,54 +24,55 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorer.models;
+package network.minter.explorer.tests.repo
 
-import org.parceler.Parcel;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import network.minter.core.crypto.MinterPublicKey;
+import network.minter.core.internal.log.StdLogger
+import network.minter.explorer.MinterExplorerSDK
+import org.junit.Assert.*
+import org.junit.Test
+import java.math.BigInteger
 
 /**
  * minter-android-explorer. 2020
- *
  * @author Eduard Maximovich (edward.vstock@gmail.com)
  */
-@Parcel
-public class DelegationList {
-    public Map<MinterPublicKey, List<CoinDelegation>> delegations = new HashMap<>();
+class GateCoinRepositoryTest {
 
-    public int size() {
-        return delegations.size();
-    }
-
-    public boolean isEmpty() {
-        return delegations.isEmpty();
-    }
-
-    public List<CoinDelegation> getDelegatedByPublicKey(MinterPublicKey publicKey) {
-        if (!hasDelegations(publicKey)) {
-            return Collections.emptyList();
+    companion object {
+        init {
+            MinterExplorerSDK.Setup()
+                    .setEnableDebug(true)
+                    .setLogger(StdLogger())
+                    .init()
         }
-        return delegations.get(publicKey);
     }
 
-    public boolean hasInWaitList() {
-        for (Map.Entry<MinterPublicKey, List<CoinDelegation>> entry : delegations.entrySet()) {
-            for (CoinDelegation item : entry.getValue()) {
-                if (item.isInWaitlist) {
-                    return true;
-                }
-            }
-        }
+    @Test
+    fun testGetCoin() {
+        val coinRepo = MinterExplorerSDK.getInstance().coinsGate()
+        val resultByName = coinRepo.getCoinInfo("MNT").blockingFirst()
 
-        return false;
+        assertTrue(resultByName.isOk)
+        assertEquals("MNT", resultByName.result.symbol)
+
+        val resultById = coinRepo.getCoinInfo(BigInteger("10")).blockingFirst()
+
+        assertTrue(resultById.isOk)
+        assertEquals("LASHIN", resultById.result.symbol)
     }
 
-    public boolean hasDelegations(MinterPublicKey publicKey) {
-        return publicKey != null && delegations.containsKey(publicKey) && delegations.get(publicKey) != null;
+    @Test
+    fun testCheckCoinExists() {
+        val coinRepo = MinterExplorerSDK.getInstance().coinsGate()
+        val resultByName = coinRepo.coinExists("UNKNOWN123").blockingFirst()
+
+        assertFalse(resultByName)
+
+
+        val resultByUnknownId = coinRepo.coinExists(BigInteger("9999999999999")).blockingFirst()
+        assertFalse(resultByUnknownId)
+
+        val resultMNT = coinRepo.coinExists(BigInteger.ZERO).blockingFirst()
+        assertTrue(resultMNT)
     }
 }

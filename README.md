@@ -15,7 +15,7 @@ root build.gradle
 allprojects {
     repositories {
        // ... some repos
-        maven { url "https://dl.bintray.com/minterteam/android" }
+        maven { url "https://minter.jfrog.io/artifactory/android/" }
     }
 }
 ```
@@ -24,7 +24,7 @@ project build.gradle
 ```groovy
 
 ext {
-    minterExplorerSDK = "1.0.0"
+    minterExplorerSDK = "2.0.0"
 }
 
 dependencies {

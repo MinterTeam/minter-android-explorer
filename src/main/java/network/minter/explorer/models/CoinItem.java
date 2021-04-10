@@ -50,6 +50,8 @@ public class CoinItem extends CoinItemBase {
     public BigDecimal maxSupply;
     @SerializedName("owner_address")
     public MinterAddress owner;
+    public Boolean mintable;
+    public Boolean burnable;
 
     @Override
     public String toString() {

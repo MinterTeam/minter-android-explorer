@@ -43,7 +43,6 @@ import network.minter.core.crypto.MinterHash;
  *
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
-@Parcel
 public class PushResult extends NodeResult {
 
     public TxData transaction;

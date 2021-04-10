@@ -28,12 +28,15 @@ package network.minter.explorer.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+
 import java.math.BigInteger;
 
 /**
  * minter-android-explorer. 2019
  * @author Eduard Maximovich [edward.vstock@gmail.com]
  */
+@Parcel
 public class TxCount {
     @SerializedName("nonce")
     public BigInteger count;

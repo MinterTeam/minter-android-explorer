@@ -30,6 +30,7 @@ import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
+
 /**
  * minter-android-explorer. 2020
  *

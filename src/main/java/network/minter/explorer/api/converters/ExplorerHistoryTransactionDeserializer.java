@@ -53,11 +53,13 @@ public class ExplorerHistoryTransactionDeserializer implements JsonDeserializer<
         final Gson gson = MinterExplorerSDK.getInstance().getGsonBuilder().create();
         final HistoryTransaction tx = gson.fromJson(json, HistoryTransaction.class);
 
+        JsonObject obj = json.getAsJsonObject().get("data").getAsJsonObject();
         if (tx.type != null && tx.type.getCls() != null) {
-            JsonObject obj = json.getAsJsonObject().get("data").getAsJsonObject();
             tx.data = gson.fromJson(obj, tx.type.getCls());
+            if (HistoryTransaction.TxConvertSwapPoolResult.class.isAssignableFrom(tx.type.getCls())) {
+                ((HistoryTransaction.TxConvertSwapPoolResult) tx.data).type = tx.type;
+            }
         } else {
-            JsonObject obj = json.getAsJsonObject().get("data").getAsJsonObject();
             tx.data = gson.fromJson(obj, HistoryTransaction.TxDefaultResult.class);
         }
 

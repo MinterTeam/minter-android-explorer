@@ -27,6 +27,7 @@
 package network.minter.explorer.models;
 
 import com.google.common.base.Objects;
+import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
@@ -41,6 +42,13 @@ import java.math.BigInteger;
 public class CoinItemBase implements Comparable<CoinItemBase> {
     public BigInteger id;
     public String symbol;
+    public CoinType type = CoinType.Coin;
+
+    public CoinItemBase(BigInteger id, String symbol, CoinType type) {
+        this.id = id;
+        this.symbol = symbol;
+        this.type = type;
+    }
 
     public CoinItemBase() {
     }
@@ -49,32 +57,49 @@ public class CoinItemBase implements Comparable<CoinItemBase> {
         this.id = id;
         this.symbol = symbol;
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CoinItemBase)) return false;
+        CoinItemBase that = (CoinItemBase) o;
+        return Objects.equal(id, that.id) &&
+                Objects.equal(symbol, that.symbol) &&
+                type == that.type;
+    }
 
     @Override
     public String toString() {
         return symbol;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CoinItemBase)) {
-            if (o instanceof String) {
-                return symbol.equals((String) o);
-            } else if (o instanceof BigInteger) {
-                return id.equals((BigInteger) o);
-            } else {
-                return false;
-            }
-        }
-        CoinItemBase that = (CoinItemBase) o;
-        return Objects.equal(id, that.id) &&
-                Objects.equal(symbol, that.symbol);
-    }
-
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, symbol);
+        return Objects.hashCode(id, symbol, type);
+    }
+
+    public enum CoinType {
+        @SerializedName("coin")
+        Coin("coin"),
+        @SerializedName("token")
+        Token("token"),
+        @SerializedName("pool_token")
+        PoolToken("pool_token"),
+        ;
+
+        private final String value;
+
+        CoinType(String sname) {
+            value = sname;
+        }
+
+        public static CoinType findByName(String name) {
+            for (CoinType c : CoinType.values()) {
+                if (c.name().equals(name) || c.value.equals(name)) {
+                    return c;
+                }
+            }
+
+            return Coin;
+        }
     }
 
     @Override

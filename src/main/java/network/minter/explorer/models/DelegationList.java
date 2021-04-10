@@ -26,6 +26,7 @@
 
 package network.minter.explorer.models;
 
+
 import org.parceler.Parcel;
 
 import java.util.Collections;

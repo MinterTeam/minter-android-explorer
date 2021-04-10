@@ -24,15 +24,15 @@
  * THE SOFTWARE.
  */
 buildscript {
-    ext.kotlin_version = "1.4.10"
+    ext.kotlin_version = "1.4.30"
     repositories {
         google()
         jcenter()
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
+        classpath 'com.android.tools.build:gradle:4.1.3'
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.21.0"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -45,29 +45,30 @@ allprojects {
         maven { url "https://dl.bintray.com/ethereum/maven/" }
         maven { url 'https://clojars.org/repo/' }
         maven { url 'https://jitpack.io' }
-        maven { url 'https://dl.bintray.com/minterteam/android' }
         maven { url "https://repo1.maven.org/maven2/com/google/zxing/" }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/'}
+        maven { url 'https://dl.bintray.com/minterteam/android' }
+        maven { url "https://minter.jfrog.io/artifactory/android/" }
     }
 }
 
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 group = 'network.minter.android'
-version = '1.0.0'
+version = '2.0.0'
 
 ext {
     minterMinSdk = 16
     minterMaxSdk = 30
     minterBuildTools = "30.0.2"
-    minterCoreSDK = "1.0.0"
-    minterBlockchainSDK = "1.0.0"
+    minterCoreSDK = "1.1.0"
+    minterBlockchainSDK = "2.0.0"
 
     buildArtifactName = project.name
     buildArtifactVersion = version
@@ -138,7 +139,7 @@ android {
             dimension "env"
             buildConfigField "String", "BASE_FRONT_URL", '"https://explorer.minter.network"'
             buildConfigField "String", "BASE_API_URL", '"https://explorer-api.apps.minter.network/api/"'
-            buildConfigField "String", "GATE_API_URL", '"https://gate.apps.minter.network/api/"'
+            buildConfigField "String", "GATE_API_URL", '"https://gate-api.apps.minter.network/api/"'
         }
         netTest {
             dimension "env"
@@ -189,7 +190,7 @@ dependencies {
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
 
     // network
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.17'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
 
     implementation 'com.squareup.okhttp3:okhttp:4.8.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.8.1'
@@ -205,7 +206,7 @@ dependencies {
     kapt 'org.parceler:parceler:1.1.13'
     implementation 'com.annimon:stream:1.2.1'
 
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.2'
     testImplementation 'com.squareup.okhttp3:mockwebserver:3.12.1'
     testImplementation 'com.squareup.retrofit2:retrofit-mock:2.5.0'
     testImplementation "org.mockito:mockito-core:2.25.0"
@@ -213,7 +214,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-inline:2.23.4'
 
     androidTestImplementation "androidx.test:runner:1.3.0"
-    androidTestImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
+    androidTestImplementation "org.junit.jupiter:junit-jupiter-api:5.7.0"
     androidTestImplementation "de.mannodermaus.junit5:android-test-core:1.0.0"
     androidTestRuntimeOnly "de.mannodermaus.junit5:android-test-runner:1.0.0"
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

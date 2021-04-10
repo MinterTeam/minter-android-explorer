@@ -36,6 +36,7 @@ import network.minter.core.internal.data.DataRepository;
 import network.minter.explorer.api.GateGasEndpoint;
 import network.minter.explorer.models.GasValue;
 import network.minter.explorer.models.GateResult;
+import network.minter.explorer.models.PriceCommissions;
 
 /**
  * minter-android-explorer. 2019
@@ -54,6 +55,13 @@ public class GateGasRepository extends DataRepository<GateGasEndpoint> implement
         return getInstantService().getMinGas();
     }
 
+    /**
+     * @return Resolve default commissions values with representation coin
+     */
+    public Observable<GateResult<PriceCommissions>> getCommissions() {
+        return getInstantService().getCommissions();
+    }
+
     @Nonnull
     @Override
     protected Class<GateGasEndpoint> getServiceClass() {
@@ -64,5 +72,7 @@ public class GateGasRepository extends DataRepository<GateGasEndpoint> implement
     public void configure(ApiService.Builder api) {
         api.registerTypeAdapter(new TypeToken<GateResult<GasValue>>() {
         }.getType(), new GateResult.Deserializer<>(GasValue.class));
+        api.registerTypeAdapter(new TypeToken<GateResult<PriceCommissions>>() {
+        }.getType(), new GateResult.Deserializer<>(PriceCommissions.class));
     }
 }

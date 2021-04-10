@@ -33,6 +33,7 @@ import network.minter.core.MinterSDK
 import network.minter.core.crypto.MinterAddress
 import network.minter.explorer.models.AddressBalance
 import network.minter.explorer.models.CoinBalance
+import network.minter.explorer.models.CoinItemBase
 import java.lang.reflect.Type
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -82,10 +83,20 @@ class ExplorerAddressBalanceDeserializer : JsonDeserializer<AddressBalance?> {
                 val coinDataObj = coinData["coin"].asJsonObject
                 val coinId = coinDataObj["id"].asBigInteger
                 var coinName = coinDataObj["symbol"].asString.toUpperCase(Locale.getDefault())
+                val coinType: CoinItemBase.CoinType = if (coinDataObj.has("type")) {
+                    CoinItemBase.CoinType.findByName(coinDataObj["type"].asString)
+                } else {
+                    CoinItemBase.CoinType.Coin
+                }
+
                 if (coinId != MinterSDK.DEFAULT_COIN_ID && out.containsKey(coinName)) {
                     coinName += "-${i + 1}"
                 }
-                out[coinName] = CoinBalance(coinId, coinName, amount, bipAmount, data.address)
+//                out[coinName] = CoinBalance(coinId, coinName, amount, bipAmount, data.address)
+                out[coinName] = CoinBalance(
+                        CoinItemBase(coinId, coinName, coinType),
+                        amount, bipAmount, data.address
+                )
                 outById[coinId] = out[coinName]!!
             }
 

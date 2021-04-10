@@ -1,12 +1,19 @@
 # Release notes
 
+## 2.0.0
+- **BREAKING FOR ANDROID RELEASE**
+- blockchain sdk version 2.0.0
+- Added new transactions data types to `HistoryTransaction`
+- Added `ExplorerPoolsRepository` which represents pools information
+- Added `Pool` and `PoolProvider` models
+
 ## 1.0.0
 - **BREAKING RELEASE**
 - removed `GateResult` - use `NodeResult` from blockchain sdk
 - Simple retrofit calls replaced with RxJava2 calls
 - Some methods changed it's signatures as minter 1.2 has new api and data sets
 - Added `GateCoinRepository` to get coin information from Team's gate directly
-- `CoinItem` and `CoinDelegations` now extends `CoinItemBase` that has coin id
+- `CoinItem` and `CoinDelegations` now extends `CoinItemBase` which has coin id
 - `AddressBalance`: `availableBalanceBIP` and `availableBalanceUSD` renamed to `stakeBalanceBIP` and `stakeBalanceBIP` accordingly
 - `CoinDelegation`: now has field `isInWaitlist` that represents wallet delegated stake now in waitlist
 - Added new transactions data types to `HistoryTransaction`

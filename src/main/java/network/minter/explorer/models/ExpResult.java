@@ -28,8 +28,6 @@ package network.minter.explorer.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.parceler.Parcel;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
@@ -77,7 +75,7 @@ public class ExpResult<Result> {
         return error == null;
     }
 
-    @Parcel
+
     public static class ErrorResult {
         public int code;
         public String message;
@@ -92,7 +90,7 @@ public class ExpResult<Result> {
         }
     }
 
-    @Parcel
+
     public static class Meta {
         @SerializedName("current_page")
         public int currentPage;
@@ -104,7 +102,7 @@ public class ExpResult<Result> {
         public int total;
         public Additional additional;
 
-        @Parcel
+
         public static class Additional {
             @SerializedName("total_delegated_bip_value")
             public BigDecimal delegatedAmount;

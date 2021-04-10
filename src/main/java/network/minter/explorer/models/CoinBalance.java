@@ -26,6 +26,7 @@
 
 package network.minter.explorer.models;
 
+
 import org.parceler.Parcel;
 
 import java.math.BigDecimal;
@@ -43,6 +44,13 @@ public class CoinBalance extends BaseCoinValue {
     public MinterAddress address;
 
     public CoinBalance() {
+    }
+
+    public CoinBalance(CoinItemBase coin, BigDecimal amount, BigDecimal bipValue, MinterAddress address) {
+        this.coin = coin;
+        this.amount = amount;
+        this.bipValue = bipValue;
+        this.address = address;
     }
 
     public CoinBalance(BigInteger coinId, String coin, BigDecimal amount, BigDecimal bipValue, MinterAddress address) {
@@ -70,33 +78,4 @@ public class CoinBalance extends BaseCoinValue {
         result = 31 * result + (address != null ? address.hashCode() : 0);
         return result;
     }
-
-    /*
-    @Parcelize
-open class CoinBalance @JvmOverloads constructor(
-        override var coin: String? = null,
-        override var amount: BigDecimal = BigDecimal.ZERO,
-        open var address: MinterAddress? = null
-) : BaseCoinValue(coin, amount), Parcelable {
-
-    override fun toString(): String {
-        return "CoinBalance{address=$address, coin=$coin, amount=${amount.toPlainString()}}"
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is CoinBalance) return false
-        if (!super.equals(other)) return false
-
-        if (address != other.address) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + address.hashCode()
-        return result
-    }
-     */
 }

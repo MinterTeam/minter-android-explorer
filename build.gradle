@@ -52,14 +52,6 @@ allprojects {
     }
 }
 
-apply plugin: 'com.android.library'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.artifactory'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
-
 group = 'network.minter.android'
 version = '2.0.0'
 
@@ -101,6 +93,14 @@ ext {
     }
 
 }
+
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-parcelize'
+apply plugin: 'com.jfrog.artifactory'
 
 android {
     compileSdkVersion minterMaxSdk

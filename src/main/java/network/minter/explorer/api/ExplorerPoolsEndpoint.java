@@ -31,9 +31,11 @@ import java.util.List;
 import io.reactivex.Observable;
 import network.minter.explorer.models.CoinItemBase;
 import network.minter.explorer.models.ExpResult;
+import network.minter.explorer.models.GateResult;
 import network.minter.explorer.models.HistoryTransaction;
 import network.minter.explorer.models.Pool;
 import network.minter.explorer.models.PoolProvider;
+import network.minter.explorer.models.PoolRoute;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -66,8 +68,24 @@ public interface ExplorerPoolsEndpoint {
     @GET("pools/coins/{coin0}/{coin1}/transactions")
     Observable<ExpResult<List<HistoryTransaction>>> getTransactionsByPair(@Path("coin0") String coin0, @Path("coin1") String coin1);
 
-    @GET("pools/token/{coin0}/{coin1}/providers")
+    @GET("pools/coins/{coin0}/{coin1}/providers")
     Observable<ExpResult<List<PoolProvider>>> getProvidersByPair(@Path("coin0") String coin0, @Path("coin1") String coin1);
+
+    @GET("pools/coins/{coin0}/{coin1}/route")
+    Observable<GateResult<PoolRoute>> getRoute(
+            @Path("coin0") String coin0,
+            @Path("coin1") String coin1,
+            @Query("amount") String amount,
+            @Query("type") String routeType
+    );
+
+    @GET("pools/coins/{coin0}/{coin1}/estimate")
+    Observable<GateResult<PoolRoute>> getEstimate(
+            @Path("coin0") String coin0,
+            @Path("coin1") String coin1,
+            @Query("amount") String amount,
+            @Query("type") String routeType
+    );
 
     @GET("pools/token/{coin0}/{coin1}/providers/{address}")
     Observable<ExpResult<PoolProvider>> getProviderByPair(@Path("coin0") String coin0, @Path("coin1") String coin1, @Path("address") String address);

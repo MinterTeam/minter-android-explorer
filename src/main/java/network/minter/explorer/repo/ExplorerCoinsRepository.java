@@ -26,6 +26,7 @@
 
 package network.minter.explorer.repo;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -35,6 +36,7 @@ import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.data.DataRepository;
 import network.minter.explorer.api.ExplorerCoinsEndpoint;
 import network.minter.explorer.models.CoinItem;
+import network.minter.explorer.models.CoinItemBase;
 import network.minter.explorer.models.ExpResult;
 
 import static network.minter.core.internal.common.Preconditions.checkArgument;
@@ -66,6 +68,14 @@ public class ExplorerCoinsRepository extends DataRepository<ExplorerCoinsEndpoin
     public Observable<ExpResult<List<CoinItem>>> search(String symbol) {
         checkArgument(symbol != null, "Symbol must be not null");
         return getInstantService().search(symbol.toUpperCase());
+    }
+
+    public Observable<ExpResult<CoinItem>> getById(CoinItemBase coin) {
+        return getInstantService().getById(coin.id.toString());
+    }
+
+    public Observable<ExpResult<CoinItem>> getById(BigInteger id) {
+        return getInstantService().getById(id.toString());
     }
 
 

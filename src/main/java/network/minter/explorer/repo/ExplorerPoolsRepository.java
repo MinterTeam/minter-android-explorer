@@ -26,28 +26,34 @@
 
 package network.minter.explorer.repo;
 
+import com.google.gson.reflect.TypeToken;
+
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
 import io.reactivex.Observable;
+import network.minter.blockchain.models.operational.Transaction;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.core.internal.api.ApiService;
 import network.minter.core.internal.data.DataRepository;
 import network.minter.explorer.api.ExplorerPoolsEndpoint;
 import network.minter.explorer.models.CoinItemBase;
 import network.minter.explorer.models.ExpResult;
+import network.minter.explorer.models.GateResult;
 import network.minter.explorer.models.HistoryTransaction;
 import network.minter.explorer.models.Pool;
 import network.minter.explorer.models.PoolProvider;
+import network.minter.explorer.models.PoolRoute;
 
 /**
  * minter-android-explorer. 2021
  *
  * @author Eduard Maximovich (edward.vstock@gmail.com)
  */
-public class ExplorerPoolsRepository extends DataRepository<ExplorerPoolsEndpoint> {
+public class ExplorerPoolsRepository extends DataRepository<ExplorerPoolsEndpoint> implements DataRepository.Configurator {
     public ExplorerPoolsRepository(@Nonnull ApiService.Builder apiBuilder) {
         super(apiBuilder);
     }
@@ -153,9 +159,62 @@ public class ExplorerPoolsRepository extends DataRepository<ExplorerPoolsEndpoin
         return getProvidersByAddress(address.toString());
     }
 
+    public Observable<GateResult<PoolRoute>> getRoute(String coin0, String coin1, BigDecimal amount, PoolRoute.SwapType swapType) {
+        return getInstantService()
+                .getRoute(coin0, coin1, Transaction.normalizeValue(amount).toString(), swapType.getValue());
+    }
+
+    public Observable<GateResult<PoolRoute>> getRoute(BigInteger coin0, BigInteger coin1, BigDecimal amount, PoolRoute.SwapType swapType) {
+        return getInstantService()
+                .getRoute(coin0.toString(), coin1.toString(), Transaction.normalizeValue(amount).toString(), swapType.getValue());
+    }
+
+    public Observable<GateResult<PoolRoute>> getRoute(CoinItemBase coin0, CoinItemBase coin1, BigDecimal amount, PoolRoute.SwapType swapType) {
+        return getRoute(coin0.id, coin1.id, amount, swapType);
+    }
+
+    public Observable<GateResult<PoolRoute>> getRoute(BigInteger coin0, BigInteger coin1, BigInteger amount, PoolRoute.SwapType swapType) {
+        return getInstantService()
+                .getRoute(coin0.toString(), coin1.toString(), amount.toString(), swapType.getValue());
+    }
+
+    /**
+     * getEstimate works almost like getRoute but accepts not only tokens but coins too
+     *
+     * @param coin0
+     * @param coin1
+     * @param amount
+     * @param swapType
+     * @return
+     */
+    public Observable<GateResult<PoolRoute>> getEstimate(String coin0, String coin1, BigDecimal amount, PoolRoute.SwapType swapType) {
+        return getInstantService()
+                .getEstimate(coin0, coin1, Transaction.normalizeValue(amount).toString(), swapType.getValue());
+    }
+
+    public Observable<GateResult<PoolRoute>> getEstimate(BigInteger coin0, BigInteger coin1, BigDecimal amount, PoolRoute.SwapType swapType) {
+        return getInstantService()
+                .getEstimate(coin0.toString(), coin1.toString(), Transaction.normalizeValue(amount).toString(), swapType.getValue());
+    }
+
+    public Observable<GateResult<PoolRoute>> getEstimate(CoinItemBase coin0, CoinItemBase coin1, BigDecimal amount, PoolRoute.SwapType swapType) {
+        return getEstimate(coin0.id, coin1.id, amount, swapType);
+    }
+
+    public Observable<GateResult<PoolRoute>> getEstimate(BigInteger coin0, BigInteger coin1, BigInteger amount, PoolRoute.SwapType swapType) {
+        return getInstantService()
+                .getEstimate(coin0.toString(), coin1.toString(), amount.toString(), swapType.getValue());
+    }
+
+
     @Nonnull
     @Override
     protected Class<ExplorerPoolsEndpoint> getServiceClass() {
         return ExplorerPoolsEndpoint.class;
+    }
+    @Override
+    public void configure(ApiService.Builder api) {
+        api.registerTypeAdapter(new TypeToken<GateResult<PoolRoute>>() {
+        }.getType(), new GateResult.Deserializer<>(PoolRoute.class));
     }
 }

@@ -1,5 +1,9 @@
 # Release notes
 
+## 2.0.1
+- Explorer coins estimate calculation
+- Added pools repository to sdk instance
+
 ## 2.0.0
 - **BREAKING FOR ANDROID RELEASE**
 - blockchain sdk version 2.0.0

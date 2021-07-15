@@ -62,6 +62,7 @@ import network.minter.core.internal.log.StdLogger;
 import network.minter.core.internal.log.TimberLogger;
 import network.minter.explorer.repo.ExplorerAddressRepository;
 import network.minter.explorer.repo.ExplorerCoinsRepository;
+import network.minter.explorer.repo.ExplorerPoolsRepository;
 import network.minter.explorer.repo.ExplorerTransactionRepository;
 import network.minter.explorer.repo.ExplorerValidatorsRepository;
 import network.minter.explorer.repo.GateCoinRepository;
@@ -105,6 +106,7 @@ public class MinterExplorerSDK {
     private ExplorerAddressRepository mAddressRepository;
     private ExplorerCoinsRepository mCoinsRepository;
     private ExplorerValidatorsRepository mValidatorsRepository;
+    private ExplorerPoolsRepository mPoolsRepository;
     private GateGasRepository mGasRepository;
     private GateEstimateRepository mGateEstimateRepo;
     private GateTransactionRepository mGateTxRepo;
@@ -249,6 +251,13 @@ public class MinterExplorerSDK {
         }
 
         return mAddressRepository;
+    }
+
+    public ExplorerPoolsRepository pools() {
+        if (mPoolsRepository == null) {
+            mPoolsRepository = new ExplorerPoolsRepository(mApiService);
+        }
+        return mPoolsRepository;
     }
 
     public GsonBuilder getGsonBuilder() {

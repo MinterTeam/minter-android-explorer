@@ -24,29 +24,43 @@
  * THE SOFTWARE.
  */
 
-package network.minter.explorer.api;
+package network.minter.explorer.tests.repo
 
-import java.util.List;
-
-import io.reactivex.Observable;
-import network.minter.explorer.models.CoinItem;
-import network.minter.explorer.models.ExpResult;
-import retrofit2.http.GET;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
+import network.minter.core.internal.log.StdLogger
+import network.minter.explorer.MinterExplorerSDK
+import network.minter.explorer.models.PoolRoute
+import org.junit.Assert.*
+import org.junit.Test
+import java.math.BigDecimal
 
 /**
- * minter-android-explorer. 2018
- * @author Eduard Maximovich [edward.vstock[at]gmail.com]
+ * minter-android-explorer. 2020
+ * @author Eduard Maximovich (edward.vstock@gmail.com)
  */
-public interface ExplorerCoinsEndpoint {
+class ExplorerPoolsRepositoryTest {
 
-    @GET("coins")
-    Observable<ExpResult<List<CoinItem>>> getAll();
+    companion object {
+        init {
+            MinterExplorerSDK.Setup()
+                .setEnableDebug(true)
+                .setLogger(StdLogger())
+                .init()
+        }
+    }
 
-    @GET("coins")
-    Observable<ExpResult<List<CoinItem>>> search(@Query("symbol") String symbol);
+    @Test
+    fun testGetRouteBIPtoLASHIN() {
+        val poolsRepo = MinterExplorerSDK.getInstance().pools()
+        val res = poolsRepo.getRoute("BIP", "LASHIN", BigDecimal("10"), PoolRoute.SwapType.Buy)
+            .blockingFirst()
+        assertNotNull(res)
+        assertNull(res.error)
+        assertNotNull(res.result)
 
-    @GET("coins/id/{id}")
-    Observable<ExpResult<CoinItem>> getById(@Path("id") String id);
+        assertEquals(2, res.result.coins.size)
+        assertEquals("BIP", res.result.coins[0].symbol)
+        assertEquals("LASHIN", res.result.coins[1].symbol)
+        assertNotNull(res.result.amountIn)
+        assertNotNull(res.result.amountOut)
+    }
 }
